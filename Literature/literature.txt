@@ -1,0 +1,12 @@
+On identifying DM models with ML using mono-X signals:
+1. 1910.06058 : ML studies for the mono-jet case with different DM models (WIMP DM (SUSY neutralino), pseudo-Goldstone impostor (ALP), light DM mediated by a heavy particle.)
+   - Paper : https://arxiv.org/abs/1910.06058
+   - Relevant (partially) slides from authors : https://indico.cern.ch/event/857401/contributions/3638753/attachments/1948259/3232550/NExTSussexCKtalk.pdf
+
+2. 2105.12018 : ML studies for the mono-jet case with different DM candidates within the the s-channel simplified DM framework
+   - Paper: https://arxiv.org/abs/2105.12018
+   - Relevant slides from authors : https://indico.cern.ch/event/1012251/contributions/4302093/attachments/2219387/3758020/presentation-Feno-Exp-IFLP-AndresPerez.pdf
+   
+3. 2007.14586 : ML studies for the mono-lepton case with the W' model (not a DM candidate, but relevant work in identifying new physics with mono-X signals at colliders with ML)
+   - Paper: https://arxiv.org/abs/2007.14586
+   - Relevant (partially) slides from authors : https://indico.cern.ch/event/976823/contributions/4253328/attachments/2215375/3750500/HPNP2021-Chiang.pdf
