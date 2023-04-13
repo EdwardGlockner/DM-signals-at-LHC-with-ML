@@ -27,7 +27,6 @@ class CNN_model():
         model.add(layers.Dense(64, activation = "relu"))
         #model.add(layers.Dropout(0.2))
         model.add(layers.BatchNormalization())
-        model.add(layers.Dense(128, activation = "relu"))
         model.add(layers.Dense(64, activation = "relu"))
         model.add(layers.Dense(10, activation = "softmax"))
 
