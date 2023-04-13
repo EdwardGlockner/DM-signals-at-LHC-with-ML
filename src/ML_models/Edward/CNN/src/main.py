@@ -5,6 +5,7 @@ import pandas as pd
 import sys
 import os
 import matplotlib.pyplot as plt
+import time
 
 #---LOCAL IMPORTS--------+
 from data_prep import *
@@ -85,7 +86,8 @@ def main():
 
             elif choice_set == "2":
                 X_train, y_train, X_test, y_test = create_datasets("mnistfashion")
-
+            
+            start = time.time()
             clear()
             print(bar)
             print(f"Training model on {dataset} dataset")
@@ -97,6 +99,8 @@ def main():
                 model.compile("model_mnist_fashion")
 
             model.train()
+            end = time.time()
+            print(f"Time: {end-start} seconds")
             model.plot_performance()
             check = False 
 
