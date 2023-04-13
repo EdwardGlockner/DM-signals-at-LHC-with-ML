@@ -22,7 +22,7 @@
 
 
 # Main for loop
-path_LesHouches="/home/edward/Desktop/Thesis/SPheno-4.0.5/input/LesHouces.in.MSSM"
+#path_LesHouches="/home/edward/Desktop/Thesis/SPheno-4.0.5/input/LesHouces.in.MSSM"
 path_storage="~/Desktop/Thesis/storage_folder/storage_folder"
 
 for i in {1..2}

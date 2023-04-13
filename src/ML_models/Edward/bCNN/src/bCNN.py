@@ -31,6 +31,7 @@ class bCNN_model():
             layers.MaxPooling2D(pool_size = (2,2)),
             layers.Flatten(),
             layers.Dense(64, activation="relu"),
+            layers.Dropout(0.3),
             layers.BatchNormalization(),
             layers.Dense(32, activation="relu"),
             layers.Dense(tfpl.OneHotCategorical.params_size(10)),
@@ -85,4 +86,4 @@ class bCNN_model():
         else:
             ensamble_size = 1
 
-        image = 
+        #image = 
