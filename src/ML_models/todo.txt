@@ -1,0 +1,7 @@
+add additional feature for the histograms: the mass. Can encode it into the feature maps
+
+(see: https://stackoverflow.com/questions/47818968/adding-an-additional-value-to-a-convolutional-neural-network-input)
+
+(see: https://stats.stackexchange.com/questions/288496/how-to-add-more-inputs-to-a-cnn)
+
+(see: https://stats.stackexchange.com/questions/418906/variable-number-inputs-to-cnn)
