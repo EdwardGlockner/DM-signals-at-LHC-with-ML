@@ -1,0 +1,20 @@
+For MSSM monojet with p p > n1 n1 j process. 
+
+	No difference in THT, MHT, TET and MET --> Only use MET (Missing Transverse Energy)
+	No difference in sqrt(s) and M(n1 n1 p) --> Only use sqrt(s)
+
+	Should the independent transverse momentum for each particle be used, different if p p > z j and p p > n1 n1 j as there are more histograms in p p > n1 n1 j?
+
+	Is ETA distribution interesting, difference between ETA for z (process p p > z j, SM model) and n1 (process p p > n1 n1 j, MSSM model).
+
+	Mass Change:
+         Cross Section vary, maybe store it as a feature if the mass difference makes it change?
+	 The sqrt(s) vary. Moving on x-axis and more concentrated distribution in higher mass. Where to make the cut, for lower mass --> Noise in tail but necessary info in higher mass histogram at higher GeV.         Slope steeper in lower mass in MET
+	 Wider ETA distribution for lower mass --> lower peak
+
+Difference between all of the models:
+	Cross-Section different for all models with same mass of DM candidate. Mass[chi_1, sv1] = 700, 700. No special mass for SM model. 
+	MET cut of short for SM. Not much difference between (p p > sve sve~ j) and (p p > n1 n1 j), just a little slope difference (implicit diff mean value)
+	sqrt(s) small for SM. Higher peak for (p p > n1 n1 j) than (p p > sve sve~ j)
+	No difference in ETA distribution for n1 and sve but the z in SM model is a trivial difference. 
+	Wider DELTAR for n1 n1 than sve sve~
