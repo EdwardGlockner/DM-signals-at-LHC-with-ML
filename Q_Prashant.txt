@@ -8,3 +8,6 @@
 8. Should we use batch normalization after every convolutional layer to standardize the input?
 9. Thoughts on adding extra numerical features after the convolutional layers, to merge them via a fully connected layers?
 10. Thoughts on using multiple images as input to our CNN? Three separate CNN:s and merge them via a fully connected layer?
+11. Should we run more events on the same mass as it is a stochastic process which makes the model less generalized?
+12. How many masses should we use and the spacing between them?
+
