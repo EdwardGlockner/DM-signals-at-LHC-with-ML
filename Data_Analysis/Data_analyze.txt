@@ -18,3 +18,33 @@ Difference between all of the models:
 	sqrt(s) small for SM. Higher peak for (p p > n1 n1 j) than (p p > sve sve~ j)
 	No difference in ETA distribution for n1 and sve but the z in SM model is a trivial difference. 
 	Wider DELTAR for n1 n1 than sve sve~
+
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+Answer from Harrys mail: 
+
+	Cross section vary between every model with different parameters and the amount of free parameters. In others model you could change the coupling parameters which will result in a
+	change of the cross section. And in this project we will focus more on the shapes of the histograms so we do not want to include the cross section. 
+		--> Do not include cross section
+
+	In mono-jet. All of our visible momentum is hadronic and the missing momentum is attributed to dark matter particles. Initial state have zero transverse momentum and due to 
+	the conservation of momentum, the hadronic and missing transverse momenta must be equal. Therefore --> THT, MHT, TET, MET looks quite the same. 
+		--> Include MET
+		--> Do not include THT, MHT, TET
+
+	We cannot measure SQRTS experimentally as some of our particles are invisible. One has to reconstruct all momentum compenets of all the particles involved to determine SQRTS. 
+		Can do with ma5 -R (reconstructed mode) ???, if we can then can include it. Otherwise not. 
+		--> Maybe include SQRTS, depend on the above row. 
+
+	ETA distribution comes mainly from parton distribution functions, which are different for quark and gluon initiated processes. 
+		--> Will help, include ETA.
+
+	In mono-jet we don't expect that neutralino/sneutrino would differ in terms of PT as the emitted gluons/quarks comes from the initial state, and not from the DM particles. Which
+	means that there should be no spin dependence. Expect it to be different for the mono-Z event. 
+		--> Include PT for the DM particles as it would be different for mono-Z. 
+
+	Will not be able to measure the DELTAR for invisible particles. 
+		--> Do not include DELTAR.
+
+	For the luminosity we can have the same as before, 10 fb^-1 since it does not change the shape of the distributions. 
