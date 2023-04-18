@@ -1,0 +1,3 @@
+http://madgraph.phys.ucl.ac.be/Manual/lhco.html # INSTRUCTIONS LHCO FILES
+https://github.com/andrewfowlie/LHCO_reader # PYTHON PACKAGE FOR LHCO FILES
+https://root.cern/doc/master/group__TMVA.html # ROOT FILES

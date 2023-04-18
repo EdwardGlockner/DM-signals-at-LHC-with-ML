@@ -26,9 +26,15 @@ class bCNN_model():
     def _create_model(self):
         model = models.Sequential([
             layers.Conv2D(filters=32, kernel_size=(3, 3), activation= "relu", padding = "VALID", input_shape = (28, 28, 1)),
-            layers.MaxPooling2D(pool_size = (2,2)),
+            layers.BatchNormalization(),
+            #layers.MaxPooling2D(pool_size = (2,2)),
             layers.Conv2D(filters=32, kernel_size=(3, 3), activation = "relu", padding = "VALID"),
-            layers.MaxPooling2D(pool_size = (2,2)),
+            layers.BatchNormalization(),
+            #layers.MaxPooling2D(pool_size = (2,2)),
+            layers.Conv2D(filters=32, kernel_size=(3, 3), activation = "relu", padding = "VALID"),
+            layers.BatchNormalization(),
+            layers.Conv2D(filters=32, kernel_size=(3, 3), activation = "relu", padding = "VALID"),
+            #layers.MaxPooling2D(pool_size = (2,2)),
             layers.Flatten(),
             layers.Dense(64, activation="relu"),
             layers.Dropout(0.3),

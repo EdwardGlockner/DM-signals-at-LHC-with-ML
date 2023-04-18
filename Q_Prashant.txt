@@ -1,0 +1,10 @@
+1. Explain the thought behind choosing the amount of convolutional layers, pooling layers and dense layers in a CNN
+2. Some researchers using MNIST didnt use any pooling layers, why?
+3. Thoughts on our model architecture (show drawing)
+4. The images from the event generation are quite big: 602x409?. Is this a problem? Should we resize them?
+5. What do you think about data augmentation for our task? Considering using scaling/resizing, and translation
+6. Ensamble of CNN:s? Is it overkill?
+7. What is a good kernel size in our convolutional layer in our case?
+8. Should we use batch normalization after every convolutional layer to standardize the input?
+9. Thoughts on adding extra numerical features after the convolutional layers, to merge them via a fully connected layers?
+10. Thoughts on using multiple images as input to our CNN? Three separate CNN:s and merge them via a fully connected layer?
