@@ -23,10 +23,6 @@ def create_datasets(dataset):
 
     X_test = X_test.reshape(X_test.shape[0], X_test.shape[1], X_test.shape[2], 1)
     X_test = X_test / 255
-
-    # Label encoding
-    y_train = tf.one_hot(y_train.astype(np.int32), depth=10) 
-    y_test = tf.one_hot(y_test.astype(np.int32), depth=10)
     
     return X_train, y_train, X_test, y_test 
 
