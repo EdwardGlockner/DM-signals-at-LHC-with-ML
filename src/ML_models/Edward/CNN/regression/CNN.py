@@ -44,7 +44,7 @@ class CNN_model():
             dpi=96,
         )
 
-        self.model.compile(optimizer = "sgd", loss = "mse", metrics = [tf.keras.metrics.MeanSquaredError()])
+        self.model.compile(optimizer = "sgd", loss = "mse", metrics = [tf.keras.metrics.RootMeanSquaredError()])
 
     
     def train(self, print_perf=True):
