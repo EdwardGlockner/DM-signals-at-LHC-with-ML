@@ -51,7 +51,7 @@ class CNN_model():
         self.history = self.model.fit(self.X_train, self.y_train, epochs = 1000,
                             validation_data = (self.X_test, self.y_test), callbacks = [tf.keras.callbacks.EarlyStopping(monitor='val_loss', 
                                 min_delta=0, 
-                                patience=1, 
+                                patience=2, 
                                 verbose=0, 
                                 mode='auto', 
                                 baseline=None, 
@@ -62,10 +62,10 @@ class CNN_model():
 
 
     def plot_performance(self):
-        plt.plot(self.history.history["mean_squared_error"], label = "MSE")
-        plt.plot(self.history.history["val_mean_squared_error"], label = "val_MSE")
+        plt.plot(self.history.history["root_mean_squared_error"], label = "MSE")
+        plt.plot(self.history.history["val_root_mean_squared_error"], label = "val_MSE")
         plt.xlabel("Epochs")
-        plt.ylabel("MSE")
+        plt.ylabel("RMSE")
         plt.ylim([0, 1])
         plt.legend(loc="lower right")
         plt.show()

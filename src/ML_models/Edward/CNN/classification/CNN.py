@@ -19,15 +19,19 @@ class CNN_model():
     def _create_model(self):
         model = models.Sequential()
         model.add(layers.Conv2D(32, (3, 3), activation= "relu", input_shape = (28, 28, 1)))
+        model.add(layers.BatchNormalization())
         model.add(layers.MaxPooling2D((2, 2)))
         model.add(layers.Conv2D(32, (3, 3), activation = "relu"))
+        model.add(layers.BatchNormalization())
         model.add(layers.MaxPooling2D((2, 2)))
+        #model.add(layers.Conv2D(32, (3, 3), activation = "relu"))
+        #model.add(layers.MaxPooling2D((2, 2)))
+        #model.add(layers.BatchNormalization())
         # three splits in data
         model.add(layers.Flatten())
         model.add(layers.Dense(64, activation = "relu"))
-        #model.add(layers.Dropout(0.2))
         model.add(layers.BatchNormalization())
-        model.add(layers.Dense(64, activation = "relu"))
+        model.add(layers.Dense(16, activation = "relu"))
         model.add(layers.Dense(10, activation = "softmax"))
 
         return model
@@ -54,7 +58,7 @@ class CNN_model():
         self.history = self.model.fit(self.X_train, self.y_train, epochs = 1000,
                             validation_data = (self.X_test, self.y_test), callbacks = [tf.keras.callbacks.EarlyStopping(monitor='val_loss', 
                                 min_delta=0, 
-                                patience=1, 
+                                patience=2, 
                                 verbose=0, 
                                 mode='auto', 
                                 baseline=None, 
