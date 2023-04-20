@@ -11,3 +11,4 @@
 11. Should we run more events on the same mass as it is a stochastic process which makes the model less generalized?
 12. How many masses should we use and the spacing between them?
 13. Tips on bayesian CNN, what layers, how should probabilistic weights by initialized and where, what librarires?
+14. For SM only 3 histograms, for MSSM 5 histograms. CNN can learn to distinguish them only by the number of histograms and not the shapes. Tips???
