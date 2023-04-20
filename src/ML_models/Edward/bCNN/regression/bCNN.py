@@ -16,6 +16,19 @@ tfpl = tfp.layers
 
 class bCNN_model():
     def __init__(self, X_train, y_train, X_test, y_test, epochs = 5):
+        """
+        asdfasdf
+
+        @arguments:
+            X_train: <numpy.ndarray>
+            y_train: <tensorflow.python.framework.ops.EagerTensor>
+            X_test:  <numpy.ndarray>
+            y_test:  <tensorflow.python.framework.ops.EagerTensor>
+            epochs:  <int>
+
+        @returns:
+            None
+        """
         self.X_train = X_train
         self.y_train = y_train
         self.X_test = X_test
@@ -25,6 +38,16 @@ class bCNN_model():
 
     
     def _create_model(self):
+        """
+        asdfasdf
+
+        @arguments:
+            None
+
+        @returns:
+            None
+        """
+        # Create the model
         model = tf.keras.Sequential([
             tfpl.Convolution2DFlipout(32, kernel_size=(3, 3), activation="relu", input_shape = (28, 28, 1)),
             layers.Conv2D(filters=64, kernel_size=(3, 3), activation= "relu", padding = "VALID"),
@@ -57,18 +80,40 @@ class bCNN_model():
 
             ])
 
+        # Print the architecture and return the model
+        print(self.model.summary())
+
 
         return model
 
     
     def n_ll(self, y_true, y_pred):
+        """
+        asdfasdf
+
+        @arguments:
+            y_true: <tensorflow.python.framework.ops.Tensor>
+            y_pred: <tensorflow_probability.python.layers.internal.distribution_tensor_coercible._TensorCoercible>
+
+        @returns:
+            neg_log_lik: <tensorflow.python.framework.ops.Tensor>
+        """
+        
         y_true = tf.cast(y_true, tf.float32)
-        return -y_pred.log_prob(y_true)
+        neg_log_lik = -y_pred.log_prob(y_true)
+        return -neg_log_lik
 
 
     def compile(self, model_name):
-        print(self.model.summary())
+        """
+        asdfasdf
+
+        @arguments:
+            model_name <string> Name of the model that will be saved
         
+        @returns:
+            None
+        """
         tf.keras.utils.plot_model(
                 self.model,
                 to_file = "model.png",
@@ -110,19 +155,20 @@ class bCNN_model():
 
 # Specify the surrogate posterior over `keras.layers.Dense` `kernel` and `bias`.
 def posterior_mean_field(kernel_size, bias_size=0, dtype=None):
-  n = kernel_size + bias_size
-  c = np.log(np.expm1(1.))
-  return tf.keras.Sequential([
-      tfp.layers.VariableLayer(2 * n, dtype=dtype),
-      tfp.layers.DistributionLambda(lambda t: tfd.Independent(
-          tfd.Normal(loc=t[..., :n],
-                     scale=1e-5 + tf.nn.softplus(c + t[..., n:])),
-          reinterpreted_batch_ndims=1)),
-    ])
+     
+    n = kernel_size + bias_size
+    c = np.log(np.expm1(1.))
+    return tf.keras.Sequential([
+          tfp.layers.VariableLayer(2 * n, dtype=dtype),
+          tfp.layers.DistributionLambda(lambda t: tfd.Independent(
+              tfd.Normal(loc=t[..., :n],
+                         scale=1e-5 + tf.nn.softplus(c + t[..., n:])),
+              reinterpreted_batch_ndims=1)),
+     ])
 
 # Specify the prior over `keras.layers.Dense` `kernel` and `bias`.
 def prior_trainable(kernel_size, bias_size=0, dtype=None):
-  n = kernel_size + bias_size
+    n = kernel_size + bias_size
   return tf.keras.Sequential([
       tfp.layers.VariableLayer(n, dtype=dtype),
       tfp.layers.DistributionLambda(lambda t: tfd.Independent(

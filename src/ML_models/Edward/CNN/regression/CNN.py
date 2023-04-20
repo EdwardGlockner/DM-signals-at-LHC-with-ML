@@ -6,6 +6,19 @@ from sklearn.metrics import confusion_matrix, classification_report
 
 class CNN_model():
     def __init__(self, X_train, y_train, X_test, y_test, epochs=5):
+        """
+        asdfasdf
+
+        @arguments:
+            X_train: <numpy.ndarray>
+            y_train: <tensorflow.python.framework.ops.EagerTensor>
+            X_test:  <numpy.ndarray>
+            y_test:  <tensorflow.python.framework.ops.EagerTensor>
+            epochs:  <int>
+
+        @returns:
+            None
+        """
         self.X_train = X_train
         self.y_train = y_train
         self.X_test = X_test
@@ -17,23 +30,44 @@ class CNN_model():
 
 
     def _create_model(self):
+        """
+        asfasdf
+
+        @arguments:
+            None
+
+        @returns:
+            None
+        """
+        # Add all the layers
         model = models.Sequential()
         model.add(layers.Conv2D(32, (3, 3), activation= "relu", input_shape = (28, 28, 1)))
         model.add(layers.MaxPooling2D((2, 2)))
         model.add(layers.Conv2D(32, (3, 3), activation = "relu"))
         model.add(layers.MaxPooling2D((2, 2)))
-        # three splits in data
         model.add(layers.Flatten())
         model.add(layers.Dense(64, activation = "relu"))
         model.add(layers.BatchNormalization())
         model.add(layers.Dense(16, activation = "relu"))
         model.add(layers.BatchNormalization())
         model.add(layers.Dense(1, activation = "linear"))
+        
+        # Print the model architecture and return the model
+        print(model.summary())
+
         return model
 
 
     def compile(self, model_name):
-        print(self.model.summary())
+        """
+        asdfasdf
+
+        @arguments:
+            model_name: <string> Name of the figure that will be saved
+
+        @returns:
+            None
+        """
         tf.keras.utils.plot_model(
             self.model,
             to_file= model_name + ".png",
@@ -48,6 +82,15 @@ class CNN_model():
 
     
     def train(self, print_perf=True):
+        """
+        asdfasdf
+
+        @arguments:
+            print_perf <bool>
+        
+        @returns:
+            None
+        """
         self.history = self.model.fit(self.X_train, self.y_train, epochs = 1000,
                             validation_data = (self.X_test, self.y_test), callbacks = [tf.keras.callbacks.EarlyStopping(monitor='val_loss', 
                                 min_delta=0, 
@@ -62,6 +105,15 @@ class CNN_model():
 
 
     def plot_performance(self):
+        """
+        asdfasdf
+
+        @arguments:
+            None
+        
+        @returns:
+            None
+        """
         plt.plot(self.history.history["root_mean_squared_error"], label = "MSE")
         plt.plot(self.history.history["val_root_mean_squared_error"], label = "val_MSE")
         plt.xlabel("Epochs")

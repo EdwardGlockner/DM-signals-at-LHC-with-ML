@@ -16,6 +16,8 @@ class CNN_model():
             y_test:  <tensorflow.python.framework.ops.EagerTensor>
             epochs:  <int>
 
+        @returns:
+            None
         """
         print(type(y_train))
         self.X_train = X_train
@@ -28,7 +30,7 @@ class CNN_model():
         self.callback = Callback()
 
 
-    def _create_modeltensorflow.python.framework.ops.EagerTensortensorflow.python.framework.ops.EagerTensor(self):
+    def _create_model(self):
         """
         asdfasdf
 
@@ -111,6 +113,12 @@ class CNN_model():
     def plot_performance(self):
         """
         asdfasdfasdf
+
+        @arguments
+            None
+
+        @returns:
+            None
 
         """
         plt.plot(self.history.history["accuracy"], label = "accuracy")
