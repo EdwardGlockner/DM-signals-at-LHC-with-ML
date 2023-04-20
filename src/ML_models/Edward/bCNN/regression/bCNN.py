@@ -89,7 +89,7 @@ class bCNN_model():
                                 verbose=0, 
                                 mode='auto', 
                                 baseline=None, 
-                                restore_best_weights=False)])
+                                restore_best_weights=True)])
 
         self.model.save("./model.h5")
 

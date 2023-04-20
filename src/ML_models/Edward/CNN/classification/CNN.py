@@ -61,8 +61,9 @@ class CNN_model():
                                 patience=2, 
                                 verbose=0, 
                                 mode='auto', 
-                                baseline=None, 
-                                restore_best_weights=False)])
+                                baseline=None,
+                                start_from_epoch=10,
+                                restore_best_weights=True)])
 
         self.model.save("./model.h5")
         test_loss, test_acc = self.model.evaluate(self.X_test, self.y_test, verbose=2)

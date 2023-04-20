@@ -72,8 +72,9 @@ class bCNN_model():
                                 patience=2, 
                                 verbose=0, 
                                 mode='auto', 
-                                baseline=None, 
-                                restore_best_weights=False)])
+                                baseline=None,
+                                restore_best_weights=True,
+                                start_from_epoch=10)])
 
         self.model.save("./model.h5")
 

@@ -10,4 +10,4 @@
 10. Thoughts on using multiple images as input to our CNN? Three separate CNN:s and merge them via a fully connected layer? or stack them to 3 channels? Or add them into a montage?
 11. Should we run more events on the same mass as it is a stochastic process which makes the model less generalized?
 12. How many masses should we use and the spacing between them?
-
+13. Tips on bayesian CNN, what layers, how should probabilistic weights by initialized and where, what librarires?
