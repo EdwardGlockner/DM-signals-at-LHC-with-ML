@@ -1,8 +1,8 @@
 #---IMPORTS----------+
+import time
 import os
 import sys
 import numpy as np
-import PIL
 from PIL import Image
 
 
@@ -61,7 +61,10 @@ def average_img(folder_path, show=False):
 #---MAIN----------+
 def main():
     folder_path = dirname + "src/DataGeneration/R_MNIST/"
-    average_img(folder_path, show=True)
+    start = time.time()
+    average_img(folder_path, show=False)
+    end = time.time()
+    print(f"Time: {end-start}")
 
 
 #---RUN CODE------+
