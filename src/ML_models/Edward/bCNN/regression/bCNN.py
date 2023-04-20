@@ -140,10 +140,33 @@ class bCNN_model():
 
 
     def plot_performance(self):
+        """
+        asdfasdf
+
+        @arguments:
+            None
+
+        @returns:
+            None
+        """
         pass
 
 
     def analyze_model_prediction(self, data, true_label, model, image_num, run_ensamble=False):
+        """
+        asdasd
+
+        @arguments:
+            data:
+            true_label:
+            true_label:
+            model:
+            image_num:
+            run_ensamble: <bool>
+
+        @returns:
+            None
+        """
         if run_ensamble:
             ensamble_size = 200
         else:
@@ -155,7 +178,17 @@ class bCNN_model():
 
 # Specify the surrogate posterior over `keras.layers.Dense` `kernel` and `bias`.
 def posterior_mean_field(kernel_size, bias_size=0, dtype=None):
-     
+    """
+    asdfasdf
+
+    @arguments:
+        kernel_size:
+        bias_size:
+        dtype:
+
+    @returns:
+        
+    """
     n = kernel_size + bias_size
     c = np.log(np.expm1(1.))
     return tf.keras.Sequential([
@@ -168,6 +201,17 @@ def posterior_mean_field(kernel_size, bias_size=0, dtype=None):
 
 # Specify the prior over `keras.layers.Dense` `kernel` and `bias`.
 def prior_trainable(kernel_size, bias_size=0, dtype=None):
+    """
+    asdfasdf
+
+    @arguments:
+        kernel_size:
+        bias_size:
+        dtype: 
+
+    @returns:
+
+    """
     n = kernel_size + bias_size
   return tf.keras.Sequential([
       tfp.layers.VariableLayer(n, dtype=dtype),
