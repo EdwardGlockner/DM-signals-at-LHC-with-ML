@@ -25,16 +25,6 @@ The search for evidence of a dark matter particle is one of the hottest topics i
 ### Aim
 The *aim* of the project is to develop a deep learning model that can, to a satisfactory degree of accuracy, determine whether a proton-proton collision resulted in the production of a dark matter candidate particle. If true, the model outputs a prediction of the mass of the dark matter candidate particle.
 
-<!-- About the Project -->
-## About the Project
-
-<!-- Description -->
-### Description
-
-This project is based on the course: "Computational Finance: Pricing and Valuation 1TD186 12010 HT2022" given by Uppsala University. The course is divided into five different assignments. In each assignment a different variation of either the finite difference scheme, or the Monte-Carlo method is used to price different types of financial options.
-
-The project is divided into five folders containing one assignment each. Every folder contains the assignment description named: "Assignment{x}.pdf", a solution to the assignment named "Solution{x}.pdf" or "Solution{x}.mlx" (for MATLAB live scripts), aswell as all the helper functions used in the assignment.
-
 <!-- Getting Started -->
 ## Getting Started
 
