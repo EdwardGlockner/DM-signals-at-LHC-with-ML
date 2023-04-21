@@ -24,6 +24,7 @@ The search for evidence of a dark matter particle is one of the hottest topics i
 
 ### Goals
 The *aim* of the project is to develop a deep learning model that can, to a satisfactory degree of accuracy, determine whether a proton-proton collision resulted in the production of a dark matter candidate particle. If true, the model outputs a prediction of the mass of the dark matter candidate particle.
+
 ---
 <!-- Getting Started -->
 ## Getting Started
