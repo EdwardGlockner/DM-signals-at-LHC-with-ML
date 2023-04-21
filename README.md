@@ -12,6 +12,7 @@
 
 - [Contact](#contact)
 - [Links](#links)
+- [License](#license)
 
 ## About the Project
 This is project by Edward Glöckner, Max Andersson and Carl Löfkvist. It was supervised by Stefano Moretti, Prashant Singh, Rikard Enberg, Harri Waltari at Uppsala University. The project investigates the role deep learning can have in the discovery of new physics.
@@ -23,9 +24,6 @@ The search for evidence of a dark matter particle is one of the hottest topics i
 
 ### Aim
 The *aim* of the project is to develop a deep learning model that can, to a satisfactory degree of accuracy, determine whether a proton-proton collision resulted in the production of a dark matter candidate particle. If true, the model outputs a prediction of the mass of the dark matter candidate particle.
-
-
-
 
 <!-- About the Project -->
 ## About the Project
@@ -43,17 +41,19 @@ The project is divided into five folders containing one assignment each. Every f
 <!-- Prerequisites -->
 ### Prerequisites
  
-
 <!-- Run Locally -->
 ### Run Locally
 
-
 <!-- Contact -->
 ## Contact
-
 
 <!-- Links -->
 ## Links
 
 Here are some helpful links:
+
+<!-- License -->
+## License
+
+
 
