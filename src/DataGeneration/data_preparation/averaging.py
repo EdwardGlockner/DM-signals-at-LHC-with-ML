@@ -1,5 +1,4 @@
 #---IMPORTS----------+
-import time
 import os
 import sys
 import numpy as np
@@ -32,8 +31,11 @@ bar = "+-----------------"
 #---FUNCTIONS--------+
 def average_img(folder_path, show=False, save_file="Average.png"):
     """
-    asdfasdf
-    Requires all images to be the same size
+    Takes in a path to a folder, and averages the pixelvalues of the images
+    in the folder. The output image is saved and returned.
+
+    This functions requires all images to be the same size
+
     @params:
         folder_path: <string> Full path to the folder where the images are
         show: <bool> Visualize image or note
@@ -63,10 +65,7 @@ def average_img(folder_path, show=False, save_file="Average.png"):
 #---MAIN----------+
 def main():
     folder_path = dirname + "Data_Analysis/All_png/"
-    start = time.time()
     average_img(folder_path, show=False)
-    end = time.time()
-    print(f"Time: {end-start}")
 
 
 #---RUN CODE------+

@@ -63,7 +63,7 @@ class bCNN_model():
         ])
         # Print the architecture and return the model
         print(model.summary())
-
+        print(type(model))
         return model
 
     
