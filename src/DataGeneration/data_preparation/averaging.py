@@ -30,19 +30,21 @@ bar = "+-----------------"
 
 
 #---FUNCTIONS--------+
-def average_img(folder_path, show=False):
+def average_img(folder_path, show=False, save_file="Average.png"):
     """
     asdfasdf
     Requires all images to be the same size
     @params:
-        None
+        folder_path: <string> Full path to the folder where the images are
+        show: <bool> Visualize image or note
+        save_file <string> Name of the saved file
 
     @returns:
-        None:
+        avg_img: <> asdf 
     """
     # Read all files
     files = os.listdir(folder_path)
-    imgs = [folder_path + file for file in files if file[-4:] in [".png", ".PNG", ".jpg", ".JPG"]]
+    imgs = [folder_path + file for file in files if file[-8:] in ["ETA1.png", "ETA1.PNG", "ETA1.jpg", "ETA1.JPG"]]
     imgs = [np.array(Image.open(img)) for img in imgs]
     arrs = [np.array(img) for img in imgs]
     avg_arr = np.mean(arrs, axis=0).astype(float)
@@ -50,7 +52,7 @@ def average_img(folder_path, show=False):
     avg_img = Image.fromarray(avg_arr)
     avg_img = avg_img.convert("L") # Convert to grayscale
     # For RGD: ...convert("RGB")
-    avg_img.save("Average.png")
+    avg_img.save(save_file)
     
     if show:
         avg_img.show()
@@ -60,7 +62,7 @@ def average_img(folder_path, show=False):
 
 #---MAIN----------+
 def main():
-    folder_path = dirname + "src/DataGeneration/R_MNIST/"
+    folder_path = dirname + "Data_Analysis/All_png/"
     start = time.time()
     average_img(folder_path, show=False)
     end = time.time()

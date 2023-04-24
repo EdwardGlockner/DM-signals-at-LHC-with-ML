@@ -1,10 +1,7 @@
 #---IMPORTS--------------+
 import keras
-import numpy as np
-import pandas as pd
 import sys
 import os
-import matplotlib.pyplot as plt
 import time
 
 #---LOCAL IMPORTS--------+
@@ -43,7 +40,7 @@ def main():
         print("2. MNIST Fashion")
         choice_set = input("\nChoose dataset: ")
         clear()
-        print(choice_set)
+        dataset = ""
         if choice_set == "1":
             dataset = "MNIST"
             check = False
@@ -90,7 +87,7 @@ def main():
             start = time.time()
             clear()
             print(bar)
-            print(f"Training model on {dataset} dataset")
+            print(f"model on {dataset} dataset")
             model = CNN_model(X_train, y_train, X_test, y_test)
             if choice_set == "1":
                 model.compile("model_mnist")

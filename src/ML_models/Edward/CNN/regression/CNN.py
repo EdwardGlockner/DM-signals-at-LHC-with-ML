@@ -44,10 +44,10 @@ class CNN_model():
         model.add(layers.Conv2D(32, (3, 3), activation= "relu", input_shape = (28, 28, 1)))
         model.add(layers.MaxPooling2D((2, 2)))
         model.add(layers.Conv2D(32, (3, 3), activation = "relu"))
+        model.add(layers.BatchNormalization())
         model.add(layers.MaxPooling2D((2, 2)))
         model.add(layers.Flatten())
         model.add(layers.Dense(64, activation = "relu"))
-        model.add(layers.BatchNormalization())
         model.add(layers.Dense(16, activation = "relu"))
         model.add(layers.BatchNormalization())
         model.add(layers.Dense(1, activation = "linear"))
@@ -56,7 +56,7 @@ class CNN_model():
         print(model.summary())
 
         return model
-
+        print("Hello World")
 
     def compile(self, model_name):
         """
@@ -98,6 +98,7 @@ class CNN_model():
                                 verbose=0, 
                                 mode='auto', 
                                 baseline=None,
+                                start_from_epoch=5,
                                 restore_best_weights=True)])
 
         self.model.save("./model.h5")

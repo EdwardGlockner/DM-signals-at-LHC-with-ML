@@ -15,7 +15,7 @@ def create_datasets(dataset):
         (X_train, y_train), (X_test, y_test) = mnist_fashion.load_data()
 
     else:
-        return None
+        return 0, 0, 0, 0 
 
     # Reshape and normalize
     X_train = X_train.reshape(X_train.shape[0], X_train.shape[1], X_train.shape[2], 1)

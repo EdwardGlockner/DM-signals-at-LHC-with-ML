@@ -134,6 +134,7 @@ class bCNN_model():
                                 verbose=0, 
                                 mode='auto', 
                                 baseline=None, 
+                                start_from_epoch=5,
                                 restore_best_weights=True)])
 
         self.model.save("./model.h5")

@@ -38,26 +38,26 @@ class CNN_model():
             None
 
         @returns:
-            None
+            Model: 
 
         """
         # Add all the layers
         model = models.Sequential()
-        model.add(layers.Conv2D(32, (3, 3), activation= "relu", input_shape = (28, 28, 1)))
-        model.add(layers.BatchNormalization())
+        model.add(layers.Conv2D(32, (3, 3), activation="relu", input_shape=(28, 28, 1)))
         model.add(layers.MaxPooling2D((2, 2)))
-        model.add(layers.Conv2D(32, (3, 3), activation = "relu"))
+        model.add(layers.Conv2D(32, (3, 3), activation="relu"))
         model.add(layers.BatchNormalization())
         model.add(layers.MaxPooling2D((2, 2)))
         model.add(layers.Flatten())
-        model.add(layers.Dense(64, activation = "relu"))
+        model.add(layers.Dense(64, activation="relu"))
+        model.add(layers.Dropout(.2))
+        model.add(layers.Dense(16, activation="relu"))
         model.add(layers.BatchNormalization())
-        model.add(layers.Dense(16, activation = "relu"))
-        model.add(layers.Dense(10, activation = "softmax"))
-        
+        model.add(layers.Dropout(.2))
+        model.add(layers.Dense(10, activation="softmax"))
+
         print(model.summary())
         return model
-
 
     def compile(self, model_name):
         """
@@ -85,7 +85,7 @@ class CNN_model():
                       loss = tf.keras.losses.CategoricalCrossentropy(from_logits=False),
                       metrics = ["accuracy"])
 
-    
+ 
     def train(self, print_perf=True):
         """
         asdfasdf
@@ -99,11 +99,11 @@ class CNN_model():
         self.history = self.model.fit(self.X_train, self.y_train, epochs = 1000,
                             validation_data = (self.X_test, self.y_test), callbacks = [tf.keras.callbacks.EarlyStopping(monitor='val_loss', 
                                 min_delta=0, 
-                                patience=2, 
+                                patience=1, 
                                 verbose=0, 
                                 mode='auto', 
                                 baseline=None,
-                                start_from_epoch=10,
+                                start_from_epoch=1,
                                 restore_best_weights=True)])
 
         self.model.save("./model.h5")

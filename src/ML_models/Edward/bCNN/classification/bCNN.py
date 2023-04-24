@@ -49,7 +49,6 @@ class bCNN_model():
         # Create the model
         model = models.Sequential([
             layers.Conv2D(filters=32, kernel_size=(3, 3), activation= "relu", padding = "VALID", input_shape = (28, 28, 1)),
-            layers.BatchNormalization(),
             layers.MaxPooling2D(pool_size = (2, 2)),
             layers.Conv2D(filters=32, kernel_size=(3, 3), activation = "relu", padding = "VALID"),
             layers.BatchNormalization(),
@@ -57,6 +56,7 @@ class bCNN_model():
             layers.Flatten(),
             layers.Dense(64, activation="relu"),
             layers.BatchNormalization(),
+            layers.Dropout(.2),
             layers.Dense(16, activation="relu"),
             layers.Dense(tfpl.OneHotCategorical.params_size(10)),
             tfpl.OneHotCategorical(10, convert_to_tensor_fn=tfd.Distribution.mode)
@@ -122,12 +122,12 @@ class bCNN_model():
         self.history = self.model.fit(self.X_train, self.y_train, epochs = 1000,
                             validation_data = (self.X_test, self.y_test), callbacks = [tf.keras.callbacks.EarlyStopping(monitor='val_loss', 
                                 min_delta=0, 
-                                patience=2, 
+                                patience=1, 
                                 verbose=0, 
                                 mode='auto', 
                                 baseline=None,
                                 restore_best_weights=True,
-                                start_from_epoch=10)])
+                                start_from_epoch=1)])
 
         self.model.save("./model.h5")
 
