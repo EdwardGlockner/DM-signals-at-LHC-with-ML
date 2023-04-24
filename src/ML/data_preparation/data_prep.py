@@ -206,8 +206,9 @@ def combine_imgs(script_path, folder_path, folder_dest=""):
     if folder_dest == "":
         folder_dest = folder_path
     
+    script_path = f"{script_path} {folder_path} {folder_dest}"
     try:
-        subprocess.run(script_path, shell=True)
+        print(subprocess.run(script_path, check=True, capture_output=True, text=True, shell=True))
 
     except subprocess.CalledProcessError as e:
         print ( "Error:\nreturn code: ", e.returncode, "\nOutput: ", e.stderr.decode("utf-8") )
@@ -235,3 +236,6 @@ def lower_res(script_path, folder_path, folder_dest=""):
         print ( "Error:\nreturn code: ", e.returncode, "\nOutput: ", e.stderr.decode("utf-8") )
         raise
 
+combine_imgs("/Users/MaxAn/Documents/VScode/Kandidatprojekt/DM-signals-at-LHC-with-ML/src/ML/data_preparation/combine_png.sh", \
+              "/Users/MaxAn/Documents/VScode/Kandidatprojekt/DM-signals-at-LHC-with-ML/src/ML/raw_data/Test_images", \
+              "/Users/MaxAn/Documents/VScode/Kandidatprojekt/DM-signals-at-LHC-with-ML/src/ML/raw_data/Combine")

@@ -2,10 +2,10 @@
 
 # This script is only for a directory with the same model
 
-current_dir=$(pwd)
-
-input_directory="$1"
-output_directory="$2"
+input_directory=${1}
+output_directory=${2}
+echo "input_dir: $input_directory"
+echo "output_dir: $output_directory"
 
 # Combine the average pngs in a model directory
 for (( i=0; i<10; i++ ))
