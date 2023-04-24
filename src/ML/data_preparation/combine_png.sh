@@ -2,8 +2,8 @@
 
 current_dir=$(pwd)
 
-input_directory="${current_dir}/Storage_data/Test_collapse"
-output_directory="${current_dir}/Storage_data/MSSMmonojet"
+input_directory="${current_dir}/../raw_data/images"
+output_directory="${current_dir}/../processed_data/images"
 
 
 #convert +append ${input_directory}/*.png ${output_directory}/combined.png
@@ -23,7 +23,5 @@ done
 
 # Convert all of the images indices [0 to 17] from the folders and combine them together
 
-
-
-
 echo "Combined PNG image created at ${output_directory}/combined.png"
+

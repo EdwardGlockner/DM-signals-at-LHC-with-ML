@@ -10,8 +10,8 @@ sys.path.insert(1, os.path.join(dirname, "src/ML/data_preparation"))
 sys.path.insert(1, os.path.join(dirname, "src/ML/models"))
 
 #---LOCAL IMPORTS--------+
-from classification_bCNN import *
-from regression_CNN import *
+#from classification_bCNN import *
+#from regression_CNN import *
 from data_prep import *
 
 #---GLOBALS--------------+
@@ -32,21 +32,29 @@ bar = "+---------------------+"
 
 
 #---FUNCTIONS------------+
-def preprocess(folder_img_path):
+def preprocess(folder_img_path, folder_dest):
     """
     asdfasdf
 
     @arguments:
-        None
+        folder_img_path: <string>
+        folder_dest: <string>
     @returns:
         None
     """
+    #1. average
+    #2. lower_res
+    #3. combine
     lower_res_script = ""
     combine_script = ""
-    lower_res(lower_res_script, folder_img_path)
-    combine_imgs(combine_script, folder_img_path)
+    #lower_res(lower_res_script, folder_img_path, folder_dest)
 
-    average_imgs(folder_img_path)
+    #combine_imgs(combine_script, folder_img_path, folder_dest)
+
+    average_imgs(folder_img_path, folder_dest, show=False)
+    # TODO
+    lower_res()
+    combine_imgs()
 
 def get_sets(folder_img_path, folder_target_path, img_height, img_width):
     """
@@ -114,18 +122,21 @@ def run_all():
 
 #---MAIN-----------------+
 def main():
-    folder_img_path = ""
-    folder_target_path = ""
-    img_height = ""
-    img_width = ""
+    folder_img_path = dirname + "src/ML/raw_data/images/"
+    folder_target_path = dirname + "src/ML/processed_data/images/"
+    img_height = 420
+    img_width = 646 
     
-    preprocess(folder_img_path) 
+    preprocess(folder_img_path, folder_target_path) 
+    """
     cl, re =  get_sets(folder_img_path, folder_target_path, img_height, img_width)
     X_val_cl, y_val_cl = cl[4], cl[5]
     X_val_re, y_val_re = re[4], re[5]
 
     train_classification(cl[0], cl[1], cl[2], cl[3])
     train_regression(re[0], re[1], re[2], re[3])
+    """
+
 
 #---RUN CODE-------------+
 if __name__ == "__main__":

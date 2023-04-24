@@ -39,7 +39,7 @@ def create_label_encoding(class_label):
     return target_dict
 
 
-def average_imgs(folder_path, show=False, save_file="Average.png"):
+def average_imgs(folder_path, folder_dest, show=False):
     """
     Takes in a path to a folder, and averages the pixelvalues of the images
     in the folder. The output image is saved and returned.
@@ -49,28 +49,47 @@ def average_imgs(folder_path, show=False, save_file="Average.png"):
     @params:
         folder_path: <string> Full path to the folder where the images are
         show: <bool> Visualize image or note
-        save_file <string> Name of the saved file
-
+        folder_dest <string> Path to the folder where the files should be saved
     @returns:
-        avg_img: <> asdf 
+        None
     """
     # Read all files
     files = os.listdir(folder_path)
-    imgs = [folder_path + file for file in files if file[-8:] in ["ETA1.png", "ETA1.PNG", "ETA1.jpg", "ETA1.JPG"]]
-    imgs = [np.array(Image.open(img)) for img in imgs]
-    arrs = [np.array(img) for img in imgs]
-    avg_arr = np.mean(arrs, axis=0).astype(float)
-    
-    avg_img = Image.fromarray(avg_arr)
-    avg_img = avg_img.convert("L") # Convert to grayscale
-    # For RGD: ...convert("RGB")
-    avg_img.save(save_file)
-    
-    if show:
-        avg_img.show()
-    
-    return avg_img 
+    imgs = [folder_path + file for file in files if file[-4:] == ".png"]
 
+    # Group all the images based on first index, and image type (last 7 characters)
+    img_grouping = {}
+    for i in range(len(imgs)):
+        if ".png" in imgs[i]: # Check so it is a picture
+            temp_img = imgs[i].split("/")[-1]
+            temp_key = (temp_img[0], temp_img[-7:])
+
+            if temp_key in img_grouping:
+                img_grouping[temp_key].append(imgs[i])
+            else:
+                img_grouping[temp_key] = [imgs[i]]
+    
+    # Convert into list
+    img_grouping = [v for k, v in img_grouping.items()]
+    
+    # Averaging all the images, and saving them
+    for i in range(len(img_grouping)):
+        imgs = [np.array(Image.open(img)) for img in img_grouping[i]]
+        arrs = [np.array(img) for img in imgs]
+        avg_arr = np.mean(arrs, axis=0).astype(float)
+        
+        avg_img = Image.fromarray(avg_arr)
+        avg_img = avg_img.convert("L") # Convert to grayscale
+        # For RGD: ...convert("RGB")
+        
+        new_file_name = img_grouping[i][0].split("/")[-1]
+        new_file_name = new_file_name[0:2] + new_file_name[4:]
+
+        avg_img.save(folder_dest + new_file_name)
+        
+        if show:
+            avg_img.show()
+        
 
 def read_images(folder_img_path, img_height, img_width):
     """
@@ -212,8 +231,17 @@ def combine_imgs(script_path, folder_path, folder_dest=""):
     except subprocess.CalledProcessError as e:
         print ( "Error:\nreturn code: ", e.returncode, "\nOutput: ", e.stderr.decode("utf-8") )
         raise
+    """
+    import cv2
 
+    img1 = cv2.imread("0_0_neutralino_ETA.png")
+    img2 = cv2.imread("0_0_neutralino_MET.png")
+    img3 = cv2.imread("0_0_neutralino_PT.png")
 
+    img = cv2.hconcat([img1, img2, img3])
+    img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+    cv2.imwrite("test.png", img)
+    """
 def lower_res(script_path, folder_path, folder_dest=""):
     """
     Runs a bash script to lower the resolution of images in a folder.
