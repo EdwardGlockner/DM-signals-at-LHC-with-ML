@@ -39,7 +39,7 @@ def create_label_encoding(class_label):
     return target_dict
 
 
-def average_img(folder_path, show=False, save_file="Average.png"):
+def average_imgs(folder_path, show=False, save_file="Average.png"):
     """
     Takes in a path to a folder, and averages the pixelvalues of the images
     in the folder. The output image is saved and returned.
@@ -72,84 +72,82 @@ def average_img(folder_path, show=False, save_file="Average.png"):
     return avg_img 
 
 
-def regression_create_datasets(folder_img_path, output_path,  img_height, img_width):
+def read_images(folder_img_path, img_height, img_width):
     """
     asdfasdf
 
     @arguments:
-        folder_path: <Path> The full path to the folder of data
-        labels_path: <Path> The full path to the csv file with the labels
+        folder_img_path: <Path> The full path to the folder of the image data
         img_height: <int> Integer value of the height of the images
-        img_width: <int> Integer value of the width of the iamges
+        img_width: <int> Integer value of the width of the images
     @returns:
-        None
+        img_data_arr: <numpy.ndarray> Array containing all the images represented by numpy.ndarrays
     """
     img_data_arr = []
-    target_vals  = []
 
     for file_name in folder_img_path:
         img_path = os.path.join(folder_img_path, file_name)
         img = cv2.imread(img_path, cv2.COLOR_BGR2RGB)
-        img = cv2.resize(img, (img_height, img_width), interpolation=cv2.INTER_AREA)
+        img = cv2.resize(img, (img_height, img_width), interpolation = cv2.INTER_AREA)
         img = np.array(img)
         img = img.astype("float32")
-        img /= 255.0 # Normalizing
+        img /= 255.0 # Normalization
         img_data_arr.append(img)
 
-    with open(output_path, 'r') as csvfile:
+    img_data_arr = np.array(img_data_arr)
+
+    return img_data_arr
+
+
+def regression_create_targets(targets_path):
+    """
+    asdfasdf
+
+    @arguments:
+        targets_path: <Path> The full path to the csv file with the labels
+    @returns:
+        target_vals: <numpy.ndarray> Array containing all the output float values 
+    """
+    target_vals  = []
+
+    with open(targets_path, 'r') as csvfile:
         datareader = csv.reader(csvfile)
         for row in datareader:
+            try:
+                row = np.float32(row[0])
+            except ValueError:
+                print("Error in function {regression_create_datasets}. Could not convert string to np.float32.")
+
             target_vals.append(row)
 
-    if len(img_data_arr) != len(target_vals):
-        print("Error in function <regression_create_datasets>. Arrays are not the same size.")
-        return None
-
-    img_data_arr = np.array(img_data_arr)
     target_vals = np.array(target_vals)
 
-    return img_data_arr, target_vals 
-    
+    return target_vals 
 
-def classification_create_datasets(folder_path, img_height, img_width, label_encode = True):
+
+def classification_create_labels(folder_path, label_encode = True):
     """
     asdfasdf
     Assumes all images are the same height and width
 
     @arguments:
         folder_path: <Path> The full path to the folder of data 
-        img_height: <int> Integer value of the height of the images
-        img_width: <int> Integer value of the width of the iamges
         label_encode: <bool> Whether to encode the categorical labels are not  
     @returns:
-        img_data_arr: <numpy.ndarray> Array containing all the images represented by numpy.ndarrays
         class_label: <numpy.ndarray> Array of all the labels corresponding to img_data_arr (encoded by default)
     """
-    img_data_arr = []
     class_label = []
 
     for file_name in folder_path:
-        img_path = os.path.join(folder_path, file_name)
-        img = cv2.imread(img_path, cv2.COLOR_BGR2RGB)
-        img = cv2.resize(img, (img_height, img_width), interpolation=cv2.INTER_AREA)
-        img = np.array(img)
-        img = img.astype("float32")
-        img /= 255.0 # Normalizing
-        img_data_arr.append(img)
         class_label.append("model")
 
     if label_encode:
         label_dict = create_label_encoding(class_label)
         class_label = [label_dict[class_label[i]] for i in range(len(class_label))]
-
-    if len(img_data_arr) != len(class_label):
-        print("Error in function <classification_create_datasets>. Arrays are not the same size.")
-        return None
-
-    img_data_arr = np.array(img_data_arr)
+    
     class_label = np.array(class_label)
 
-    return img_data_arr, class_label
+    return class_label
 
 
 def shuffle_and_create_sets(img_data_arr, label_or_target, random_seed = 13, print_shapes = False):
