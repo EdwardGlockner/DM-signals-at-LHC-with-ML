@@ -60,15 +60,14 @@ def average_imgs(folder_path, folder_dest, show=False):
     # Group all the images based on first index, and image type (last 7 characters)
     img_grouping = {}
     for i in range(len(imgs)):
-        if ".png" in imgs[i]: # Check so it is a picture
-            temp_img = imgs[i].split("/")[-1]
-            temp_key = (temp_img[0], temp_img[-7:])
+        temp_img = imgs[i].split("/")[-1]
+        temp_key = (temp_img[0], temp_img[-7:])
 
-            if temp_key in img_grouping:
-                img_grouping[temp_key].append(imgs[i])
-            else:
-                img_grouping[temp_key] = [imgs[i]]
-    
+        if temp_key in img_grouping:
+            img_grouping[temp_key].append(imgs[i])
+        else:
+            img_grouping[temp_key] = [imgs[i]]
+
     # Convert into list
     img_grouping = [v for k, v in img_grouping.items()]
     
@@ -211,30 +210,66 @@ def shuffle_and_create_sets(img_data_arr, label_or_target, random_seed = 13, pri
     return X_train, y_train, X_test, y_test, X_val, y_val 
 
 
-def combine_imgs(folder_path, folder_dest=""):
+def clear_img_directory(folder_path):
+    """
+    Removes all images in a directory
+
+    @arguments:
+        folder_path: <string> Directory that should be cleared
+    @returns:
+        None
+    """
+    file_names = os.listdir(folder_path)
+    imgs = [folder_path + file for file in file_names if file[-4:] == ".png"]
+    for file in imgs:
+        os.remove(file)
+
+def combine_imgs(folder_path, folder_dest="", remove=True):
     """
     Combine multiple images into one bigger image.
 
     @arguments:
         folder_path: <string> Path to where the images are stored 
         folder_dest: <string> To which folder the combined images should be saved
+        remove: <bool> Whether to remove the old images or not
     @returns:
         None
     """
-
     if folder_dest == "":
         folder_dest = folder_path
     
+    # Read all files
+    file_names = os.listdir(folder_path)
+    imgs = [folder_path + file for file in file_names if file[-4:] == ".png"]
 
-    for i in range(10):
-        file_names = [f for f in os.listdir(folder_path) if f.startswith(str(i)) and f.endswith(("ETA.png", "MET.png", "PT.png"))]
-        images = [Image.open(os.path.join(folder_path, f)) for f in file_names]
+    # Group all images based on the first index
+    img_grouping = {}
+    for i in range(len(imgs)):
+        temp_img = imgs[i].split("/")[-1]
+        temp_key = temp_img[0]
 
+        if temp_key in img_grouping:
+            img_grouping[temp_key].append(imgs[i])
+        else:
+            img_grouping[temp_key] = [imgs[i]]
+
+    # Convert into list
+    img_grouping = [v for k, v in img_grouping.items()]
+    img_grouping = sorted(img_grouping, key=lambda x: int(x[0].split("/")[-1].split('_')[0]))
+
+    # Combine images and save them to folder_dest
+    for i in range(len(img_grouping)):
+        files = [f for f in img_grouping[i] if f.split("/")[-1].startswith(str(i)) and f.endswith(("ETA.png", "MET.png", "PT.png"))]
+        images = [Image.open(f) for f in files]
+         
         combined_image = np.hstack(images)
         combined_image =Image.fromarray(combined_image)
         combined_image.save(os.path.join(folder_dest, f"{i}_combined.png"))
-        images=[]
 
+    # Remove the old images
+    if remove:
+        for rm_file in imgs:
+            os.remove(rm_file)
 
 def lower_res(script_path, folder_path, folder_dest=""):
     """
@@ -257,6 +292,3 @@ def lower_res(script_path, folder_path, folder_dest=""):
         print ( "Error:\nreturn code: ", e.returncode, "\nOutput: ", e.stderr.decode("utf-8") )
         raise
 
-combine_imgs("/Users/MaxAn/Documents/VScode/Kandidatprojekt/DM-signals-at-LHC-with-ML/src/ML/data_preparation/combine_png.sh", \
-              "/Users/MaxAn/Documents/VScode/Kandidatprojekt/DM-signals-at-LHC-with-ML/src/ML/raw_data/Test_images", \
-              "/Users/MaxAn/Documents/VScode/Kandidatprojekt/DM-signals-at-LHC-with-ML/src/ML/raw_data/Combine")

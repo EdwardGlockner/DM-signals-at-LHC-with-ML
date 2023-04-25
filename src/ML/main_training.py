@@ -45,16 +45,11 @@ def preprocess(folder_img_path, folder_dest):
     #1. average
     #2. lower_res
     #3. combine
-    lower_res_script = ""
-    combine_script = ""
-    #lower_res(lower_res_script, folder_img_path, folder_dest)
-
-    #combine_imgs(combine_script, folder_img_path, folder_dest)
-
+    clear_img_directory(folder_dest)
     average_imgs(folder_img_path, folder_dest, show=False)
+    combine_imgs(folder_dest, folder_dest, True)
     # TODO
-    lower_res()
-    combine_imgs()
+    #lower_res()
 
 def get_sets(folder_img_path, folder_target_path, img_height, img_width):
     """
