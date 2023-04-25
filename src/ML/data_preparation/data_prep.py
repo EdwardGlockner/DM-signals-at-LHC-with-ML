@@ -274,10 +274,8 @@ def combine_imgs(folder_path, folder_dest="", remove=True):
 
 def lower_res(folder_path, folder_dest=""):
     """
-    Runs a bash script to lower the resolution of images in a folder.
-
+    Lowers the resolution with 30% for all images in a folder
     @arguments:
-        script_path: <string> Full path to the bash script that will be run
         folder_path: <string> Path to where the images are stored
         folder_dest: <string> To which folder the combined images should be saved
     @returns:
@@ -301,3 +299,5 @@ def lower_res(folder_path, folder_dest=""):
 
         resized_image.save(img)
         image.close()
+
+
