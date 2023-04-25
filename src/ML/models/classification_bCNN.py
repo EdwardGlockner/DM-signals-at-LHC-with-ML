@@ -14,15 +14,16 @@ tfpl = tfp.layers
 
 """
 class classification_bCNN():
-    def __init__(self, X_train, y_train, X_test, y_test, input_shape, epochs = 5):
+    def __init__(self, X_train, y_train, X_test, y_test, input_shape, model_name = "classification_bCNN", epochs=1000):
         """
         @arguments:
-            X_train: <numpy.ndarray>
-            y_train: <tensorflow.python.framework.ops.EagerTensor>
-            X_test:  <numpy.ndarray>
-            y_test:  <tensorflow.python.framework.ops.EagerTensor>
-            epochs:  <int>
-
+            X_train:     <numpy.ndarray>
+            y_train:     <tensorflow.python.framework.ops.EagerTensor>
+            X_test:      <numpy.ndarray>
+            y_test:      <tensorflow.python.framework.ops.EagerTensor>
+            input_shape: <tuple> On the form: (width, height, channels)
+            model_name:  <string> Given name of the model for plots and saved files.
+            epochs:      <int> By default 1000, because early stopping is used for regularization
         @returns:
             None
         """
@@ -31,7 +32,8 @@ class classification_bCNN():
         self.X_test = X_test
         self.y_test = y_test
         self.input_shape = input_shape
-        self.epochs = 5
+        self.model_name = model_name
+        self.epochs = epochs  
         self.model = self._create_model()
         self.history = None
 
@@ -77,7 +79,6 @@ class classification_bCNN():
         @arguments:
             y_true: <tensorflow.python.framework.ops.Tensor>
             y_pred: <tensorflow_probability.python.layers.internal.distribution_tensor_coercible._TensorCoercible>
-
         @returns:
             neg_log_lik: <tensorflow.python.framework.ops.Tensor>
         """
@@ -88,20 +89,19 @@ class classification_bCNN():
 
 
 
-    def compile(self, model_png_name="model.png"):
+    def compile(self):
         """
         Saves an image of the model architecture and compiles it. 
 
         @arguments:
-            model_png_name: <string> Name of the image of the model that will be saved
-
+            None
         @returns:
             None
         """
 
         tf.keras.utils.plot_model(
         self.model,
-        to_file = model_png_name,
+        to_file = self.model_name + ".png",
         show_shapes = True,
         show_layer_names = True,
         rankdir = "TB",
@@ -113,17 +113,17 @@ class classification_bCNN():
                            metrics = ["accuracy"])
 
 
-    def train(self, model_name="model.h5"):
+    def train(self, save_model=False):
         """
         Trains the model using early stopping as regularization technique.
 
         @arguments:
-            model_name <string> Name of the model that will be saved, for fast preloading.
+            save_model <bool> Whether to save the model as a .h5 file or not.
         @returns:
             None
         """
 
-        self.history = self.model.fit(self.X_train, self.y_train, epochs = 1000,
+        self.history = self.model.fit(self.X_train, self.y_train, epochs = self.epochs,
                             validation_data = (self.X_test, self.y_test), callbacks = [tf.keras.callbacks.EarlyStopping(monitor='val_loss', 
                                 min_delta=0, 
                                 patience=1, 
@@ -132,8 +132,9 @@ class classification_bCNN():
                                 baseline=None,
                                 restore_best_weights=True,
                                 start_from_epoch=1)])
-
-        self.model.save("./" + model_name)
+        
+        if save_model:
+            self.model.save("./" + self.model_name + ".h5")
 
 
     def plot_performance(self):
@@ -144,7 +145,6 @@ class classification_bCNN():
 
         @arguments:
             None
-
         @returns:
             None
         """
@@ -159,17 +159,16 @@ class classification_bCNN():
 
     def analyze_model_prediction(self, data, true_label, model, image_num, run_ensamble=False):
         """
-        aasdfasdf
-
+        not implemented
         @arguments:
             data:
             true_label:
             model:
             image_num:
             run_ensamble: <bool>
-
         @returns:
             None
+        """
         """
         if run_ensamble:
             ensamble_size = 200
@@ -177,3 +176,12 @@ class classification_bCNN():
             ensamble_size = 1
 
         #image = 
+        """
+        raise NotImplementedError
+    
+
+
+
+
+
+

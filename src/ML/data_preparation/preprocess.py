@@ -18,8 +18,8 @@ def average_imgs(folder_path, folder_dest, show=False):
 
     @params:
         folder_path: <string> Full path to the folder where the images are
-        show: <bool> Visualize image or note
-        folder_dest <string> Path to the folder where the files should be saved
+        show:        <bool> Visualize image or note
+        folder_dest  <string> Path to the folder where the files should be saved
     @returns:
         None
     """
@@ -85,7 +85,7 @@ def combine_imgs(folder_path, folder_dest="", remove=True):
     @arguments:
         folder_path: <string> Path to where the images are stored 
         folder_dest: <string> To which folder the combined images should be saved
-        remove: <bool> Whether to remove the old images or not
+        remove:      <bool> Whether to remove the old images or not
     @returns:
         None
     """

@@ -44,12 +44,12 @@ def read_images(folder_img_path):
     Assumes all images have the same size
 
     @arguments:
-        folder_img_path: <Path> The full path to the folder of the image data
-        img_height: <int> Integer value of the height of the images
-        img_width: <int> Integer value of the width of the images
+        folder_img_path: <string> The full path to the folder of the image data
+        img_height:      <int> Integer value of the height of the images
+        img_width:       <int> Integer value of the width of the images
     @returns:
         img_data_arr: <numpy.ndarray> Array containing all the images represented by numpy.ndarrays
-        img_shape: <tuple> Tuple of the size of the images (width, height, channels)
+        img_shape:    <tuple> Tuple of the size of the images (width, height, channels)
     """
     img_data_arr = []
     
@@ -109,7 +109,7 @@ def classification_create_labels(folder_path, label_encode = True):
     Creates all the labels used for the classification model. Hot encoding is available.
 
     @arguments:
-        folder_path: <string> The full path to the folder of data 
+        folder_path:  <string> The full path to the folder of data 
         label_encode: <bool> Whether to encode the categorical labels are not  
     @returns:
         class_label: <numpy.ndarray> Array of all the labels corresponding to img_data_arr (encoded by default)
@@ -137,17 +137,17 @@ def shuffle_and_create_sets(img_data_arr, label_or_target, random_seed = 13, pri
     is an out of sample test, used for performance metrics.
 
     @arguments:
-        img_data_arr: <numpy.ndarray> Array of all the images represented as numpy.ndarrays
+        img_data_arr:    <numpy.ndarray> Array of all the images represented as numpy.ndarrays
         label_or_target: <numpy.ndarray> Array of either class labels for classification or target values for regression
-        random_seed: <int> Random seed for the shuffling
-        print_shapes: <bool> Whether to print the shapes of the sets or not
+        random_seed:     <int> Random seed for the shuffling
+        print_shapes:    <bool> Whether to print the shapes of the sets or not
     @returns:
         X_train: <numpy.ndarray> Contains 64 % of the data
         y_train: <numpy.ndarray> Contains 64 % of the data
-        X_test: <numpy.ndarray> Contains 16 % of the data 
-        y_test: <numpy.ndarray> Contains 16 % of the data
-        X_val: <numpy.ndarray> Used for validation after the model is trained. Contains 20 % of the data
-        y_val: <numpy.ndarray> Used for validation after the model is trained. Contains 20 % of the data
+        X_test:  <numpy.ndarray> Contains 16 % of the data 
+        y_test:  <numpy.ndarray> Contains 16 % of the data
+        X_val:   <numpy.ndarray> Used for validation after the model is trained. Contains 20 % of the data
+        y_val:   <numpy.ndarray> Used for validation after the model is trained. Contains 20 % of the data
     """
     if len(img_data_arr) != len(label_or_target): # Return empty sets if error
         print("Error in function <shuffle_and_create_sets>. Arrays are not the same size.")

@@ -1,7 +1,6 @@
 #---IMPORTS--------------+
 import sys
 import os
-import time
 
 #---FIXING PATH----------+
 sys.path.append(str(sys.path[0][:-14]))
@@ -40,8 +39,8 @@ def preprocess(folder_img_path, folder_dest, clear_dir=True):
 
     @arguments:
         folder_img_path: <string>
-        folder_dest: <string>
-        clear_dir: <bool>
+        folder_dest:     <string>
+        clear_dir:       <bool>
     @returns:
         None
     """
@@ -89,7 +88,7 @@ def train_classification(data_sets, input_shape):
     asdfasdf
 
     @arguments:
-        data_sets: <list> List of the datasets. Order: X_train, y_train, X_test, y_test, X_val, y_val
+        data_sets:   <list> List of the datasets. Order: X_train, y_train, X_test, y_test, X_val, y_val
         input_shape: <tuple> Tuple of the input shape (width, height, channels)
     @returns:
         None
@@ -100,8 +99,8 @@ def train_classification(data_sets, input_shape):
     
     X_train, y_train, X_test, y_test, X_val, y_val = data_sets 
 
-    model = classification_bCNN(X_train, y_train, X_test, y_test, input_shape) 
-    model.compile("Classification_model")
+    model = classification_bCNN(X_train, y_train, X_test, y_test, input_shape, "classification_bCNN") 
+    model.compile()
     model.train()
 
 
@@ -110,7 +109,7 @@ def train_regression(data_sets, input_shape):
     asdfasdf
 
     @arguments:
-        data_sets: <list> List of the datasets. Order: X_train, y_train, X_test, y_test, X_val, y_val
+        data_sets:   <list> List of the datasets. Order: X_train, y_train, X_test, y_test, X_val, y_val
         input_shape: <tuple> Tuple of the input shape (width, height, channels)
     @returns:
         None
@@ -121,14 +120,13 @@ def train_regression(data_sets, input_shape):
 
     X_train, y_train, X_test, y_test, X_val, y_val = data_sets 
 
-    model = regression_CNN(X_train, y_train, X_test, y_test, input_shape)
-    model.compile("Regression_model")
+    model = regression_CNN(X_train, y_train, X_test, y_test, input_shape, "regression_CNN")
+    model.compile()
     model.train()
 
 
 #---MAIN-----------------+
 def main():
-    start = time.time()
     # Create all the paths to the directories
     folder_img_path = dirname + "src/ML/raw_data/images/"
     folder_dest_path = dirname + "src/ML/processed_data/images/"
@@ -136,8 +134,6 @@ def main():
 
     # Preprocessing and creating datasets
     preprocess(folder_img_path, folder_dest_path) 
-    end = time.time()
-    print(f"Time for preprocessing: {end-start}")
 
     re, image_shape = get_sets(folder_dest_path, folder_target_path) 
     #eventually: re, cl, image_shape = get_sets(....

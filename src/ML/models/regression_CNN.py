@@ -5,16 +5,18 @@ import numpy as np
 from sklearn.metrics import confusion_matrix, classification_report
 
 class regression_CNN():
-    def __init__(self, X_train, y_train, X_test, y_test, input_shape, epochs=5):
+    def __init__(self, X_train, y_train, X_test, y_test, input_shape, model_name = "regression_CNN", epochs=1000):
         """
         asdfasdf
 
         @arguments:
-            X_train: <numpy.ndarray>
-            y_train: <tensorflow.python.framework.ops.EagerTensor>
-            X_test:  <numpy.ndarray>
-            y_test:  <tensorflow.python.framework.ops.EagerTensor>
-            epochs:  <int>
+            X_train:     <numpy.ndarray>
+            y_train:     <tensorflow.python.framework.ops.EagerTensor>
+            X_test:      <numpy.ndarray>
+            y_test:      <tensorflow.python.framework.ops.EagerTensor>
+            input_shape: <tuple> On the form (width, height, channels)
+            model_name:  <string> Given name of the model for plots and saved files.
+            epochs:      <int> By default 1000, because early stopping is used for regularization
         @returns:
             None
         """
@@ -23,6 +25,7 @@ class regression_CNN():
         self.X_test = X_test
         self.y_test = y_test
         self.input_shape = input_shape
+        self.model_name = model_name
         self.epochs = epochs
         self.model = self._create_model()
         self.history = ""
@@ -57,18 +60,18 @@ class regression_CNN():
         return model
 
 
-    def compile(self, model_name):
+    def compile(self):
         """
         asdfasdf
 
         @arguments:
-            model_name: <string> Name of the figure that will be saved
+            None
         @returns:
             None
         """
         tf.keras.utils.plot_model(
             self.model,
-            to_file= model_name + ".png",
+            to_file= self.model_name + ".png",
             show_shapes=True,
             show_layer_names=True,
             rankdir="TB",
@@ -79,16 +82,16 @@ class regression_CNN():
         self.model.compile(optimizer = "sgd", loss = "mse", metrics = [tf.keras.metrics.RootMeanSquaredError()])
 
     
-    def train(self, print_perf=True):
+    def train(self, save_model=False):
         """
-        asdfasdf
+        Trains the model using early stopping as regularization technique.
 
         @arguments:
-            print_perf <bool>
+            save_model <bool> Whether to save the model as a .h5 file or not.
         @returns:
             None
         """
-        self.history = self.model.fit(self.X_train, self.y_train, epochs = 1000,
+        self.history = self.model.fit(self.X_train, self.y_train, epochs = self.epochs,
                             validation_data = (self.X_test, self.y_test), callbacks = [tf.keras.callbacks.EarlyStopping(monitor='val_loss', 
                                 min_delta=0, 
                                 patience=2, 
@@ -97,10 +100,10 @@ class regression_CNN():
                                 baseline=None,
                                 start_from_epoch=5,
                                 restore_best_weights=True)])
-
-        #self.model.save("./model.h5")
-        test_loss, test_acc = self.model.evaluate(self.X_test, self.y_test, verbose=2)
+        if save_model:
+            self.model.save("./" + self.model_name + ".h5")
         
+        """
         # Evaluate the model on the test data using `evaluate`
         print("Evaluate on test data")
         results = self.model.evaluate(self.X_test, self.y_test, batch_size=128)
@@ -112,6 +115,7 @@ class regression_CNN():
         predictions = self.model.predict(self.X_test[:])
         print("predictions shape:", predictions.shape)
         print(f"Predictions: {predictions}")
+        """
 
     def plot_performance(self):
         """
