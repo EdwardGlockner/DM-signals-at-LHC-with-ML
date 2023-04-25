@@ -10,10 +10,11 @@ sys.path.insert(1, os.path.join(dirname, "src/ML/data_preparation"))
 sys.path.insert(1, os.path.join(dirname, "src/ML/models"))
 
 #---LOCAL IMPORTS--------+
-#from classification_bCNN import *
-#from regression_CNN import *
+from classification_bCNN import *
+from regression_CNN import *
 from data_prep import *
 from preprocess import *
+
 #---GLOBALS--------------+
 try:
     if sys.platform in ["darwin", "linux", "linux2"]: #macOS
@@ -51,7 +52,7 @@ def preprocess(folder_img_path, folder_dest, clear_dir=True):
     lower_res(folder_dest)
 
 
-def get_sets(folder_img_path, folder_target_path, img_height, img_width):
+def get_sets(folder_img_path, folder_target_path):
     """
     asdfasdf
 
@@ -60,7 +61,7 @@ def get_sets(folder_img_path, folder_target_path, img_height, img_width):
     @returns:
         None
     """
-    img_arr = read_images(folder_img_path, img_height, img_width)
+    img_arr = read_images(folder_img_path)
     target_vals = regression_create_targets(folder_target_path) 
     #class_labels = classification_create_labels(folder_img_path)
 
@@ -76,6 +77,7 @@ def get_sets(folder_img_path, folder_target_path, img_height, img_width):
 
     X_train_re, y_train_re, X_test_re, y_test_re, X_val_re, y_val_re = \
             shuffle_and_create_sets(img_arr, target_vals)
+
     return [X_train_re, y_train_re, X_test_re, y_test_re, X_val_re, y_val_re] 
     #return [X_train_cl, y_train_cl, X_test_cl, y_test_cl, X_val_cl, y_val_cl], \
     #        [X_train_re, y_train_re, X_test_re, y_test_re, X_val_re, y_val_re]
@@ -102,8 +104,10 @@ def train_regression(X_train, y_train, X_test, y_test):
     @returns:
         None
     """
-    pass
-
+    model = CNN_model(X_train, y_train, X_test, y_test)
+    model.compile("model")
+    model.train()
+    model.plot_performance()
 
 def run_all():
     """
@@ -114,15 +118,22 @@ def run_all():
     @returns:
         None
     """
-
+    
 #---MAIN-----------------+
-def main():
+def main():  
+    # Create all the paths to the directories
     folder_img_path = dirname + "src/ML/raw_data/images/"
-    folder_target_path = dirname + "src/ML/processed_data/images/"
-    
-    preprocess(folder_img_path, folder_target_path) 
-    
-    #re = get_sets( 
+    folder_dest_path = dirname + "src/ML/processed_data/images/"
+    folder_target_path = dirname + "src/ML/raw_data/target_values/data_MSSM.csv" 
+
+    # Preprocessing and creating datasets
+    preprocess(folder_img_path, folder_dest_path) 
+
+    re = get_sets(folder_dest_path, folder_target_path) 
+    X_val_re, y_val_re = re[4], re[5]
+    X_train_re, y_train_re, X_test_re, y_test_re, X_val_re, y_val_re = re[0], re[1], re[2], re[3], re[4], re[5]
+
+    train_regression(X_train_re, y_train_re, X_test_re, y_test_re) 
     """
     cl, re =  get_sets(folder_img_path, folder_target_path, img_height, img_width)
     X_val_cl, y_val_cl = cl[4], cl[5]

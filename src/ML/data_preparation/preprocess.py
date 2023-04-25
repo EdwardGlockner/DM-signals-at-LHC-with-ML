@@ -108,6 +108,7 @@ def combine_imgs(folder_path, folder_dest="", remove=True):
     # Combine images and save them to folder_dest
     for i in range(len(img_grouping)):
         files = [f for f in img_grouping[i] if f.split("/")[-1].startswith(str(i)) and f.endswith(("ETA.png", "MET.png", "PT.png"))]
+        files = sorted(files)
         images = [Image.open(f) for f in files]
          
         combined_image = np.hstack(images)
@@ -135,17 +136,17 @@ def lower_res(folder_path, folder_dest=""):
      # Read all files
     file_names = os.listdir(folder_path)
     imgs = [folder_path + file for file in file_names if file[-4:] == ".png"]
+
     for img in imgs:
         image = Image.open(img)
 
         current_width, current_height = image.size
         
-        new_width = int(current_width * 0.7)
-        new_height = int(current_height * 0.7)
+        new_width = int(current_width * 0.4)
+        new_height = int(current_height * 0.4)
 
-        resized_image = image.resize((new_width, new_height), Image.ANTIALIAS)
-
+        resized_image = image.resize((new_width, new_height), Image.BICUBIC)
         resized_image.save(img)
         image.close()
-
+        
 

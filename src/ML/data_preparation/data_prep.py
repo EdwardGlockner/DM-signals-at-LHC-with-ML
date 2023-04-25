@@ -1,6 +1,7 @@
 #---IMPORTS----------+
 import numpy as np
 import os
+import sys
 from pathlib import Path
 import matplotlib.image as mpimg
 import csv
@@ -38,7 +39,7 @@ def create_label_encoding(class_label):
     return target_dict
        
 
-def read_images(folder_img_path, img_height, img_width):
+def read_images(folder_img_path):
     """
     asdfasdf
 
@@ -50,10 +51,14 @@ def read_images(folder_img_path, img_height, img_width):
         img_data_arr: <numpy.ndarray> Array containing all the images represented by numpy.ndarrays
     """
     img_data_arr = []
-
-    for file_name in folder_img_path:
-        img_path = os.path.join(folder_img_path, file_name)
-        img = cv2.imread(img_path, cv2.COLOR_BGR2RGB)
+    
+    file_names = os.listdir(folder_img_path)
+    files = [folder_img_path + file for file in file_names if file[-4:] == ".png"]
+    temp_img = Image.open(files[0])
+    img_width, img_height = temp_img.size
+    np.set_printoptions(threshold=sys.maxsize)
+    for file_name in files:
+        img = cv2.imread(file_name, cv2.COLOR_BGR2GRAY)
         img = cv2.resize(img, (img_height, img_width), interpolation = cv2.INTER_AREA)
         img = np.array(img)
         img = img.astype("float32")
@@ -61,7 +66,6 @@ def read_images(folder_img_path, img_height, img_width):
         img_data_arr.append(img)
 
     img_data_arr = np.array(img_data_arr)
-
     return img_data_arr
 
 
@@ -146,8 +150,8 @@ def shuffle_and_create_sets(img_data_arr, label_or_target, random_seed = 13, pri
     label_or_target_shuffled = label_or_target[permutation]
     
     # Create training, validation and testing sets using 0.64:0.16:0.20
-    X_train, X_temp, y_train, y_temp = train_test_split(img_data_arr_shuffled, label_or_target_shuffled, test_size=0.36)
-    X_val, X_test, y_val, y_test = train_test_split(X_temp, y_temp, test_size=0.44/0.56)
+    X_train, X_val_test, y_train, y_val_test = train_test_split(img_data_arr_shuffled, label_or_target_shuffled, test_size=0.36, random_state=random_seed)
+    X_val, X_test, y_val, y_test = train_test_split(X_val_test, y_val_test, test_size=0.44, random_state=42)
    
     # Print the shapes of the resulting arrays
     if print_shapes:
