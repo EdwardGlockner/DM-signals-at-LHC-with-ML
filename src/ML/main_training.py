@@ -1,6 +1,7 @@
 #---IMPORTS--------------+
 import sys
 import os
+import time
 
 #---FIXING PATH----------+
 sys.path.append(str(sys.path[0][:-14]))
@@ -126,7 +127,8 @@ def train_regression(data_sets, input_shape):
 
 
 #---MAIN-----------------+
-def main():  
+def main():
+    start = time.time()
     # Create all the paths to the directories
     folder_img_path = dirname + "src/ML/raw_data/images/"
     folder_dest_path = dirname + "src/ML/processed_data/images/"
@@ -134,6 +136,8 @@ def main():
 
     # Preprocessing and creating datasets
     preprocess(folder_img_path, folder_dest_path) 
+    end = time.time()
+    print(f"Time for preprocessing: {end-start}")
 
     re, image_shape = get_sets(folder_dest_path, folder_target_path) 
     #eventually: re, cl, image_shape = get_sets(....

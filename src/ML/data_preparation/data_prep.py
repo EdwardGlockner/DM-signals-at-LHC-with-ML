@@ -16,7 +16,7 @@ def plot_img(path):
     Plot and show an image given a path
 
     @arguments:
-        path: <Path> Path to the location of the image
+        path: <string> Path to the location of the image
     @returns:
         None
     """
@@ -28,8 +28,7 @@ def plot_img(path):
 
 def create_label_encoding(class_label):
     """
-    asdfasdf
-
+    Hot encoding for the classification model.
     @arguments:
         class_label: <> 
     @returns:
@@ -41,7 +40,8 @@ def create_label_encoding(class_label):
 
 def read_images(folder_img_path):
     """
-    asdfasdf
+    Reads and converts all images in a given folder to a numpy array. Also returns the shape of the images.
+    Assumes all images have the same size
 
     @arguments:
         folder_img_path: <Path> The full path to the folder of the image data
@@ -53,11 +53,14 @@ def read_images(folder_img_path):
     """
     img_data_arr = []
     
+    # Read all files in the directory
     file_names = os.listdir(folder_img_path)
     files = [folder_img_path + file for file in file_names if file[-4:] == ".png"]
+
+    # Get size of the images
     temp_img = Image.open(files[0])
     img_width, img_height = temp_img.size
-    np.set_printoptions(threshold=sys.maxsize)
+
     for file_name in files:
         img = cv2.imread(file_name, cv2.COLOR_BGR2GRAY)
         img = cv2.resize(img, (img_height, img_width), interpolation = cv2.INTER_AREA)
@@ -67,7 +70,7 @@ def read_images(folder_img_path):
         img_data_arr.append(img)
     
     img_data_arr = np.array(img_data_arr)
-    # Assume all images have the same shape
+
     img_shape = (img_width, img_height, 1)
 
     return img_data_arr, img_shape
@@ -75,15 +78,16 @@ def read_images(folder_img_path):
 
 def regression_create_targets(targets_path):
     """
-    asdfasdf
+    Reads all the data used for the regression model from a csv file. 
 
     @arguments:
-        targets_path: <Path> The full path to the csv file with the labels
+        targets_path: <string> The full path to the csv file with the labels
     @returns:
         target_vals: <numpy.ndarray> Array containing all the output float values 
     """
     target_vals  = []
-
+    
+    # Opens and read the csv file
     with open(targets_path, 'r') as csvfile:
         datareader = csv.reader(csvfile)
         for row in datareader:
@@ -93,7 +97,8 @@ def regression_create_targets(targets_path):
                 print("Error in function {regression_create_datasets}. Could not convert string to np.float32.")
 
             target_vals.append(row)
-
+    
+    # Convert to numpy array
     target_vals = np.array(target_vals)
 
     return target_vals 
@@ -101,20 +106,21 @@ def regression_create_targets(targets_path):
 
 def classification_create_labels(folder_path, label_encode = True):
     """
-    asdfasdf
-    Assumes all images are the same height and width
+    Creates all the labels used for the classification model. Hot encoding is available.
 
     @arguments:
-        folder_path: <Path> The full path to the folder of data 
+        folder_path: <string> The full path to the folder of data 
         label_encode: <bool> Whether to encode the categorical labels are not  
     @returns:
         class_label: <numpy.ndarray> Array of all the labels corresponding to img_data_arr (encoded by default)
     """
     class_label = []
-
+    
+    # Parse all the model names
     for file_name in folder_path:
         class_label.append("model")
-
+    
+    # Use hot encoding
     if label_encode:
         label_dict = create_label_encoding(class_label)
         class_label = [label_dict[class_label[i]] for i in range(len(class_label))]
@@ -126,7 +132,9 @@ def classification_create_labels(folder_path, label_encode = True):
 
 def shuffle_and_create_sets(img_data_arr, label_or_target, random_seed = 13, print_shapes = False):
     """
-    asdfasdf
+    Shuffles all the images and labels/targets and creates three datasets with a ratio of 0.64:0.16:0.20.
+    The training and testing sets are passed to the model in order to train it, while the validation set
+    is an out of sample test, used for performance metrics.
 
     @arguments:
         img_data_arr: <numpy.ndarray> Array of all the images represented as numpy.ndarrays
@@ -134,17 +142,16 @@ def shuffle_and_create_sets(img_data_arr, label_or_target, random_seed = 13, pri
         random_seed: <int> Random seed for the shuffling
         print_shapes: <bool> Whether to print the shapes of the sets or not
     @returns:
-        X_train: <>
-        y_train: <>
-        X_test: <>
-        y_test: <>
-        X_val: <>
-        y_val: <>
+        X_train: <numpy.ndarray> Contains 64 % of the data
+        y_train: <numpy.ndarray> Contains 64 % of the data
+        X_test: <numpy.ndarray> Contains 16 % of the data 
+        y_test: <numpy.ndarray> Contains 16 % of the data
+        X_val: <numpy.ndarray> Used for validation after the model is trained. Contains 20 % of the data
+        y_val: <numpy.ndarray> Used for validation after the model is trained. Contains 20 % of the data
     """
-    X_train, y_train, X_test, y_test = [], [], [], []
-    if len(img_data_arr) != len(label_or_target):
+    if len(img_data_arr) != len(label_or_target): # Return empty sets if error
         print("Error in function <shuffle_and_create_sets>. Arrays are not the same size.")
-        return X_train, y_train, X_test, y_test 
+        return [], [], [], [], [], []
     
     # Randomly shuffle the sets
     np.random.seed(random_seed)
@@ -162,7 +169,7 @@ def shuffle_and_create_sets(img_data_arr, label_or_target, random_seed = 13, pri
         print("Training set shapes: X_train={}, y_train={}".format(X_train.shape, y_train.shape))
         print("Validation set shapes: X_val={}, y_val={}".format(X_val.shape, y_val.shape))
         print("Testing set shapes: X_test={}, y_test={}".format(X_test.shape, y_test.shape))
-   
+
     return X_train, y_train, X_test, y_test, X_val, y_val 
 
 

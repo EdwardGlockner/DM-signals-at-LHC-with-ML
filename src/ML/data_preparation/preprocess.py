@@ -8,8 +8,11 @@ from PIL import Image
 
 def average_imgs(folder_path, folder_dest, show=False):
     """
-    Takes in a path to a folder, and averages the pixelvalues of the images
-    in the folder. The output image is saved and returned.
+    Averages all the pixel-values of the images in a given folder.
+    Example file: '0_1_neutralino_ETA.png'.
+    The images are matched by the first index, i.e. '0' in the example file.
+    The file will thus be averaged with files on the form: '0_x_neutralino_ETA.png'.
+    The output image is saved as: '0_neutralino_ETA.png'.
 
     This functions requires all images to be the same size
 
@@ -28,7 +31,7 @@ def average_imgs(folder_path, folder_dest, show=False):
     img_grouping = {}
     for i in range(len(imgs)):
         temp_img = imgs[i].split("/")[-1]
-        temp_key = (temp_img[0], temp_img[-7:])
+        temp_key = (temp_img[0], temp_img[-7:]) # Use index and file ending as key. i.e. (0, ETA.png)
 
         if temp_key in img_grouping:
             img_grouping[temp_key].append(imgs[i])
@@ -75,6 +78,9 @@ def clear_img_directory(folder_path):
 def combine_imgs(folder_path, folder_dest="", remove=True):
     """
     Combine multiple images into one bigger image.
+    Files example: '0_neutralino_ETA.png', '0_neutralino_MET.png', '0_neutralino_PT.png'
+    Images are matched via first index, i.e. 0, and merged into one big image.
+    Order of images in the combined image from left to right: ETA, MET, PT
 
     @arguments:
         folder_path: <string> Path to where the images are stored 
@@ -123,7 +129,8 @@ def combine_imgs(folder_path, folder_dest="", remove=True):
 
 def lower_res(folder_path, folder_dest=""):
     """
-    Lowers the resolution with 30% for all images in a folder
+    Lowers the resolution with 30% for all images in a folder.
+
     @arguments:
         folder_path: <string> Path to where the images are stored
         folder_dest: <string> To which folder the combined images should be saved
