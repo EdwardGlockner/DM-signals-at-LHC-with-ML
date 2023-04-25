@@ -211,7 +211,7 @@ def shuffle_and_create_sets(img_data_arr, label_or_target, random_seed = 13, pri
     return X_train, y_train, X_test, y_test, X_val, y_val 
 
 
-def combine_imgs(script_path, folder_path, folder_dest=""):
+def combine_imgs(folder_path, folder_dest=""):
     """
     Runs a bash script to combine multiple images into one bigger image.
 
@@ -221,6 +221,19 @@ def combine_imgs(script_path, folder_path, folder_dest=""):
         folder_dest: <string> To which folder the combined images should be saved
     @returns:
         None
+    """
+
+    for i in range(10):
+        file_names = [f for f in os.listdir(folder_path) if f.startswith(str(i)) and f.endswith(("ETA.png", "MET.png", "PT.png"))]
+        images = [Image.open(os.path.join(folder_path, f)) for f in file_names]
+
+        combined_image = np.hstack(images)
+        combined_image =Image.fromarray(combined_image)
+        combined_image.save(os.path.join(output_directory, f"{i}_combined.png"))
+        images=[]
+
+
+
     """
     if folder_dest == "":
         folder_dest = folder_path
@@ -232,7 +245,7 @@ def combine_imgs(script_path, folder_path, folder_dest=""):
     except subprocess.CalledProcessError as e:
         print ( "Error:\nreturn code: ", e.returncode, "\nOutput: ", e.stderr.decode("utf-8") )
         raise
-    """
+
     import cv2
 
     img1 = cv2.imread("0_0_neutralino_ETA.png")
