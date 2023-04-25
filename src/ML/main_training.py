@@ -13,7 +13,7 @@ sys.path.insert(1, os.path.join(dirname, "src/ML/models"))
 #from classification_bCNN import *
 #from regression_CNN import *
 from data_prep import *
-
+from preprocess import *
 #---GLOBALS--------------+
 try:
     if sys.platform in ["darwin", "linux", "linux2"]: #macOS
@@ -32,25 +32,24 @@ bar = "+---------------------+"
 
 
 #---FUNCTIONS------------+
-def preprocess(folder_img_path, folder_dest):
+def preprocess(folder_img_path, folder_dest, clear_dir=True):
     """
     asdfasdf
 
     @arguments:
         folder_img_path: <string>
         folder_dest: <string>
+        clear_dir: <bool>
     @returns:
         None
     """
-    #1. average
-    #2. lower_res
-    #3. combine
-    clear_img_directory(folder_dest)
+    if clear_dir:
+        clear_img_directory(folder_dest)
+
     average_imgs(folder_img_path, folder_dest, show=False)
     combine_imgs(folder_dest, folder_dest, True)
     lower_res(folder_dest)
-    # TODO
-    #lower_res()
+
 
 def get_sets(folder_img_path, folder_target_path, img_height, img_width):
     """
@@ -63,24 +62,24 @@ def get_sets(folder_img_path, folder_target_path, img_height, img_width):
     """
     img_arr = read_images(folder_img_path, img_height, img_width)
     target_vals = regression_create_targets(folder_target_path) 
-    class_labels = classification_create_labels(folder_img_path)
+    #class_labels = classification_create_labels(folder_img_path)
 
     
     if len(img_arr) != len(target_vals):
         print("Error in function <get_sets>. Arrays img_arr and target_vals are not the same size.")
 
-    if len(img_arr) != len(class_labels):
-        print("Erorr in function <get_sets>. Arrays img_arr and class_labels are not the same size.")
+    #if len(img_arr) != len(class_labels):
+    #    print("Erorr in function <get_sets>. Arrays img_arr and class_labels are not the same size.")
 
-    X_train_cl, y_train_cl, X_test_cl, y_test_cl, X_val_cl, y_val_cl = \
-            shuffle_and_create_sets(img_arr, class_labels)
+    #X_train_cl, y_train_cl, X_test_cl, y_test_cl, X_val_cl, y_val_cl = \
+    #     shuffle_and_create_sets(img_arr, class_labels)
 
     X_train_re, y_train_re, X_test_re, y_test_re, X_val_re, y_val_re = \
             shuffle_and_create_sets(img_arr, target_vals)
+    return [X_train_re, y_train_re, X_test_re, y_test_re, X_val_re, y_val_re] 
+    #return [X_train_cl, y_train_cl, X_test_cl, y_test_cl, X_val_cl, y_val_cl], \
+    #        [X_train_re, y_train_re, X_test_re, y_test_re, X_val_re, y_val_re]
     
-    return [X_train_cl, y_train_cl, X_test_cl, y_test_cl, X_val_cl, y_val_cl], \
-            [X_train_re, y_train_re, X_test_re, y_test_re, X_val_re, y_val_re]
-
 
 def train_classification(X_train, y_train, X_test, y_test):
     """
@@ -120,10 +119,10 @@ def run_all():
 def main():
     folder_img_path = dirname + "src/ML/raw_data/images/"
     folder_target_path = dirname + "src/ML/processed_data/images/"
-    img_height = 420
-    img_width = 646 
     
     preprocess(folder_img_path, folder_target_path) 
+    
+    #re = get_sets( 
     """
     cl, re =  get_sets(folder_img_path, folder_target_path, img_height, img_width)
     X_val_cl, y_val_cl = cl[4], cl[5]
