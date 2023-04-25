@@ -213,15 +213,18 @@ def shuffle_and_create_sets(img_data_arr, label_or_target, random_seed = 13, pri
 
 def combine_imgs(folder_path, folder_dest=""):
     """
-    Runs a bash script to combine multiple images into one bigger image.
+    Combine multiple images into one bigger image.
 
     @arguments:
-        script_path: <string> Full path to the bash script that will be run
         folder_path: <string> Path to where the images are stored 
         folder_dest: <string> To which folder the combined images should be saved
     @returns:
         None
     """
+
+    if folder_dest == "":
+        folder_dest = folder_path
+    
 
     for i in range(10):
         file_names = [f for f in os.listdir(folder_path) if f.startswith(str(i)) and f.endswith(("ETA.png", "MET.png", "PT.png"))]
@@ -229,33 +232,10 @@ def combine_imgs(folder_path, folder_dest=""):
 
         combined_image = np.hstack(images)
         combined_image =Image.fromarray(combined_image)
-        combined_image.save(os.path.join(output_directory, f"{i}_combined.png"))
+        combined_image.save(os.path.join(folder_dest, f"{i}_combined.png"))
         images=[]
 
 
-
-    """
-    if folder_dest == "":
-        folder_dest = folder_path
-    
-    script_path = f"{script_path} {folder_path} {folder_dest}"
-    try:
-        print(subprocess.run(script_path, check=True, capture_output=True, text=True, shell=True))
-
-    except subprocess.CalledProcessError as e:
-        print ( "Error:\nreturn code: ", e.returncode, "\nOutput: ", e.stderr.decode("utf-8") )
-        raise
-
-    import cv2
-
-    img1 = cv2.imread("0_0_neutralino_ETA.png")
-    img2 = cv2.imread("0_0_neutralino_MET.png")
-    img3 = cv2.imread("0_0_neutralino_PT.png")
-
-    img = cv2.hconcat([img1, img2, img3])
-    img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-    cv2.imwrite("test.png", img)
-    """
 def lower_res(script_path, folder_path, folder_dest=""):
     """
     Runs a bash script to lower the resolution of images in a folder.
