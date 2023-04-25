@@ -13,8 +13,8 @@ tfpl = tfp.layers
 """
 
 """
-class bCNN_model():
-    def __init__(self, X_train, y_train, X_test, y_test, epochs = 5):
+class classification_bCNN():
+    def __init__(self, X_train, y_train, X_test, y_test, input_shape, epochs = 5):
         """
         @arguments:
             X_train: <numpy.ndarray>
@@ -30,6 +30,7 @@ class bCNN_model():
         self.y_train = y_train
         self.X_test = X_test
         self.y_test = y_test
+        self.input_shape = input_shape
         self.epochs = 5
         self.model = self._create_model()
         self.history = None
@@ -47,7 +48,7 @@ class bCNN_model():
         """
         # Create the model
         model = models.Sequential([
-            layers.Conv2D(filters=32, kernel_size=(3, 3), activation= "relu", padding = "VALID", input_shape = (28, 28, 1)),
+            layers.Conv2D(filters=32, kernel_size=(3, 3), activation= "relu", padding = "VALID", input_shape = self.input_shape),
             layers.MaxPooling2D(pool_size = (2, 2)),
             layers.Conv2D(filters=32, kernel_size=(3, 3), activation = "relu", padding = "VALID"),
             layers.BatchNormalization(),

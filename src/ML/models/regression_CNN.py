@@ -4,8 +4,8 @@ import matplotlib.pyplot as plt
 import numpy as np
 from sklearn.metrics import confusion_matrix, classification_report
 
-class CNN_model():
-    def __init__(self, X_train, y_train, X_test, y_test, epochs=5):
+class regression_CNN():
+    def __init__(self, X_train, y_train, X_test, y_test, input_shape, epochs=5):
         """
         asdfasdf
 
@@ -15,7 +15,6 @@ class CNN_model():
             X_test:  <numpy.ndarray>
             y_test:  <tensorflow.python.framework.ops.EagerTensor>
             epochs:  <int>
-
         @returns:
             None
         """
@@ -23,6 +22,7 @@ class CNN_model():
         self.y_train = y_train
         self.X_test = X_test
         self.y_test = y_test
+        self.input_shape = input_shape
         self.epochs = epochs
         self.model = self._create_model()
         self.history = ""
@@ -35,13 +35,12 @@ class CNN_model():
 
         @arguments:
             None
-
         @returns:
             None
         """
         # Add all the layers
         model = models.Sequential()
-        model.add(layers.Conv2D(32, (3, 3), activation= "relu", input_shape = (775, 168, 1)))
+        model.add(layers.Conv2D(32, (3, 3), activation= "relu", input_shape = self.input_shape))
         model.add(layers.MaxPooling2D((2, 2)))
         model.add(layers.Conv2D(32, (3, 3), activation = "relu"))
         model.add(layers.BatchNormalization())
@@ -64,7 +63,6 @@ class CNN_model():
 
         @arguments:
             model_name: <string> Name of the figure that will be saved
-
         @returns:
             None
         """
@@ -87,7 +85,6 @@ class CNN_model():
 
         @arguments:
             print_perf <bool>
-        
         @returns:
             None
         """
@@ -122,7 +119,6 @@ class CNN_model():
 
         @arguments:
             None
-        
         @returns:
             None
         """

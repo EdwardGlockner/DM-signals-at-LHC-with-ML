@@ -49,6 +49,7 @@ def read_images(folder_img_path):
         img_width: <int> Integer value of the width of the images
     @returns:
         img_data_arr: <numpy.ndarray> Array containing all the images represented by numpy.ndarrays
+        img_shape: <tuple> Tuple of the size of the images (width, height, channels)
     """
     img_data_arr = []
     
@@ -64,9 +65,12 @@ def read_images(folder_img_path):
         img = img.astype("float32")
         img /= 255.0 # Normalization
         img_data_arr.append(img)
-
+    
     img_data_arr = np.array(img_data_arr)
-    return img_data_arr
+    # Assume all images have the same shape
+    img_shape = (img_width, img_height, 1)
+
+    return img_data_arr, img_shape
 
 
 def regression_create_targets(targets_path):

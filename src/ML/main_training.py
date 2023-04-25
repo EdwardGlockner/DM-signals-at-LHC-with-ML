@@ -10,10 +10,10 @@ sys.path.insert(1, os.path.join(dirname, "src/ML/data_preparation"))
 sys.path.insert(1, os.path.join(dirname, "src/ML/models"))
 
 #---LOCAL IMPORTS--------+
-from classification_bCNN import *
-from regression_CNN import *
-from data_prep import *
-from preprocess import *
+from classification_bCNN import classification_bCNN
+from regression_CNN import regression_CNN 
+from data_prep import read_images, shuffle_and_create_sets, classification_create_labels, regression_create_targets      
+from preprocess import average_imgs, clear_img_directory, combine_imgs, lower_res   
 
 #---GLOBALS--------------+
 try:
@@ -61,7 +61,7 @@ def get_sets(folder_img_path, folder_target_path):
     @returns:
         None
     """
-    img_arr = read_images(folder_img_path)
+    img_arr, img_shape = read_images(folder_img_path)
     target_vals = regression_create_targets(folder_target_path) 
     #class_labels = classification_create_labels(folder_img_path)
 
@@ -78,47 +78,53 @@ def get_sets(folder_img_path, folder_target_path):
     X_train_re, y_train_re, X_test_re, y_test_re, X_val_re, y_val_re = \
             shuffle_and_create_sets(img_arr, target_vals)
 
-    return [X_train_re, y_train_re, X_test_re, y_test_re, X_val_re, y_val_re] 
+    return [X_train_re, y_train_re, X_test_re, y_test_re, X_val_re, y_val_re], img_shape 
     #return [X_train_cl, y_train_cl, X_test_cl, y_test_cl, X_val_cl, y_val_cl], \
     #        [X_train_re, y_train_re, X_test_re, y_test_re, X_val_re, y_val_re]
     
 
-def train_classification(X_train, y_train, X_test, y_test):
+def train_classification(data_sets, input_shape):
     """
     asdfasdf
 
     @arguments:
-        None
+        data_sets: <list> List of the datasets. Order: X_train, y_train, X_test, y_test, X_val, y_val
+        input_shape: <tuple> Tuple of the input shape (width, height, channels)
     @returns:
         None
     """
-    pass
-
-
-def train_regression(X_train, y_train, X_test, y_test):
-    """
-    asdfasdf
-
-    @arguments:
-        None
-    @returns:
-        None
-    """
-    model = CNN_model(X_train, y_train, X_test, y_test)
-    model.compile("model")
-    model.train()
-    model.plot_performance()
-
-def run_all():
-    """
-    asdfasdf
-
-    @arguments:
-        None
-    @returns:
-        None
-    """
+    if len(data_sets) != 6:
+        print("Error in function <train_classification>. Excpected data_sets to contain 6 sets.")
+        return None
     
+    X_train, y_train, X_test, y_test, X_val, y_val = data_sets 
+
+    model = classification_bCNN(X_train, y_train, X_test, y_test, input_shape) 
+    model.compile("Classification_model")
+    model.train()
+
+
+def train_regression(data_sets, input_shape):
+    """
+    asdfasdf
+
+    @arguments:
+        data_sets: <list> List of the datasets. Order: X_train, y_train, X_test, y_test, X_val, y_val
+        input_shape: <tuple> Tuple of the input shape (width, height, channels)
+    @returns:
+        None
+    """
+    if len(data_sets) != 6:
+        print("Error in function <train_regression>. Excepected data_sets to contain 6 sets.")
+        return None
+
+    X_train, y_train, X_test, y_test, X_val, y_val = data_sets 
+
+    model = regression_CNN(X_train, y_train, X_test, y_test, input_shape)
+    model.compile("Regression_model")
+    model.train()
+
+
 #---MAIN-----------------+
 def main():  
     # Create all the paths to the directories
@@ -129,11 +135,13 @@ def main():
     # Preprocessing and creating datasets
     preprocess(folder_img_path, folder_dest_path) 
 
-    re = get_sets(folder_dest_path, folder_target_path) 
-    X_val_re, y_val_re = re[4], re[5]
-    X_train_re, y_train_re, X_test_re, y_test_re, X_val_re, y_val_re = re[0], re[1], re[2], re[3], re[4], re[5]
+    re, image_shape = get_sets(folder_dest_path, folder_target_path) 
+    #eventually: re, cl, image_shape = get_sets(....
+    # Train the classification model
 
-    train_regression(X_train_re, y_train_re, X_test_re, y_test_re) 
+    # Train the regression model
+    train_regression(re, image_shape) 
+
     """
     cl, re =  get_sets(folder_img_path, folder_target_path, img_height, img_width)
     X_val_cl, y_val_cl = cl[4], cl[5]
