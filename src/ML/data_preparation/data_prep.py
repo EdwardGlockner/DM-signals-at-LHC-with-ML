@@ -5,7 +5,6 @@ from pathlib import Path
 import matplotlib.image as mpimg
 import csv
 from matplotlib import pyplot as plt
-import subprocess
 import cv2
 from PIL import Image
 from sklearn.model_selection import train_test_split
@@ -224,6 +223,7 @@ def clear_img_directory(folder_path):
     for file in imgs:
         os.remove(file)
 
+
 def combine_imgs(folder_path, folder_dest="", remove=True):
     """
     Combine multiple images into one bigger image.
@@ -271,7 +271,8 @@ def combine_imgs(folder_path, folder_dest="", remove=True):
         for rm_file in imgs:
             os.remove(rm_file)
 
-def lower_res(script_path, folder_path, folder_dest=""):
+
+def lower_res(folder_path, folder_dest=""):
     """
     Runs a bash script to lower the resolution of images in a folder.
 
@@ -285,10 +286,18 @@ def lower_res(script_path, folder_path, folder_dest=""):
     if folder_dest == "":
         folder_dest = folder_path
 
-    try:
-        subprocess.run(script_path, shell=True)
+     # Read all files
+    file_names = os.listdir(folder_path)
+    imgs = [folder_path + file for file in file_names if file[-4:] == ".png"]
+    for img in imgs:
+        image = Image.open(img)
 
-    except subprocess.CalledProcessError as e:
-        print ( "Error:\nreturn code: ", e.returncode, "\nOutput: ", e.stderr.decode("utf-8") )
-        raise
+        current_width, current_height = image.size
+        
+        new_width = int(current_width * 0.7)
+        new_height = int(current_height * 0.7)
 
+        resized_image = image.resize((new_width, new_height), Image.ANTIALIAS)
+
+        resized_image.save(img)
+        image.close()

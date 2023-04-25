@@ -48,6 +48,7 @@ def preprocess(folder_img_path, folder_dest):
     clear_img_directory(folder_dest)
     average_imgs(folder_img_path, folder_dest, show=False)
     combine_imgs(folder_dest, folder_dest, True)
+    lower_res(folder_dest)
     # TODO
     #lower_res()
 
