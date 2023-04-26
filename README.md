@@ -7,6 +7,7 @@
   * [Goals](#goals)
   * [Event Generation](#event-generation)
   * [Deep Learning](#deep-learning)
+  * [Paper](#paper)
 
 - [Getting Started](#getting-started)
   * [Prerequisites](#prerequisites)
@@ -33,6 +34,10 @@ asdfasfd
 
 ### Deep Learning
 asdfasdf
+
+## Paper
+TBA
+
 ---
 <!-- Getting Started -->
 ## Getting Started
