@@ -71,7 +71,7 @@ class regression_CNN():
         """
         tf.keras.utils.plot_model(
             self.model,
-            to_file= self.model_name + ".png",
+            to_file= "../model_architecture" + self.model_name + ".png",
             show_shapes=True,
             show_layer_names=True,
             rankdir="TB",

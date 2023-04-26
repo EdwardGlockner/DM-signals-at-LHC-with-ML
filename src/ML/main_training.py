@@ -6,8 +6,8 @@ import os
 sys.path.append(str(sys.path[0][:-14]))
 dirname = os.getcwd()
 dirname = dirname.replace("src/ML","")
-sys.path.insert(1, os.path.join(dirname, "src/ML/data_preparation"))
-sys.path.insert(1, os.path.join(dirname, "src/ML/models"))
+sys.path.insert(1, os.path.join(dirname, "src/data_preparation"))
+sys.path.insert(1, os.path.join(dirname, "src/ML/ml_models"))
 
 #---LOCAL IMPORTS--------+
 from classification_bCNN import classification_bCNN
@@ -128,9 +128,9 @@ def train_regression(data_sets, input_shape):
 #---MAIN-----------------+
 def main():
     # Create all the paths to the directories
-    folder_img_path = dirname + "src/ML/raw_data/images/"
-    folder_dest_path = dirname + "src/ML/processed_data/images/"
-    folder_target_path = dirname + "src/ML/raw_data/target_values/data_MSSM.csv" 
+    folder_img_path = dirname + "src/raw_data/images/"
+    folder_dest_path = dirname + "src/processed_data/images/"
+    folder_target_path = dirname + "src/raw_data/target_values/data_MSSM.csv" 
 
     # Preprocessing and creating datasets
     preprocess(folder_img_path, folder_dest_path) 
