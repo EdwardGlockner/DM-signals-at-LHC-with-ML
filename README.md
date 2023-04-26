@@ -1,7 +1,5 @@
 # Dark Matter Signals at the LHC using Machine Learning
 
-Analyzing dark matter candidates at the LHC utilizing deep learning techniques.
-
 <!-- Table of Contents -->
 # Table of Contents
 - [About the Project](#about-the-project)
