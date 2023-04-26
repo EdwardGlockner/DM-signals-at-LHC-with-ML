@@ -149,8 +149,8 @@ def lower_res(folder_path, folder_dest=""):
 
         current_width, current_height = image.size
         
-        new_width = int(current_width * 0.4)
-        new_height = int(current_height * 0.4)
+        new_width = int(current_width * 0.5)
+        new_height = int(current_height * 0.5)
 
         resized_image = image.resize((new_width, new_height), Image.BICUBIC)
         resized_image.save(img)
