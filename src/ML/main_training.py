@@ -20,7 +20,7 @@ try:
     if sys.platform in ["darwin", "linux", "linux2"]: #macOS
         clear = lambda : os.system("clear")
 
-    elif sys.platform == "win32" or sys.platform == "win64": #windows
+    elif sys.platform in ["win32", "win64"]: #windows
         clear = lambda : os.system("cls")
     
     else:

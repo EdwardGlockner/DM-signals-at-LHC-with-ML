@@ -101,16 +101,15 @@ class regression_CNN():
                                 start_from_epoch=5,
                                 restore_best_weights=True)])
         if save_model:
-            self.model.save("./" + self.model_name + ".h5")
+            self.model.save("../saved_models/" + self.model_name + ".h5")
         
         """
+        # FOR TESTING
         # Evaluate the model on the test data using `evaluate`
         print("Evaluate on test data")
         results = self.model.evaluate(self.X_test, self.y_test, batch_size=128)
         print("test loss, test acc:", results)
-        
 
-        # FOR TESTING
         print("Generate predictions for 3 samples")
         predictions = self.model.predict(self.X_test[:])
         print("predictions shape:", predictions.shape)

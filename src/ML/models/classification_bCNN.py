@@ -134,7 +134,7 @@ class classification_bCNN():
                                 start_from_epoch=1)])
         
         if save_model:
-            self.model.save("./" + self.model_name + ".h5")
+            self.model.save("../saved_models/" + self.model_name + ".h5")
 
 
     def plot_performance(self):
@@ -179,9 +179,6 @@ class classification_bCNN():
         """
         raise NotImplementedError
     
-
-
-
 
 
 

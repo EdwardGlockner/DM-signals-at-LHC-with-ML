@@ -30,9 +30,9 @@ def average_imgs(folder_path, folder_dest, show=False):
     # Group all the images based on first index, and image type (last 7 characters)
     img_grouping = {}
     for i in range(len(imgs)):
-        temp_img = imgs[i].split("/")[-1]
+        temp_img = imgs[i].split("/")[-1] # image file string
         temp_key = (temp_img[0], temp_img[-7:]) # Use index and file ending as key. i.e. (0, ETA.png)
-
+    
         if temp_key in img_grouping:
             img_grouping[temp_key].append(imgs[i])
         else:
@@ -99,8 +99,8 @@ def combine_imgs(folder_path, folder_dest="", remove=True):
     # Group all images based on the first index
     img_grouping = {}
     for i in range(len(imgs)):
-        temp_img = imgs[i].split("/")[-1]
-        temp_key = temp_img[0]
+        temp_img = imgs[i].split("/")[-1] # image file string
+        temp_key = temp_img[0] # index is key
 
         if temp_key in img_grouping:
             img_grouping[temp_key].append(imgs[i])
