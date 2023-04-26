@@ -1,0 +1,7 @@
+#---Requirements-------------+
+numpy
+tensorflow
+matplotlib
+scikit-learn
+open-cv
+Pillow
