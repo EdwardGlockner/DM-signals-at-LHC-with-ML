@@ -7,6 +7,7 @@
   * [Goals](#goals)
   * [Event Generation](#event-generation)
   * [Deep Learning](#deep-learning)
+  * [Paper](#paper)
 
 - [Getting Started](#getting-started)
   * [Prerequisites](#prerequisites)
@@ -33,6 +34,10 @@ asdfasfd
 
 ### Deep Learning
 asdfasdf
+
+## Paper
+TBA
+
 ---
 <!-- Getting Started -->
 ## Getting Started
@@ -46,6 +51,9 @@ asdfasdf
 ---
 <!-- Contact -->
 ## Contact
+Max Andersson - [@linkedin](https://www.linkedin.com/in/maxandersson314/)  
+Edward Glöckner - [@linkedin](https://www.linkedin.com/in/edwardglockner/)  
+Carl Löfkvist - [@linkedin](https://www.linkedin.com/in/carl-löfkvist-208371225/)
 
 <!-- Links -->
 ## Links
