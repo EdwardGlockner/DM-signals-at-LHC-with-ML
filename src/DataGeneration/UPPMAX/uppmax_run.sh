@@ -1,6 +1,6 @@
 #!/bin/bash
 
-    #--------------- For UPPMAX run ------------------
+  #--------------- For UPPMAX run ------------------
 	##!/bin/bash -l
 
 	##SBATCH -A name-of-project(ex. naiss2023-22-305)
@@ -10,10 +10,10 @@
 	##SBATCH -J (jobs, but script in this file)
 
 	# Load python module, madgraph OK for python 3.7 or higher
-	#module load python/3.8.7
+	# module load python/3.8.7
 
-    # Go to UPPMAX project directory to not run in "cluster" that won't save data.
-    # cd /back_to_project_dir
+  # Go to UPPMAX project directory to not run in "cluster" that won't save data.
+  # cd /back_to_project_dir
 
 # Get available cores on cluster
 NPROC=$(nproc)
@@ -21,7 +21,7 @@ echo "number of cores: $NPROC"
 
 current_dir=$(pwd)
 
-#-------------- Constant parameters -----------------
+#-------------- Parameters -----------------
 
 # Model name
 model_name="neutrino" #neutrino #something #something2
@@ -29,7 +29,7 @@ signature="jet" 		#z
 
 if [ "$model_name" == "neutralino" ]
 then
-        model_value=0
+  model_value=0
     elif [ "$model_name" == "neutrino" ]
     then
 	model_value=1
@@ -122,13 +122,13 @@ do
         fi
     done
 
-    ##--------------------------------------
-    path="$output_folder_path/Output/Histos/MadAnalysis5job_0/"
+    ##------------------Save 1D data into csv-files-------------------
+    oneD_data_path="$output_folder_path/Output/Histos/MadAnalysis5job_0/"
 
-    # read the contents of the python script into a variable
-    sel0=$(cat $path"selection_0.py")
-    sel1=$(cat $path"selection_1.py")
-    sel2=$(cat $path"selection_2.py")
+    # Read scripts into variables
+    sel0=$(cat $oneD_data_path"selection_0.py")
+    sel1=$(cat $oneD_data_path"selection_1.py")
+    sel2=$(cat $oneD_data_path"selection_2.py")
 
     # Extract contents of numpy.array(...) on line 20	
     eta=$(echo "$sel0" | sed -n '20p' | awk -F '[\\[\\]]' '{print $2}')
@@ -137,12 +137,9 @@ do
 
     # Save to csv
     echo "$mass_LSP_to_image,$model_value,$eta,$pt,$met" >> $current_dir/Storage_data/MSSM_${model_name}_${signature}/norm_amp_array/raw_data_all.csv
-    #echo "$mass_LSP_to_image, $eta" >> $current_dir/Storage_data/MSSM_${model_name}_${signature}/norm_amp_array/${model_name}_ETA.csv
-    #echo "$mass_LSP_to_image, $pt" >> $current_dir/Storage_data/MSSM_${model_name}_${signature}/norm_amp_array/${model_name}_PT.csv
-    #echo "$mass_LSP_to_image, $met" >> $current_dir/Storage_data/MSSM_${model_name}_${signature}/norm_amp_array/${model_name}_MET.csv	
-    #
-    ##--------------------------------------
+    ##-----------------------------------------------------------------
 
+    # Copy images to Storage folder
     cp $output_folder_path/Output/PDF/MadAnalysis5job_0/selection_0.png $current_dir/Storage_data/MSSM_${model_name}_${signature}/raw_images/${mass_LSP_to_image}_${model_name}_${signature}_ETA.png
     cp $output_folder_path/Output/PDF/MadAnalysis5job_0/selection_1.png $current_dir/Storage_data/MSSM_${model_name}_${signature}/raw_images/${mass_LSP_to_image}_${model_name}_${signature}_PT.png
     cp $output_folder_path/Output/PDF/MadAnalysis5job_0/selection_2.png $current_dir/Storage_data/MSSM_${model_name}_${signature}/raw_images/${mass_LSP_to_image}_${model_name}_${signature}_MET.png
