@@ -27,6 +27,17 @@ current_dir=$(pwd)
 model_name="neutrino" #neutrino #something #something2
 signature="jet" 		#z
 
+if [ "$model_name" == "neutralino" ]
+then
+        model_value=0
+    elif [ "$model_name" == "neutrino" ]
+    then
+	model_value=1
+    elif [ "$model_name" == "something" ]
+    then
+	echo "something"
+fi
+
 # Dimensions of the histograms for cut
 x=46
 y=10
@@ -125,9 +136,10 @@ do
     met=$(echo "$sel2" | sed -n '20p' | awk -F '[\\[\\]]' '{print $2}')
 
     # Save to csv
-    echo "$mass_LSP_to_image, $eta" >> $current_dir/Storage_data/MSSM_${model_name}_${signature}/norm_amp_array/${model_name}_ETA.csv
-    echo "$mass_LSP_to_image, $pt" >> $current_dir/Storage_data/MSSM_${model_name}_${signature}/norm_amp_array/${model_name}_PT.csv
-    echo "$mass_LSP_to_image, $met" >> $current_dir/Storage_data/MSSM_${model_name}_${signature}/norm_amp_array/${model_name}_MET.csv	
+    echo "$mass_LSP_to_image,$model_value,$eta,$pt,$met" >> $current_dir/Storage_data/MSSM_${model_name}_${signature}/norm_amp_array/raw_data_all.csv
+    #echo "$mass_LSP_to_image, $eta" >> $current_dir/Storage_data/MSSM_${model_name}_${signature}/norm_amp_array/${model_name}_ETA.csv
+    #echo "$mass_LSP_to_image, $pt" >> $current_dir/Storage_data/MSSM_${model_name}_${signature}/norm_amp_array/${model_name}_PT.csv
+    #echo "$mass_LSP_to_image, $met" >> $current_dir/Storage_data/MSSM_${model_name}_${signature}/norm_amp_array/${model_name}_MET.csv	
     #
     ##--------------------------------------
 
