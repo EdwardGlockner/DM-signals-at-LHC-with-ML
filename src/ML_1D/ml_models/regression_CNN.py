@@ -3,6 +3,8 @@ from tensorflow.keras import datasets, layers, models
 import matplotlib.pyplot as plt 
 import numpy as np
 from sklearn.metrics import confusion_matrix, classification_report
+import os
+import shutil
 
 class regression_CNN():
     def __init__(self, X_train, y_train, X_test, y_test, input_shape, model_name = "regression_CNN", epochs=1000):
@@ -43,11 +45,11 @@ class regression_CNN():
         """
         # Add all the layers
         model = models.Sequential()
-        model.add(layers.Conv2D(32, (3, 3), activation= "relu", input_shape = self.input_shape))
-        model.add(layers.MaxPooling2D((2, 2)))
-        model.add(layers.Conv2D(32, (3, 3), activation = "relu"))
+        model.add(layers.Conv1D(32, (3), activation= "relu", input_shape = self.input_shape))
+        model.add(layers.MaxPooling1D((2)))
+        model.add(layers.Conv1D(32, (3), activation = "relu"))
         model.add(layers.BatchNormalization())
-        model.add(layers.MaxPooling2D((2, 2)))
+        model.add(layers.MaxPooling1D((2)))
         model.add(layers.Flatten())
         model.add(layers.Dense(64, activation = "relu"))
         model.add(layers.Dense(16, activation = "relu"))
@@ -69,15 +71,27 @@ class regression_CNN():
         @returns:
             None
         """
-        tf.keras.utils.plot_model(
-            self.model,
-            to_file= "../model_architecture" + self.model_name + ".png",
-            show_shapes=True,
-            show_layer_names=True,
-            rankdir="TB",
-            expand_nested=True,
-            dpi=96,
-        )
+        
+        try:
+            tf.keras.utils.plot_model(
+                self.model,
+                to_file=self.model_name + '.png',
+                show_shapes=True,
+                show_dtype=False,
+                show_layer_names=True,
+                rankdir='TB',
+                expand_nested=False,
+                dpi=96,
+                layer_range=None,
+                show_layer_activations=True,
+                show_trainable=False
+            )
+            # Move the png to the correct folder
+            dirname_here = os.getcwd()
+            shutil.move(dirname_here + "/" + self.model_name + '.png', dirname_here + "/model_pngs/" + self.model_name+'.png') 
+
+        except FileNotFoundError as e:
+            print(f"Could not save image of model architecture. Error: {e}")
 
         self.model.compile(optimizer = "sgd", loss = "mse", metrics = [tf.keras.metrics.RootMeanSquaredError()])
 

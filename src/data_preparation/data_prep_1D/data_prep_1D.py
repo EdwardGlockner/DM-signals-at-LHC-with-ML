@@ -1,160 +1,51 @@
 #---IMPORTS----------+
 import numpy as np
+import pandas as pd
 import os
 import csv
 
 #---FUNCTIONS--------+
 
-def get_models(folder_path):
+def create_sets_from_csv(file_path):
     """
-    Get the name of all the models.
-    In the directory files are named for example {model_name}_ETA.csv
-    This function returns all the unique model_names.
+    asdfasdf
 
     @arguments:
-        folder_path: <string> Full path to the folder containing the csv files.
+        folder_path: <string> Full path to the csv file
     @returns:
-        model_names: <list> List of all the model names.
+
     """
-    # Read all the csv files in the directory
-    file_names = os.listdir(folder_path)
-    files = [file for file in file_names if file[-4:] == ".csv"]
-    model_names = []
+    # Load the CSV file into a pandas DataFrame
+    df = pd.read_csv(file_path, header=None)
 
-    # Find all the unique models
-    for file_name in files:
-        name = file_name.split("_")[0]
-        if name not in model_names:
-            model_names.append(name)
+    # Create a new dataframw with columns, [mass, model, eta, pt, met]
+    # model values = {neutralino_jet, 0; neutrino_jet, 1}
 
-    return model_names
-
-
-def read_csvs_to_data_set(folder_path, model_names):
-    """
-    Reads all the csv:s to create the 1D arrays with 3 channels.
-
-    @arguments:
-        folder_path: <string> Full path to the folder containing the csv files
-        model_names: <list> Containing all the names of the different models.
-    @returns:
-        data_dict: <>
-    """
+    df =pd.DataFrame({
+        'mass': df.iloc[:, 0],
+        'model': df.iloc[:, 1],
+        'eta': df.iloc[:, 2:52].values.tolist(),
+        'pt': df.iloc[:, 52:102].values.tolist(),
+        'met': df.iloc[:, 102:].values.tolist()
+    })
     
-    # Read all the csv files in the directory
-    file_names = os.listdir(folder_path)
-    files = [file for file in file_names if file[-4:] == ".csv"]
+    # Create separate arrays
+    masses = df["mass"].values
+    models = df["model"].values
+    eta_vals = df["eta"].values
+    pt_vals = df["pt"].values
+    met_vals = df["met"].values
     
-    # Create a dict with the model name as the key, and the three csv files as values in a list
-    file_dict = {name: [] for name in model_names}
-
-    for model in file_dict.keys():
-        for csv_file in files:
-            if csv_file.split("_")[0] == model:
-                file_dict[model].append(folder_path + "/" + csv_file)
-        file_dict[model].sort()
+    # Convert the elements into numpy.ndarrays
+    eta_vals = np.array([np.array(sublist) for sublist in eta_vals])
+    pt_vals = np.array([np.array(sublist) for sublist in pt_vals])
+    met_vals = np.array([np.array(sublist) for sublist in met_vals])
     
-    # Create a dictionary with all the data and the mass as values, and the model name as key
-    data_dict = {name: [[], [], [], []] for name in model_names} #[[MASS], [ETA], [MET], [PT]]
-    
-    for model in file_dict.keys():
-        with open(file_dict[model][0]) as ETA_file, open(file_dict[model][1]) as MET_file, \
-                open(file_dict[model][2]) as PT_file:
+    # Concatenate into three channels
+    input_data  = np.concatenate([eta_vals[..., np.newaxis], pt_vals[..., np.newaxis], met_vals[..., np.newaxis]], axis=2)
 
-            reader_ETA = csv.reader(ETA_file)
-            reader_MET = csv.reader(MET_file)
-            reader_PT = csv.reader(PT_file)
-            
-            # Read all the rows in the 3 csv files
-            for row in reader_ETA:
-                try:
-                    mass = np.float32(row[0])
-                    values = [np.float32(val) for val in row[1:]]
+    return input_data, masses, models
 
-                    data_dict[model][0].append(mass)
-                    data_dict[model][1].append(values)
-
-                except ValueError as e:
-                    print(f"Error reading csv files: {e}")
-            
-            for row in reader_MET:
-                try:
-                    values = [np.float32(val) for val in row[1:]]
-                    data_dict[model][2].append(values)
-
-                except ValueError as e:
-                    print(f"Error reading csv files: {e}")
-
-            for row in reader_PT:
-                try:
-                    values = [np.float32(val) for val in row[1:]]
-                    data_dict[model][3].append(values)
-
-                except ValueError as e:
-                    print(f"Error reading csv files: {e}")
-    
-    """
-    print(data_dict["neutrino"][0], "\n")
-    print(data_dict["neutrino"][1][1], "\n") 
-    print(data_dict["neutrino"][2][1], "\n")
-    print(data_dict["neutrino"][3][1], "\n")
-    """
-    return data_dict
-
-
-def create_sets(data_dict):
-    """
-    @arguments:
-        data_dict: <dictionary> Dictionary with all the data and masses
-            as values, and the model name as key
-    @returns:
-        label_dict: <dicionary> Mapping of model name to encoding
-        input_data: <numpy.array> Array of all the ETA, MET and PT data, stored in 3 channels.
-        mass_data: <numpy.array> Array of all the masses corresponding to the input data.
-        model_data: <numpy.array> Array of all the models corresponding to the input data.
-    """
-    # Define the data types for each channel, O for Object (numpy.array) 
-    dtype = [('ETA', 'O'), ('MET', 'O'), ('PET', 'O')]
-    
-    # Create an empty structured array with one element
-    # Should use preallocation
-    input_data = np.empty(shape=(0,), dtype=dtype)
-    mass_data = np.empty(shape=(0,)) 
-    model_data = np.empty(shape=(0,))
-    
-    # Iterate over all the 'histograms'
-    for model in data_dict.keys():
-        for i in range(len(data_dict[model][1])):
-            # Append all the data
-            model_data = np.append(model_data, model)
-            input_data = np.append(input_data, np.array([(np.array(data_dict[model][1][i]), \
-                    np.array(data_dict[model][2][i]), np.array(data_dict[model][3][i]))], dtype=dtype))
-            mass_data = np.append(mass_data, data_dict[model][0][i])
-    
-    # Use label encoding for the model names
-    label_dict = create_label_encoding(model_data)
-    model_data = [label_dict[model_data[i]] for i in range(len(model_data))]
-    model_data = np.array(model_data)
-    """ 
-    print(mass_data, "\n")
-    print(model_data, "\n")
-    print(input_data[0], "\n")
-    """
-    return label_dict, input_data, mass_data, model_data
-
-
-def create_label_encoding(class_label):
-    """
-    Hot encoding for the classification model.
-
-    @arguments:
-        class_label: <numpy.array> All the different models 
-    @returns:
-        target_dict: <dictionary> Mapping from model to encoding
-    """
-    target_dict = {k: v for v, k in enumerate(np.unique(class_label))}
-    return target_dict
-       
 
 def shuffle_and_create_sets(X_data, labels, targets, random_seed = 13, print_shapes = False):
     """

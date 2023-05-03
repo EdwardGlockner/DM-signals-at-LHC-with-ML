@@ -9,12 +9,14 @@ import numpy as np
 from tensorflow.keras import datasets, layers, models
 tfd = tfp.distributions
 tfpl = tfp.layers
+import os
+import shutil
 
 """
 
 """
 class classification_bCNN():
-    def __init__(self, X_train, y_train, X_test, y_test, input_shape, model_name = "classification_bCNN", epochs=1000):
+    def __init__(self, X_train, y_train, X_test, y_test, input_shape, num_classes, model_name = "classification_bCNN", epochs=1000):
         """
         @arguments:
             X_train:     <numpy.ndarray>
@@ -22,6 +24,7 @@ class classification_bCNN():
             X_test:      <numpy.ndarray>
             y_test:      <tensorflow.python.framework.ops.EagerTensor>
             input_shape: <tuple> On the form: (width, height, channels)
+            num_classes: <int> Number of classification labels
             model_name:  <string> Given name of the model for plots and saved files.
             epochs:      <int> By default 1000, because early stopping is used for regularization
         @returns:
@@ -32,6 +35,7 @@ class classification_bCNN():
         self.X_test = X_test
         self.y_test = y_test
         self.input_shape = input_shape
+        self.num_classes = num_classes
         self.model_name = model_name
         self.epochs = epochs  
         self.model = self._create_model()
@@ -60,8 +64,8 @@ class classification_bCNN():
             layers.BatchNormalization(),
             layers.Dropout(.2),
             layers.Dense(16, activation="relu"),
-            layers.Dense(tfpl.OneHotCategorical.params_size(10)),
-            tfpl.OneHotCategorical(10, convert_to_tensor_fn=tfd.Distribution.mode)
+            layers.Dense(tfpl.OneHotCategorical.params_size(self.num_classes)),
+            tfpl.OneHotCategorical(self.num_classes, convert_to_tensor_fn=tfd.Distribution.mode)
         ])
 
         # Print the architecture and return the model
@@ -99,14 +103,26 @@ class classification_bCNN():
             None
         """
 
-        tf.keras.utils.plot_model(
-        self.model,
-        to_file = "../model_architecture/" + self.model_name + ".png",
-        show_shapes = True,
-        show_layer_names = True,
-        rankdir = "TB",
-        expand_nested = True,
-        dpi =96)
+        try:
+            tf.keras.utils.plot_model(
+                self.model,
+                to_file=self.model_name + '.png',
+                show_shapes=True,
+                show_dtype=False,
+                show_layer_names=True,
+                rankdir='TB',
+                expand_nested=False,
+                dpi=96,
+                layer_range=None,
+                show_layer_activations=True,
+                show_trainable=False
+            )
+            # Move the png to the correct folder
+            dirname_here = os.getcwd()
+            shutil.move(dirname_here + "/" + self.model_name + '.png', dirname_here + "/model_pngs/" + self.model_name+'.png') 
+
+        except FileNotFoundError as e:
+            print(f"Could not save image of model architecture. Error: {e}")
 
         self.model.compile(optimizer = "adam",
                            loss = self.n_ll,
