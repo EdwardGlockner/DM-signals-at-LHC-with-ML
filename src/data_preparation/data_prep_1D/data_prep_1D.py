@@ -54,7 +54,89 @@ def read_csvs_to_data_set(folder_path, model_names):
     for model in file_dict.keys():
         for csv_file in files:
             if csv_file.split("_")[0] == model:
-                file_dict[model].append(folder_path + csv_file)
+                file_dict[model].append(folder_path + "/" + csv_file)
+        file_dict[model].sort()
+    
+    # Create a dictionary with all the data and the mass as values, and the model name as key
+    data_dict = {name: [[], [], [], []] for name in model_names} #[[MASS], [ETA], [MET], [PT]]
+    
+    for model in file_dict.keys():
+        with open(file_dict[model][0]) as ETA_file, open(file_dict[model][1]) as MET_file, \
+                open(file_dict[model][2]) as PT_file:
+
+            reader_ETA = csv.reader(ETA_file)
+            reader_MET = csv.reader(MET_file)
+            reader_PT = csv.reader(PT_file)
+            
+            # Read all the rows in the 3 csv files
+            for row in reader_ETA:
+                try:
+                    mass = np.float32(row[0])
+                    values = [np.float32(val) for val in row[1:]]
+
+                    data_dict[model][0].append(mass)
+                    data_dict[model][1].append(values)
+
+                except ValueError as e:
+                    print(f"Error reading csv files: {e}")
+            
+            for row in reader_MET:
+                try:
+                    values = [np.float32(val) for val in row[1:]]
+                    data_dict[model][2].append(values)
+
+                except ValueError as e:
+                    print(f"Error reading csv files: {e}")
+
+            for row in reader_PT:
+                try:
+                    values = [np.float32(val) for val in row[1:]]
+                    data_dict[model][3].append(values)
+
+                except ValueError as e:
+                    print(f"Error reading csv files: {e}")
+    
+    """
+    print(data_dict["neutrino"][0], "\n")
+    print(data_dict["neutrino"][1][1], "\n") 
+    print(data_dict["neutrino"][2][1], "\n")
+    print(data_dict["neutrino"][3][1], "\n")
+    """
+    return data_dict
+
+
+def create_sets(data_dict):
+    """
+    @arguments:
+        data_dict: <dictionary> Dictionary with all the data and masses
+            as values, and the model name as key
+    @returns:
+
+    """
+    # Define the data types for each channel, O for Object (numpy.array) 
+    dtype = [('ETA', 'O'), ('MET', 'O'), ('PET', 'O')]
+    
+    # Create an empty structured array with one element
+    # Should use preallocation
+    input_data = np.empty(shape=(0,), dtype=dtype)
+    mass_data = np.empty(shape=(0,)) 
+    model_data = np.empty(shape=(0,))
+    
+    # Iterate over all the 'histograms'
+    for model in data_dict.keys():
+        for i in range(len(data_dict[model][1])):
+            # Append all the data
+            model_data = np.append(model_data, model)
+            input_data = np.append(input_data, np.array([(np.array(data_dict[model][1][i]), \
+                    np.array(data_dict[model][2][i]), np.array(data_dict[model][3][i]))], dtype=dtype))
+            mass_data = np.append(mass_data, data_dict[model][0][i])
+
+    """ 
+    print(mass_data, "\n")
+    print(model_data, "\n")
+    print(input_data[0], "\n")
+    """
+
 
 def create_label_encoding(class_label):
     """
