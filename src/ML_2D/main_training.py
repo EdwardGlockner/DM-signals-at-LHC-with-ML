@@ -1,4 +1,5 @@
 #---IMPORTS--------------+
+import numpy as np
 import sys
 import os
 
@@ -98,7 +99,7 @@ def train_classification(data_sets, input_shape):
         return None
     
     X_train, y_train, X_test, y_test, X_val, y_val = data_sets 
-    num_classes = len(y_train)
+    num_classes = len(np.unique(y_train))
     model = classification_bCNN(X_train, y_train, X_test, y_test, input_shape, num_classes, "classification_bCNN") 
     model.compile()
     model.train()

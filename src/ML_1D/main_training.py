@@ -1,5 +1,6 @@
 #---IMPORTS--------------+
 import sys
+import numpy as np
 import os
 
 #---FIXING PATH----------+
@@ -88,7 +89,7 @@ def main():
     cl_data_set = [X_train, y_train_cl, X_test, y_test_cl, X_val, y_val_cl]
     re_data_set = [X_train, y_train_re, X_test, y_test_re, X_val, y_val_re]
 
-    num_classes = len(y_train_cl)
+    num_classes = len(np.unique(y_train_cl))
 
     train_classification(cl_data_set, input_shape, num_classes)
    # train_regression(re_data_set, input_shape) 
