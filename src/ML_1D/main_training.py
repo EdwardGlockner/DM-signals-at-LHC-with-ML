@@ -44,11 +44,11 @@ def get_sets(folder_csv_path):
     """
 
     """
-    model_names = get_models(folder_csv_path)
-    data_dict = read_csvs_to_data_set(folder_csv_path, model_names)
-    label_dict, X_data, targets, labels = create_sets(data_dict)
+    #model_names = get_models(folder_csv_path)
+    #data_dict = read_csvs_to_data_set(folder_csv_path, model_names)
+    #label_dict, X_data, targets, labels = create_sets(data_dict)
+    X_data, targets, labels = read_csvs_to_data_set(folder_csv_path) 
     X_train, y_train_cl, y_train_re, X_test, y_test_cl, y_train_re, X_val, y_val_cl, y_val_re = shuffle_and_create_sets(X_data, labels, targets, print_shapes=True)
-
 
 def train_classification():
     """
@@ -65,7 +65,7 @@ def train_regression():
 #---MAIN-----------------+
 def main():
     clear()
-    folder_csv_path = dirname + "src/data_preparation/data_prep_1D"
+    folder_csv_path = dirname + "src/data_preparation/raw_data_all.csv"
     get_sets(folder_csv_path) 
 
 #---RUN CODE-------------+
