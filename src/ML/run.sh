@@ -19,4 +19,7 @@
 	#cd ...
 	# Should I copy /home/max/... to the project directory to run the files?
 
+# Start the run in the /home/max/... directory to run bash script
+current_dir=$(pwd)
+
 python3.10 main_training.py
