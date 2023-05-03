@@ -16,7 +16,7 @@ model_name = "neutrino"
 # Generate mass list
 lower_bound=150
 upper_bound=1000
-num_elements=101
+num_elements=10001
 
 if model_name=="neutralino":
     lower_bound=lower_bound
@@ -31,7 +31,7 @@ print(spacing)
 # List of all mass, first one becomes a different size. 
 
 mass_list = [format(lower_bound + (i * spacing), '.3f') for i in range(num_elements)]
-mass_list_split = np.array_split(mass_list, 51)
+mass_list_split = np.array_split(mass_list, 100)
 
 # Send masses as an input to bash script
 

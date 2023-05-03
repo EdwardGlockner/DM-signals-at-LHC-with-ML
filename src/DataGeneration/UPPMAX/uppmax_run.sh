@@ -111,9 +111,9 @@ do
         fi
     done
 
-    cp $output_folder_path/Output/PDF/MadAnalysis5job_0/selection_0.png $current_dir/Storage_data/MSSM_${model_name}_${signature}/raw_images/${mass_LSP_to_image}_${model_name}_${signature}_MET.png
-    cp $output_folder_path/Output/PDF/MadAnalysis5job_0/selection_1.png $current_dir/Storage_data/MSSM_${model_name}_${signature}/raw_images/${mass_LSP_to_image}_${model_name}_${signature}_ETA.png
-    cp $output_folder_path/Output/PDF/MadAnalysis5job_0/selection_2.png $current_dir/Storage_data/MSSM_${model_name}_${signature}/raw_images/${mass_LSP_to_image}_${model_name}_${signature}_PT.png
+    cp $output_folder_path/Output/PDF/MadAnalysis5job_0/selection_0.png $current_dir/Storage_data/MSSM_${model_name}_${signature}/raw_images/${mass_LSP_to_image}_${model_name}_${signature}_ETA.png
+    cp $output_folder_path/Output/PDF/MadAnalysis5job_0/selection_1.png $current_dir/Storage_data/MSSM_${model_name}_${signature}/raw_images/${mass_LSP_to_image}_${model_name}_${signature}_PT.png
+    cp $output_folder_path/Output/PDF/MadAnalysis5job_0/selection_2.png $current_dir/Storage_data/MSSM_${model_name}_${signature}/raw_images/${mass_LSP_to_image}_${model_name}_${signature}_MET.png
 
     # Delete the folders after each run. Remove run_01 in events and tag_ in HTML/run_01
     rm -rf ${current_dir}/MG5_aMC_v3_4_2/MSSM_${model_name}_${signature}/Events/run_01
