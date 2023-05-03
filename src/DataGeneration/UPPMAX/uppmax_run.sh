@@ -125,9 +125,9 @@ do
     met=$(echo "$sel0" | sed -n '20p' | awk -F '[\\[\\]]' '{print $2}')
 
     # Save to csv
-    echo "$mass_LSP_to_image, $eta" >> $current_dir/Storage_data/MSSM_${model_name}_${signature}/norm_amp_array/array_ETA.csv
-    echo "$mass_LSP_to_image, $pt" >> $current_dir/Storage_data/MSSM_${model_name}_${signature}/norm_amp_array/array_PT.csv
-    echo "$mass_LSP_to_image, $met" >> $current_dir/Storage_data/MSSM_${model_name}_${signature}/norm_amp_array/array_MET.csv	
+    echo "$mass_LSP_to_image, $eta" >> $current_dir/Storage_data/MSSM_${model_name}_${signature}/norm_amp_array/${model_name}_ETA.csv
+    echo "$mass_LSP_to_image, $pt" >> $current_dir/Storage_data/MSSM_${model_name}_${signature}/norm_amp_array/${model_name}_PT.csv
+    echo "$mass_LSP_to_image, $met" >> $current_dir/Storage_data/MSSM_${model_name}_${signature}/norm_amp_array/${model_name}_MET.csv	
     #
     ##--------------------------------------
 
