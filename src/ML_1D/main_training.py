@@ -52,7 +52,7 @@ def get_sets(folder_csv_path):
 
     return [X_train, y_train_cl, y_train_re, X_test, y_test_cl, y_test_re, X_val, y_val_cl, y_val_re], input_shape
 
-def train_classification(data_sets, input_shape):
+def train_classification(data_sets, input_shape, num_classes):
     """
 
     """
@@ -61,7 +61,7 @@ def train_classification(data_sets, input_shape):
 
         
     X_train, y_train, X_test, y_test, X_val, y_val = data_sets 
-    model = classification_bCNN(X_train, y_train, X_test, y_test, input_shape, "classification_bCNN") 
+    model = classification_bCNN(X_train, y_train, X_test, y_test, input_shape, num_classes, "classification_bCNN") 
     model.compile()
     model.train()
 
@@ -88,7 +88,9 @@ def main():
     cl_data_set = [X_train, y_train_cl, X_test, y_test_cl, X_val, y_val_cl]
     re_data_set = [X_train, y_train_re, X_test, y_test_re, X_val, y_val_re]
 
-    train_classification(cl_data_set, input_shape)
+    num_classes = len(y_train_cl)
+
+    train_classification(cl_data_set, input_shape, num_classes)
    # train_regression(re_data_set, input_shape) 
 #---RUN CODE-------------+
 if __name__ == "__main__":
