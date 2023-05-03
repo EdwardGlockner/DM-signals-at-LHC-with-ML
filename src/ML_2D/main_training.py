@@ -5,15 +5,15 @@ import os
 #---FIXING PATH----------+
 sys.path.append(str(sys.path[0][:-14]))
 dirname = os.getcwd()
-dirname = dirname.replace("src/ML","")
-sys.path.insert(1, os.path.join(dirname, "src/data_preparation"))
-sys.path.insert(1, os.path.join(dirname, "src/ML/ml_models"))
+dirname = dirname.replace("src/ML_2D","")
+sys.path.insert(1, os.path.join(dirname, "src/data_preparation/data_prep_2D"))
+sys.path.insert(1, os.path.join(dirname, "src/ML_2D/ml_models"))
 
 #---LOCAL IMPORTS--------+
 from classification_bCNN import classification_bCNN
 from regression_CNN import regression_CNN 
-from data_prep import read_images, shuffle_and_create_sets, classification_create_labels, regression_create_targets      
-from preprocess import average_imgs, clear_img_directory, combine_imgs, lower_res   
+from data_prep_2D import read_images, shuffle_and_create_sets, classification_create_labels, regression_create_targets      
+from preprocess_2D import average_imgs, clear_img_directory, combine_imgs, lower_res   
 
 #---GLOBALS--------------+
 try:
