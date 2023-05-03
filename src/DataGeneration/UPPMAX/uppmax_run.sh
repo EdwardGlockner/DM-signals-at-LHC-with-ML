@@ -119,15 +119,16 @@ do
     sel1=$(cat $path"selection_1.py")
     sel2=$(cat $path"selection_2.py")
 
-    # Extract contents of numpy.array(...) on line 20
-    eta=$(echo "$sel0" | sed -n '20p' | awk -F '[()]' '{print $2}')
-    pt=$(echo "$sel0" | sed -n '20p' | awk -F '[()]' '{print $2}')
-    met=$(echo "$sel0" | sed -n '20p' | awk -F '[()]' '{print $2}')
+    # Extract contents of numpy.array(...) on line 20	
+    eta=$(echo "$sel0" | sed -n '20p' | awk -F '[\\[\\]]' '{print $2}')
+    pt=$(echo "$sel0" | sed -n '20p' | awk -F '[\\[\\]]' '{print $2}')
+    met=$(echo "$sel0" | sed -n '20p' | awk -F '[\\[\\]]' '{print $2}')
 
     # Save to csv
-    savePath=$current_dir/Storage_data/MSSM_${model_name}_${signature}
-    echo "$eta,$met,$pt" >> $savePath
-
+    echo "$mass_LSP_to_image, $eta" >> $current_dir/Storage_data/MSSM_${model_name}_${signature}/norm_amp_array/array_ETA.csv
+    echo "$mass_LSP_to_image, $pt" >> $current_dir/Storage_data/MSSM_${model_name}_${signature}/norm_amp_array/array_PT.csv
+    echo "$mass_LSP_to_image, $met" >> $current_dir/Storage_data/MSSM_${model_name}_${signature}/norm_amp_array/array_MET.csv	
+    #
     ##--------------------------------------
 
     cp $output_folder_path/Output/PDF/MadAnalysis5job_0/selection_0.png $current_dir/Storage_data/MSSM_${model_name}_${signature}/raw_images/${mass_LSP_to_image}_${model_name}_${signature}_ETA.png
