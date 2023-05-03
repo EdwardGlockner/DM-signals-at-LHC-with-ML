@@ -12,7 +12,7 @@ sys.path.insert(1, os.path.join(dirname, "src/ML_1D/ml_models"))
 #---LOCAL IMPORTS--------+
 #from classification_bCNN import classification_bCNN
 #from regression_CNN import regression_CNN 
-from data_prep_1D import get_models, read_csvs_to_data_set      
+from data_prep_1D import get_models, read_csvs_to_data_set, create_sets 
 #from preprocess_1D import    
 
 #---GLOBALS--------------+
@@ -39,8 +39,8 @@ def preprocess():
 
 def get_sets(folder_csv_path):
     model_names = get_models(folder_csv_path)
-    read_csvs_to_data_set(folder_csv_path, model_names)
-
+    data_dict = read_csvs_to_data_set(folder_csv_path, model_names)
+    create_sets(data_dict)
 def train_classification():
     pass
 
