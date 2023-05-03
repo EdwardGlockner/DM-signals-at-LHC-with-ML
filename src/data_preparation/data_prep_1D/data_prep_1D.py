@@ -1,10 +1,7 @@
 #---IMPORTS----------+
 import numpy as np
 import os
-import sys
-from pathlib import Path
 import csv
-from sklearn.model_selection import train_test_split
 
 #---FUNCTIONS--------+
 
@@ -111,7 +108,10 @@ def create_sets(data_dict):
         data_dict: <dictionary> Dictionary with all the data and masses
             as values, and the model name as key
     @returns:
-
+        label_dict: <dicionary> Mapping of model name to encoding
+        input_data: <numpy.array> Array of all the ETA, MET and PT data, stored in 3 channels.
+        mass_data: <numpy.array> Array of all the masses corresponding to the input data.
+        model_data: <numpy.array> Array of all the models corresponding to the input data.
     """
     # Define the data types for each channel, O for Object (numpy.array) 
     dtype = [('ETA', 'O'), ('MET', 'O'), ('PET', 'O')]
@@ -130,89 +130,42 @@ def create_sets(data_dict):
             input_data = np.append(input_data, np.array([(np.array(data_dict[model][1][i]), \
                     np.array(data_dict[model][2][i]), np.array(data_dict[model][3][i]))], dtype=dtype))
             mass_data = np.append(mass_data, data_dict[model][0][i])
-
+    
+    # Use label encoding for the model names
+    label_dict = create_label_encoding(model_data)
+    model_data = [label_dict[model_data[i]] for i in range(len(model_data))]
+    model_data = np.array(model_data)
     """ 
     print(mass_data, "\n")
     print(model_data, "\n")
     print(input_data[0], "\n")
     """
+    return label_dict, input_data, mass_data, model_data
 
 
 def create_label_encoding(class_label):
     """
     Hot encoding for the classification model.
+
     @arguments:
-        class_label: <> 
+        class_label: <numpy.array> All the different models 
     @returns:
-        target_dict: <>
+        target_dict: <dictionary> Mapping from model to encoding
     """
     target_dict = {k: v for v, k in enumerate(np.unique(class_label))}
     return target_dict
        
 
-def regression_create_targets(targets_path):
-    """
-    Reads all the data used for the regression model from a csv file. 
-
-    @arguments:
-        targets_path: <string> The full path to the csv file with the labels
-    @returns:
-        target_vals: <numpy.ndarray> Array containing all the output float values 
-    """
-    target_vals  = []
-    
-    # Opens and read the csv file
-    with open(targets_path, 'r') as csvfile:
-        datareader = csv.reader(csvfile)
-        for row in datareader:
-            try:
-                row = np.float32(row[0])
-            except ValueError:
-                print("Error in function {regression_create_datasets}. Could not convert string to np.float32.")
-
-            target_vals.append(row)
-    
-    # Convert to numpy array
-    target_vals = np.array(target_vals)
-
-    return target_vals 
-
-
-def classification_create_labels(folder_path, label_encode = True):
-    """
-    Creates all the labels used for the classification model. Hot encoding is available.
-
-    @arguments:
-        folder_path:  <string> The full path to the folder of data 
-        label_encode: <bool> Whether to encode the categorical labels are not  
-    @returns:
-        class_label: <numpy.ndarray> Array of all the labels corresponding to img_data_arr (encoded by default)
-    """
-    class_label = []
-    
-    # Parse all the model names
-    for file_name in folder_path:
-        class_label.append("model")
-    
-    # Use hot encoding
-    if label_encode:
-        label_dict = create_label_encoding(class_label)
-        class_label = [label_dict[class_label[i]] for i in range(len(class_label))]
-    
-    class_label = np.array(class_label)
-
-    return class_label
-
-
-def shuffle_and_create_sets(img_data_arr, label_or_target, random_seed = 13, print_shapes = False):
+def shuffle_and_create_sets(X_data, labels, targets, random_seed = 13, print_shapes = False):
     """
     Shuffles all the images and labels/targets and creates three datasets with a ratio of 0.64:0.16:0.20.
     The training and testing sets are passed to the model in order to train it, while the validation set
     is an out of sample test, used for performance metrics.
 
     @arguments:
-        img_data_arr:    <numpy.ndarray> Array of all the images represented as numpy.ndarrays
-        label_or_target: <numpy.ndarray> Array of either class labels for classification or target values for regression
+        X_data:    <numpy.ndarray> Array of all the input data stored in 3 channels.
+        labels: <numpy.ndarray> Array of class labels for classification
+        targets: <numpy.ndarray> Array of target values for regression
         random_seed:     <int> Random seed for the shuffling
         print_shapes:    <bool> Whether to print the shapes of the sets or not
     @returns:
@@ -223,27 +176,37 @@ def shuffle_and_create_sets(img_data_arr, label_or_target, random_seed = 13, pri
         X_val:   <numpy.ndarray> Used for validation after the model is trained. Contains 20 % of the data
         y_val:   <numpy.ndarray> Used for validation after the model is trained. Contains 20 % of the data
     """
-    if len(img_data_arr) != len(label_or_target): # Return empty sets if error
+
+    # Check if all arrays have the same length as the first array
+    same_length = np.all(np.array([len(X_data), len(labels), len(targets)]) == len(X_data))
+
+    if not same_length: # Return empty sets if error
         print("Error in function <shuffle_and_create_sets>. Arrays are not the same size.")
         return [], [], [], [], [], []
     
     # Randomly shuffle the sets
     np.random.seed(random_seed)
-    permutation = np.random.permutation(len(img_data_arr))
+    permutation = np.random.permutation(len(X_data))
 
-    img_data_arr_shuffled = img_data_arr[permutation]
-    label_or_target_shuffled = label_or_target[permutation]
+    X_data_shuffled = X_data[permutation]
+    labels_shuffled = labels[permutation]
+    targets_shuffled = targets[permutation]
     
     # Create training, validation and testing sets using 0.64:0.16:0.20
-    X_train, X_val_test, y_train, y_val_test = train_test_split(img_data_arr_shuffled, label_or_target_shuffled, test_size=0.36, random_state=random_seed)
-    X_val, X_test, y_val, y_test = train_test_split(X_val_test, y_val_test, test_size=0.44, random_state=42)
-   
+    tot_len = len(X_data)
+    first_split = int(tot_len * 0.64)
+    second_split = int(first_split + tot_len * 0.16)
+    
+    # cl for classification, re for regression
+    X_train, X_val, X_test = X_data_shuffled[0:first_split], X_data_shuffled[first_split:second_split], X_data_shuffled[second_split:]
+    y_train_cl, y_val_cl, y_test_cl = labels_shuffled[0:first_split], labels_shuffled[first_split:second_split], labels_shuffled[second_split:]
+    y_train_re, y_val_re, y_test_re = targets_shuffled[0:first_split], targets_shuffled[first_split:second_split], targets_shuffled[second_split:]
+    
     # Print the shapes of the resulting arrays
     if print_shapes:
-        print("Training set shapes: X_train={}, y_train={}".format(X_train.shape, y_train.shape))
-        print("Validation set shapes: X_val={}, y_val={}".format(X_val.shape, y_val.shape))
-        print("Testing set shapes: X_test={}, y_test={}".format(X_test.shape, y_test.shape))
-
-    return X_train, y_train, X_test, y_test, X_val, y_val 
-
+        print("Training set shapes: X_train={}, y_train_cl={}, y_train_re={}".format(X_train.shape, y_train_cl.shape, y_train_re.shape))
+        print("Validation set shapes: X_val={}, y_val_cl={}, y_val_re={}".format(X_val.shape, y_val_cl.shape, y_val_re.shape))
+        print("Testing set shapes: X_test={}, y_test_cl={}, y_test_re={}".format(X_test.shape, y_test_cl.shape, y_test_re.shape))
+    
+    return X_train, y_train_cl, y_train_re, X_test, y_test_cl, y_test_re, X_val, y_val_cl, y_val_re
 
