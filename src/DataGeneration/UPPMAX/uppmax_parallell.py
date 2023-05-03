@@ -21,6 +21,7 @@ num_elements=10001
 if model_name=="neutralino":
     lower_bound=lower_bound
     upper_bound=upper_bound
+
 elif model_name=="neutrino":
     lower_bound=35000.000
     upper_bound=upper_bound**2
