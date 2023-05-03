@@ -9,6 +9,8 @@ import numpy as np
 from tensorflow.keras import datasets, layers, models
 tfd = tfp.distributions
 tfpl = tfp.layers
+import os
+import shutil
 
 """
 
@@ -99,14 +101,26 @@ class classification_bCNN():
             None
         """
 
-        tf.keras.utils.plot_model(
-        self.model,
-        to_file = "../model_architecture/" + self.model_name + ".png",
-        show_shapes = True,
-        show_layer_names = True,
-        rankdir = "TB",
-        expand_nested = True,
-        dpi =96)
+        try:
+            tf.keras.utils.plot_model(
+                self.model,
+                to_file=self.model_name + '.png',
+                show_shapes=True,
+                show_dtype=False,
+                show_layer_names=True,
+                rankdir='TB',
+                expand_nested=False,
+                dpi=96,
+                layer_range=None,
+                show_layer_activations=True,
+                show_trainable=False
+            )
+            # Move the png to the correct folder
+            dirname_here = os.getcwd()
+            shutil.move(dirname_here + "/" + self.model_name + '.png', dirname_here + "/model_pngs/" + self.model_name+'.png') 
+
+        except FileNotFoundError as e:
+            print(f"Could not save image of model architecture. Error: {e}")
 
         self.model.compile(optimizer = "adam",
                            loss = self.n_ll,

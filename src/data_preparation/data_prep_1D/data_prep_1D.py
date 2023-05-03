@@ -6,34 +6,42 @@ import csv
 
 #---FUNCTIONS--------+
 
-def read_csvs_to_data_set(folder_path):
+def create_sets_from_csv(file_path):
     """
+    asdfasdf
+
+    @arguments:
+        folder_path: <string> Full path to the csv file
+    @returns:
 
     """
     # Load the CSV file into a pandas DataFrame
-    df = pd.read_csv(folder_path, header=None)
+    df = pd.read_csv(file_path, header=None)
 
     # Create a new dataframw with columns, [mass, model, eta, pt, met]
     # model values = {neutralino_jet, 0; neutrino_jet, 1}
 
     df =pd.DataFrame({
-    'mass': df.iloc[:, 0],
-    'model': df.iloc[:, 1],
-    'eta': df.iloc[:, 2:52].values.tolist(),
-    'pt': df.iloc[:, 52:102].values.tolist(),
-    'met': df.iloc[:, 102:].values.tolist()
+        'mass': df.iloc[:, 0],
+        'model': df.iloc[:, 1],
+        'eta': df.iloc[:, 2:52].values.tolist(),
+        'pt': df.iloc[:, 52:102].values.tolist(),
+        'met': df.iloc[:, 102:].values.tolist()
     })
-
+    
+    # Create separate arrays
     masses = df["mass"].values
     models = df["model"].values
     eta_vals = df["eta"].values
     pt_vals = df["pt"].values
     met_vals = df["met"].values
-
+    
+    # Convert the elements into numpy.ndarrays
     eta_vals = np.array([np.array(sublist) for sublist in eta_vals])
     pt_vals = np.array([np.array(sublist) for sublist in pt_vals])
     met_vals = np.array([np.array(sublist) for sublist in met_vals])
     
+    # Concatenate into three channels
     input_data  = np.concatenate([eta_vals[..., np.newaxis], pt_vals[..., np.newaxis], met_vals[..., np.newaxis]], axis=2)
 
     return input_data, masses, models
