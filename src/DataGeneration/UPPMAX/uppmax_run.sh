@@ -121,8 +121,8 @@ do
 
     # Extract contents of numpy.array(...) on line 20	
     eta=$(echo "$sel0" | sed -n '20p' | awk -F '[\\[\\]]' '{print $2}')
-    pt=$(echo "$sel0" | sed -n '20p' | awk -F '[\\[\\]]' '{print $2}')
-    met=$(echo "$sel0" | sed -n '20p' | awk -F '[\\[\\]]' '{print $2}')
+    pt=$(echo "$sel1" | sed -n '20p' | awk -F '[\\[\\]]' '{print $2}')
+    met=$(echo "$sel2" | sed -n '20p' | awk -F '[\\[\\]]' '{print $2}')
 
     # Save to csv
     echo "$mass_LSP_to_image, $eta" >> $current_dir/Storage_data/MSSM_${model_name}_${signature}/norm_amp_array/${model_name}_ETA.csv
