@@ -3,6 +3,54 @@ import numpy as np
 import sys
 import os
 import time
+import getopt
+
+os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2' # Ignore tensorflow warning
+
+#---Argument Parsing-----+
+# Usage: python main.py -r <run_mode> -m <model_prefix> 
+
+def usage():
+    print("\nUsage:")
+    print("main.py -r run_mode | -m model_prefix | -h help\n")
+    print("-r \t Options: 'train', 'trainval'")
+    print("Specifies if the program should be run in training mode, or training and validation mode.")
+    print("run_mode is by default set to 't'.\n")
+    print("-m \t Options: any string")
+    print("Gives a prefix to the model name. The files will be named: <model_prefix>_Classification_bCNN_2D_<timestamp>.")
+    print("model_prefix is by default set to ''.\n")
+
+def arg_parse(argv):
+    """
+
+    """
+    run_mode = ""
+    model_prefix = ""
+    try:
+        opts, args = getopt.getopt(argv, "r:m:", ["run_mode", "model_prefix"])
+
+    except getopt.GetoptError:
+        usage()
+        sys.exit(2)
+
+    for opt, arg in opts:
+        if opt == "-h":
+            usage()
+            sys.exit()
+        if opt == "-r":
+            run_mode = arg
+
+        if opt == "-m":
+            model_prefix = arg
+    
+    if not run_mode:
+        run_mode = "training"
+
+    if not model_prefix:
+        model_prefix = ""
+
+    return run_mode, model_prefix
+
 
 #---FIXING PATH----------+
 sys.path.append(str(sys.path[0][:-14]))
@@ -85,7 +133,7 @@ def get_sets(folder_img_path, folder_target_path):
     #        [X_train_re, y_train_re, X_test_re, y_test_re, X_val_re, y_val_re]
     
 
-def train_classification(data_sets, input_shape):
+def train_classification(data_sets, input_shape, model_prefix):
     """
     asdfasdf
 
@@ -105,14 +153,14 @@ def train_classification(data_sets, input_shape):
     model_name = "classification_bCNN_2D_"
     timestamp = time.time()
     formatted_time = time.strftime("%a_%b_%d_%H:%M:%S", time.localtime(timestamp))
-    model_name = model_name + formatted_time
+    model_name = model_prefix + "_" + model_name + formatted_time
 
     model = classification_bCNN(X_train, y_train, X_test, y_test, input_shape, num_classes, model_name)
     model.compile()
     model.train()
 
 
-def train_regression(data_sets, input_shape):
+def train_regression(data_sets, input_shape, model_prefix):
     """
     asdfasdf
 
@@ -131,7 +179,7 @@ def train_regression(data_sets, input_shape):
     model_name = "regression_CNN_1D_"
     timestamp = time.time()
     formatted_time = time.strftime("%a_%b_%d_%H:%M:%S", time.localtime(timestamp))
-    model_name = model_name + formatted_time
+    model_name = model_prefix + "_" + model_name + formatted_time
 
     model = regression_CNN(X_train, y_train, X_test, y_test, input_shape, model_name)
     model.compile()
@@ -139,7 +187,7 @@ def train_regression(data_sets, input_shape):
 
 
 #---MAIN-----------------+
-def main():
+def main(run_mode, model_prefix):
     # Create all the paths to the directories
     folder_img_path = dirname + "src/raw_data/images/"
     folder_dest_path = dirname + "src/processed_data/images/"
@@ -153,7 +201,7 @@ def main():
     # Train the classification model
 
     # Train the regression model
-    train_regression(re, image_shape) 
+    train_regression(re, image_shape, model_prefix) 
 
     """
     cl, re =  get_sets(folder_img_path, folder_target_path, img_height, img_width)
@@ -167,5 +215,6 @@ def main():
 
 #---RUN CODE-------------+
 if __name__ == "__main__":
-    main()
+    run_mode, model_prefix = arg_parse(sys.argv[1:])
+    main(run_mode, model_prefix)
 
