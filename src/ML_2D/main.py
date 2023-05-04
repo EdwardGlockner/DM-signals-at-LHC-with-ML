@@ -1,3 +1,5 @@
+#main.py 
+
 #---IMPORTS--------------+
 import numpy as np
 import sys
@@ -44,7 +46,7 @@ def arg_parse(argv):
             model_prefix = arg
     
     if not run_mode:
-        run_mode = "training"
+        run_mode = "train"
 
     if not model_prefix:
         model_prefix = ""
@@ -144,7 +146,7 @@ def train_classification(data_sets, input_shape, model_prefix):
         None
     """
     if len(data_sets) != 6:
-        print("Error in function <train_classification>. Excpected data_sets to contain 6 sets.")
+        print("Error in function <train_classification>. Expected data_sets to contain 6 sets.")
         return None
     
     X_train, y_train, X_test, y_test, X_val, y_val = data_sets 
@@ -171,7 +173,7 @@ def train_regression(data_sets, input_shape, model_prefix):
         None
     """
     if len(data_sets) != 6:
-        print("Error in function <train_regression>. Excepected data_sets to contain 6 sets.")
+        print("Error in function <train_regression>. Expected data_sets to contain 6 sets.")
         return None
 
     X_train, y_train, X_test, y_test, X_val, y_val = data_sets 

@@ -10,12 +10,12 @@ import getopt
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2' # Ignore tensorflow warning
 
 #---Argument Parsing-----+
-# Usage: python main.py -r training -n test
+# Usage: python main.py -r <run_mode> -m <model_prefix>
 
 def usage():
     print("\nUsage:")
     print("main_training.py -r run_mode | -m model_prefix | -h help\n")
-    print("-r \t Options: 't', 'tv'")
+    print("-r \t Options: 'train', 'trainval'")
     print("Specifies if the program should be run in training mode, or training and validation mode.")
     print("run_mode is by default set to 't'.\n")
     print("-m \t Options: any string")
@@ -46,7 +46,7 @@ def arg_parse(argv):
             model_prefix = arg
     
     if not run_mode:
-        run_mode = "training"
+        run_mode = "train"
 
     if not model_prefix:
         model_prefix = ""
@@ -108,11 +108,11 @@ def train_classification(data_sets, input_shape, num_classes, model_prefix):
     """
 
     """
-    if len(data_sets) != 6:
-        print(f"Error in function <train_classification>. Excpected 6 datasets, got {len(data_sets)}")
+    if len(data_sets) != 4:
+        print(f"Error in function <train_classification>. Expected 4 datasets, got {len(data_sets)}")
 
         
-    X_train, y_train, X_test, y_test, X_val, y_val = data_sets 
+    X_train, y_train, X_test, y_test = data_sets 
 
     model_name = "classification_bCNN_1D_"
     timestamp = time.time()
@@ -123,15 +123,17 @@ def train_classification(data_sets, input_shape, num_classes, model_prefix):
     model.compile()
     model.train()
 
+    return model
+
 
 def train_regression(data_sets, input_shape, model_prefix):
     """
 
     """
-    if len(data_sets) != 6:
-        print(f"Error in function <train_regression>. Excpected 6 datasts, got {len(data_sets)}")
+    if len(data_sets) != 4:
+        print(f"Error in function <train_regression>. Expected 4 datasts, got {len(data_sets)}")
 
-    X_train, y_train, X_test, y_test, X_val, y_val = data_sets
+    X_train, y_train, X_test, y_test = data_sets
 
     model_name = "regression_CNN_1D"
     timestamp = time.time()
@@ -142,6 +144,28 @@ def train_regression(data_sets, input_shape, model_prefix):
     model.compile()
     model.train()
 
+    return model
+
+
+def val_classification(data_sets, input_shape, num_classes, model):
+    """
+
+    """
+    if len(data_sets) != 2:
+        print(f"Error in function <val_classification>. Expected 2 datasets, got {len(data_sets)}")
+    
+    X_val, y_val = data_sets
+    model.evaluate_model(X_val, y_val)
+
+
+def val_regression(data_sets, input_shape, model):
+    """
+
+    """
+    if len(data_sets) != 2:
+        print(f"Error in function <val_regression>. Expected 2 datasets, got {len(data_sets)}")
+
+    X_val, y_val = data_sets
 
 #---MAIN-----------------+
 def main(run_mode, model_prefix):
@@ -149,13 +173,20 @@ def main(run_mode, model_prefix):
     folder_csv_path = dirname + "src/data_preparation/data_prep_1D/raw_data_all.csv"
     data_sets, input_shape = get_sets(folder_csv_path) 
     X_train, y_train_cl, y_train_re, X_test, y_test_cl, y_test_re, X_val, y_val_cl, y_val_re = data_sets
-    cl_data_set = [X_train, y_train_cl, X_test, y_test_cl, X_val, y_val_cl]
-    re_data_set = [X_train, y_train_re, X_test, y_test_re, X_val, y_val_re]
+    cl_data_set = [X_train, y_train_cl, X_test, y_test_cl]
+    re_data_set = [X_train, y_train_re, X_test, y_test_re]
+
+    cl_data_set_val = [X_val, y_val_cl]
+    re_data_set_val = [X_val, y_val_re]
 
     num_classes = len(np.unique(y_train_cl))
 
-    train_classification(cl_data_set, input_shape, num_classes, model_prefix)
-    train_regression(re_data_set, input_shape, model_prefix) 
+    cl_model = train_classification(cl_data_set, input_shape, num_classes, model_prefix)
+    re_model = train_regression(re_data_set, input_shape, model_prefix) 
+
+    if run_mode == "trainval":
+        val_classification(cl_data_set_val, input_shape, num_classes, cl_model)
+        val_regression(re_data_set_val, input_shape, re_model)
 
 
 #---RUN CODE-------------+

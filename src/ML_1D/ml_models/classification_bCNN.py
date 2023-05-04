@@ -11,6 +11,7 @@ tfd = tfp.distributions
 tfpl = tfp.layers
 import os
 import shutil
+import json
 
 """
 
@@ -159,16 +160,32 @@ class classification_bCNN():
                 print(f"Could not save model as .h5 file. Error: {e}")
 
         
-        # FOR TESTING
-        # Evaluate the model on the test data using `evaluate`
-        print("Evaluate on test data")
-        results = self.model.evaluate(self.X_test, self.y_test, batch_size=128)
-        print("test loss, test acc:", results)
-        predictions = self.model.predict(self.X_test[:])
-        print("predictions shape:", predictions.shape)
-        print(f"Predictions: {predictions}")
+    def evaluate_model(self, X_val, y_val, save_stats=True):
+        """
 
-        print(len(self.X_test))
+        """
+        try:
+            results = self.model.evaluate(X_val, y_val, batch_size=128)
+        except OverflowError as e:
+            print(f"Error occured in <evaluate_model>. Error: {e}")
+            return None
+
+        predictions = self.model.predict(self.X_test[:])
+        stats = {
+            'loss': results[0],
+            'accuracy': results[1],
+            'prediction': predictions
+        }
+
+        if save_stats:
+            with open(self.model_name + '.json', 'w') as f:
+                json.dump(stats, f)
+            dirname_here = os.getcwd()
+            try:
+                shutil.move(dirname_here + "/" + self.model_name + ".json", dirname_here + "/val_stats/" + self.model_name + ".json") 
+            except FileNotFoundError as e:
+                print(f"Could not save validation statistics. Error: {e}")
+
     def plot_performance(self):
         """
         Plots the performance of the model throughout the training set.
