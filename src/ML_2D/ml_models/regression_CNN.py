@@ -7,7 +7,7 @@ import os
 import shutil
 
 class regression_CNN():
-    def __init__(self, X_train, y_train, X_test, y_test, input_shape, model_name = "regression_CNN", epochs=1000):
+    def __init__(self, X_train, y_train, X_test, y_test, input_shape, model_name = "regression_CNN_2D", epochs=1000):
         """
         asdfasdf
 
@@ -97,7 +97,7 @@ class regression_CNN():
         self.model.compile(optimizer = "sgd", loss = "mse", metrics = [tf.keras.metrics.RootMeanSquaredError()])
 
     
-    def train(self, save_model=False):
+    def train(self, save_model=True):
         """
         Trains the model using early stopping as regularization technique.
 
@@ -116,8 +116,15 @@ class regression_CNN():
                                 start_from_epoch=5,
                                 restore_best_weights=True)])
         if save_model:
-            self.model.save("../saved_models/" + self.model_name + ".h5")
-        
+            try:
+                self.model.save(self.model_name + ".h5")
+                # Move the model to the correct folder
+                dirname_here = os.getcwd()
+                shutil.move(dirname_here + "/" + self.model_name + '.h5', dirname_here + "/saved_models/" + self.model_name + '.h5') 
+
+            except FileNotFoundError as e:
+                print(f"Could not save model as .h5 file. Error: {e}")
+
         """
         # FOR TESTING
         # Evaluate the model on the test data using `evaluate`

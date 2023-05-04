@@ -2,6 +2,7 @@
 import numpy as np
 import sys
 import os
+import time
 
 #---FIXING PATH----------+
 sys.path.append(str(sys.path[0][:-14]))
@@ -100,7 +101,13 @@ def train_classification(data_sets, input_shape):
     
     X_train, y_train, X_test, y_test, X_val, y_val = data_sets 
     num_classes = len(np.unique(y_train))
-    model = classification_bCNN(X_train, y_train, X_test, y_test, input_shape, num_classes, "classification_bCNN") 
+
+    model_name = "classification_bCNN_2D_"
+    timestamp = time.time()
+    formatted_time = time.strftime("%a_%b_%d_%H:%M:%S", time.localtime(timestamp))
+    model_name = model_name + formatted_time
+
+    model = classification_bCNN(X_train, y_train, X_test, y_test, input_shape, num_classes, model_name)
     model.compile()
     model.train()
 
@@ -121,7 +128,12 @@ def train_regression(data_sets, input_shape):
 
     X_train, y_train, X_test, y_test, X_val, y_val = data_sets 
 
-    model = regression_CNN(X_train, y_train, X_test, y_test, input_shape, "regression_CNN")
+    model_name = "regression_CNN_1D_"
+    timestamp = time.time()
+    formatted_time = time.strftime("%a_%b_%d_%H:%M:%S", time.localtime(timestamp))
+    model_name = model_name + formatted_time
+
+    model = regression_CNN(X_train, y_train, X_test, y_test, input_shape, model_name)
     model.compile()
     model.train()
 

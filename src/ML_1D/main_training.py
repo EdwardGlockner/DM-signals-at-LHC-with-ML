@@ -1,5 +1,6 @@
 #---IMPORTS--------------+
 import sys
+import time
 import numpy as np
 import os
 
@@ -62,7 +63,13 @@ def train_classification(data_sets, input_shape, num_classes):
 
         
     X_train, y_train, X_test, y_test, X_val, y_val = data_sets 
-    model = classification_bCNN(X_train, y_train, X_test, y_test, input_shape, num_classes, "classification_bCNN") 
+
+    model_name = "classification_bCNN_1D_"
+    timestamp = time.time()
+    formatted_time = time.strftime("%a_%b_%d_%H:%M:%S", time.localtime(timestamp))
+    model_name = model_name + formatted_time
+
+    model = classification_bCNN(X_train, y_train, X_test, y_test, input_shape, num_classes, model_name) 
     model.compile()
     model.train()
 
@@ -75,7 +82,13 @@ def train_regression(data_sets, input_shape):
         print(f"Error in function <train_regression>. Excpected 6 datasts, got {len(data_sets)}")
 
     X_train, y_train, X_test, y_test, X_val, y_val = data_sets
-    model = regression_CNN(X_train, y_train, X_test, y_test, input_shape, "regression_CNN")
+
+    model_name = "regression_CNN_1D_"
+    timestamp = time.time()
+    formatted_time = time.strftime("%a_%b_%d_%H:%M:%S", time.localtime(timestamp))
+    model_name = model_name + formatted_time
+
+    model = regression_CNN(X_train, y_train, X_test, y_test, input_shape, model_name)
     model.compile()
     model.train()
 
@@ -92,7 +105,7 @@ def main():
     num_classes = len(np.unique(y_train_cl))
 
     train_classification(cl_data_set, input_shape, num_classes)
-   # train_regression(re_data_set, input_shape) 
+    train_regression(re_data_set, input_shape) 
 #---RUN CODE-------------+
 if __name__ == "__main__":
     main()
