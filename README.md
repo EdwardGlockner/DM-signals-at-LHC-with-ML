@@ -31,19 +31,19 @@ The project can be divided into two sub-projects, where the first is simulating 
 <!-- Table of Contents -->
 ## Table of Contents
   - [Introduction](#introduction)
-  - [Goals](#goals)
-  - [Event Generation](#event-generation)
-  - [Deep Learning](#deep-learning)
+    * [Goals](#goals)
+    * [Event Generation](#event-generation)
+    * [Deep Learning](#deep-learning)
   - [Paper](#paper)
 
-- [Prerequisites](#prerequisites)
-- [Run Locally](#run-locally)
- * [Data generation](#data-generation)
- * [Deep learning](#deep-learning)
+  - [Prerequisites](#prerequisites)
+  - [Run Locally](#run-locally)
+    * [Data generation](#data-generation)
+    * [Deep learning](#deep-learning)
 
-- [Contact](#contact)
-- [Links](#links)
-- [License](#license)
+  - [Contact](#contact)
+  - [Links](#links)
+  - [License](#license)
 
 ---
 ## Introduction
