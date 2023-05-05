@@ -12,12 +12,16 @@
   <a href="https://instagram.com/alexandresanlim">
     <img src="https://img.shields.io/badge/Python-FFD43B?style=for-the-badge&logo=python&logoColor=blue" />        
   </a>&nbsp;&nbsp;
-  <a href="https://instagram.com/alexandresanlim">
-    <img src="https://img.shields.io/badge/Keras-FF0000?style=for-the-badge&logo=keras&logoColor=white" />        
+  <a href="https://www.linkedin.com/in/alexandresanlim/">
+    <img src="https://img.shields.io/badge/Shell_Script-121011?style=for-the-badge&logo=gnu-bash&logoColor=white" />
   </a>&nbsp;&nbsp;
   <a href="https://www.linkedin.com/in/alexandresanlim/">
     <img src="https://img.shields.io/badge/TensorFlow-FF6F00?style=for-the-badge&logo=tensorflow&logoColor=white" />
   </a>&nbsp;&nbsp;
+  <a href="https://instagram.com/alexandresanlim">
+    <img src="https://img.shields.io/badge/Keras-FF0000?style=for-the-badge&logo=keras&logoColor=white" />        
+  </a>&nbsp;&nbsp;
+
 </p>
 
 
