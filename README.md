@@ -9,9 +9,10 @@
   * [Deep Learning](#deep-learning)
   * [Paper](#paper)
 
-- [Getting Started](#getting-started)
-  * [Prerequisites](#prerequisites)
-  * [Run Locally](#run-locally)
+- [Prerequisites](#prerequisites)
+- [Run Locally](#run-locally)
+ * [Data generation](#data-generation)
+ # [Deep learning](#deep-learning)
 
 - [Contact](#contact)
 - [Links](#links)
@@ -45,25 +46,17 @@ In context of the LHC, an *event* is the collision of two particles at high ener
 TBA
 
 ---
-<!-- Getting Started -->
-## Getting Started
-
-### Data generation
-test
-
-### Deep learning
-test
 
 <!-- Prerequisites -->
-### Prerequisites
-
-#### Data generation
-
-#### Deep learning
+## Prerequisites
 
  
 <!-- Run Locally -->
-### Run Locally
+## Run Locally
+
+### Data generation
+
+### Deep learning
 
 ---
 <!-- Contact -->
