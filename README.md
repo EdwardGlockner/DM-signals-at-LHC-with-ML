@@ -2,10 +2,20 @@
 
 <p align='center'>
   
+  <a href="https://instagram.com/alexandresanlim">
+    <img src="https://img.shields.io/badge/Python-FFD43B?style=for-the-badge&logo=python&logoColor=blue" />        
+  </a>&nbsp;&nbsp;
+  <a href="https://instagram.com/alexandresanlim">
+    <img src="https://img.shields.io/badge/Keras-FF0000?style=for-the-badge&logo=keras&logoColor=white" />        
+  </a>&nbsp;&nbsp;
   <a href="https://www.linkedin.com/in/alexandresanlim/">
     <img src="https://img.shields.io/badge/TensorFlow-FF6F00?style=for-the-badge&logo=tensorflow&logoColor=white" />
   </a>&nbsp;&nbsp;
+  <a href="https://github.com/EdwardGlockner/DM-signals-at-LHC-with-ML/graphs/contributors">
+  <img src="https://contrib.rocks/image?repo=EdwardGlockner/DM-signals-at-LHC-with-ML" />
+  </a>
 </p>
+
 
 
 <!-- Table of Contents -->
