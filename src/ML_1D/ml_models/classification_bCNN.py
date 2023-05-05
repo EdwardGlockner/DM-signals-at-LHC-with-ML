@@ -162,6 +162,13 @@ class classification_bCNN():
         
     def evaluate_model(self, X_val, y_val, save_stats=True):
         """
+        asdfasdf
+
+        @arguments:
+            X_val: <>
+            y_val: <>
+            save_stats: <>
+        @returns:
 
         """
         try:
