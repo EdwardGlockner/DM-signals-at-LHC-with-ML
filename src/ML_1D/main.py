@@ -141,7 +141,7 @@ def train_regression(data_sets, input_shape, model_prefix):
     return model
 
 
-def val_classification(data_sets, input_shape, num_classes, model):
+def val_classification(data_sets, input_shape, num_classes, model, img_save_path):
     """
 
     """
@@ -149,10 +149,10 @@ def val_classification(data_sets, input_shape, num_classes, model):
         print(f"Error in function <val_classification>. Expected 2 datasets, got {len(data_sets)}")
     
     X_val, y_val = data_sets
-    model.evaluate_model(X_val, y_val)
+    model.evaluate_model(X_val, y_val, img_save_path)
 
 
-def val_regression(data_sets, input_shape, model):
+def val_regression(data_sets, input_shape, model, img_save_path):
     """
 
     """
@@ -182,8 +182,9 @@ def main(run_mode, model_prefix):
     
     # Validate the models
     if run_mode == "trainval":
-        val_classification(cl_data_set_val, input_shape, num_classes, cl_model)
-        val_regression(re_data_set_val, input_shape, re_model)
+        img_save_path = dirname + "src/ML_1D/plots"
+        val_classification(cl_data_set_val, input_shape, num_classes, cl_model, img_save_path)
+        val_regression(re_data_set_val, input_shape, re_model, img_save_path)
 
 
 #---RUN CODE-------------+

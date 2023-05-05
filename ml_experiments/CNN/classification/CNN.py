@@ -120,7 +120,6 @@ class CNN_model():
             'prediction': predictions.tolist()
         }
 
-
         if save_stats:
             with open("test" + '.json', 'w') as f:
                 json.dump(stats, f)
@@ -132,7 +131,7 @@ class CNN_model():
         
         model_name = "test_CNN"
         plotter = plotting(self.y_test, predictions, self.history, model_name, "/Users/edwardglockner/OneDrive - Uppsala universitet/Teknisk Fysik/Termin 6 VT23/Kandidatarbete/DM-signals-at-LHC-with-ML/ml_experiments/CNN/classification")
-        plotter.loss(show=True)
+        plotter.loss(cl_or_re="cl", show=True)
         plotter.accuracy(show=True)
         plotter.roc(num_classes = 10, show=True)
 

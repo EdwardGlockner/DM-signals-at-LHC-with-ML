@@ -1,6 +1,7 @@
 #---Requirements-------------+
 numpy
 tensorflow
+tensorflow-probability
 matplotlib
 scikit-learn
 opencv-python

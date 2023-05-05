@@ -3,6 +3,8 @@ Created 24/4-23
 """
 #---Imports--------------+
 import tensorflow as tf
+import sys
+import os
 import tensorflow_probability as tfp
 from matplotlib import pyplot as plt
 import numpy as np
@@ -12,6 +14,15 @@ tfpl = tfp.layers
 import os
 import shutil
 import json
+
+#---FIXING PATH----------+
+sys.path.append(str(sys.path[0][:-14]))
+dirname = os.getcwd()
+dirname = dirname.replace("src/ML_1D","")
+sys.path.insert(1, os.path.join(dirname, "src/helper_functions"))
+
+from plotting import plotting
+
 
 """
 
@@ -126,7 +137,55 @@ class classification_bCNN():
 
         self.model.compile(optimizer = "adam",
                            loss = self.n_ll,
-                           metrics = ["accuracy"])
+                            metrics = ["accuracy", tf.keras.metrics.AUC(), tf.keras.metrics.Precision(), \
+                              tf.keras.metrics.Recall(), tf.keras.metrics.TruePositives(), tf.keras.metrics.TrueNegatives(), \
+                              tf.keras.metrics.FalsePositives(), tf.keras.metrics.FalseNegatives()])
+
+    def evaluate_model(self, X_val, y_val, save_stats=True):
+        """
+        asdfasdf
+
+        @arguments:
+            X_val: <>
+            y_val: <>
+            save_stats: <>
+        @returns:
+
+        """
+        try:
+            results = self.model.evaluate(X_val, y_val, batch_size=128)
+        except OverflowError as e:
+            print(f"Error occured in <evaluate_model>. Error: {e}")
+            return None
+
+        predictions = self.model.predict(self.X_test[:])
+        stats = {
+            'loss': results[0],
+            'accuracy': results[1],
+            'AUC': results[2],
+            'precision': results[3],
+            'recall': results[4],
+            'TP': results[5],
+            'TN': results[6],
+            'FP': results[7],
+            'FN': results[8],
+            'prediction': predictions.tolist()
+        }
+
+        if save_stats:
+            with open("test" + '.json', 'w') as f:
+                json.dump(stats, f)
+            dirname_here = os.getcwd()
+            try:
+                shutil.move(dirname_here + "/" + "test" + ".json", dirname_here + "/val_stats/" + "test" + ".json") 
+            except FileNotFoundError as e:
+                print(f"Could not save validation statistics. Error: {e}")
+        
+        model_name = "test_CNN"
+        plotter = plotting(self.y_test, predictions, self.history, model_name, "/Users/edwardglockner/OneDrive - Uppsala universitet/Teknisk Fysik/Termin 6 VT23/Kandidatarbete/DM-signals-at-LHC-with-ML/ml_experiments/CNN/classification")
+        plotter.loss(cl_or_re="cl", show=True)
+        plotter.accuracy(show=True)
+        plotter.roc(num_classes = 10, show=True)
 
 
     def train(self, save_model=True):
@@ -160,59 +219,6 @@ class classification_bCNN():
                 print(f"Could not save model as .h5 file. Error: {e}")
 
         
-    def evaluate_model(self, X_val, y_val, save_stats=True):
-        """
-        asdfasdf
-
-        @arguments:
-            X_val: <>
-            y_val: <>
-            save_stats: <>
-        @returns:
-
-        """
-        try:
-            results = self.model.evaluate(X_val, y_val, batch_size=128)
-        except OverflowError as e:
-            print(f"Error occured in <evaluate_model>. Error: {e}")
-            return None
-
-        predictions = self.model.predict(self.X_test[:])
-        stats = {
-            'loss': results[0],
-            'accuracy': results[1],
-            'prediction': predictions.tolist()
-        }
-
-        if save_stats:
-            with open(self.model_name + '.json', 'w') as f:
-                json.dump(stats, f)
-            dirname_here = os.getcwd()
-            try:
-                shutil.move(dirname_here + "/" + self.model_name + ".json", dirname_here + "/val_stats/" + self.model_name + ".json") 
-            except FileNotFoundError as e:
-                print(f"Could not save validation statistics. Error: {e}")
-
-    def plot_performance(self):
-        """
-        Plots the performance of the model throughout the training set.
-        The accuracy is plotted versus the number of epochs, for both the validation
-        and the training.
-
-        @arguments:
-            None
-        @returns:
-            None
-        """
-        plt.plot(self.history.history["accuracy"], label = "accuracy")
-        plt.plot(self.history.history["accuracy"], label = "val_accuracy")
-        plt.xlabel("Epochs")
-        plt.ylabel("Accuracy")
-        plt.ylim([0, 1])
-        plt.legend(loc="lower right")
-        plt.show()
-
-
     def analyze_model_prediction(self, data, true_label, model, image_num, run_ensamble=False):
         """
         not implemented

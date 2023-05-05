@@ -20,18 +20,21 @@ class plotting():
         self.save_path = save_path
         self.model_name = model_name
 
-
-    def loss(self, show=False):
+    
+    def loss(self, cl_or_re, show=False):
         """
 
         """
-        plt.figure(1)
+        plt.figure(2)
         plt.plot(self.history.history["loss"], label = "train_loss", color="darkorange", linewidth=2)
         plt.plot(self.history.history["val_loss"], label = "val_loss", color="navy", linewidth=2)
         plt.xlabel("Epochs")
-        plt.ylabel("Accuracy")
+        plt.ylabel("Loss")
         plt.title("Loss versus epochs")
-        plt.ylim([0 ,1])
+
+        if cl_or_re == "cl":
+            plt.ylim([0 ,1])
+        
         plt.legend(loc="upper right")
 
         plt.savefig(self.save_path + "/" + self.model_name + "_loss_plot.png")
@@ -43,13 +46,12 @@ class plotting():
         """
 
         """
-        plt.figure(2)
-        plt.plot(self.history.history["rmse"], label = "rmse", color="darkorange", linewidth=2)
-        plt.plot(self.history.history["val_rmse"], label = "val_rmse", color="navy", linewidth=2)
+        plt.figure(3)
+        plt.plot(self.history.history["root_mean_squared_error"], label = "rmse", color="darkorange", linewidth=2)
+        plt.plot(self.history.history["val_root_mean_squared_error"], label = "val_rmse", color="navy", linewidth=2)
         plt.xlabel("Epochs")
         plt.ylabel("RMSE")
         plt.title("RMSE versus epochs")
-        plt.ylim([0, 1])
         plt.legend(loc="lower right")
     
         plt.savefig(self.save_path + "/" + self.model_name + "_accuracy_plot.png")
@@ -63,7 +65,7 @@ class plotting():
         """
 
         """
-        plt.figure(3)
+        plt.figure(4)
         plt.plot(self.history.history["accuracy"], label = "accuracy", color="darkorange", linewidth=2)
         plt.plot(self.history.history["val_accuracy"], label = "val_accuracy", color="navy", linewidth=2)
         plt.xlabel("Epochs")
@@ -77,7 +79,7 @@ class plotting():
         if show:
             plt.show()
 
-        plt.figure(4)
+        plt.figure(5)
         plt.plot(self.history.history["accuracy"], label = "accuracy", color="darkorange", linewidth=2)
         plt.plot(self.history.history["val_accuracy"], label = "val_accuracy", color="navy", linewidth=2)
         plt.xlabel("Epochs")
@@ -128,7 +130,7 @@ class plotting():
         roc_auc["macro"] = auc(fpr["macro"], tpr["macro"])
 
         # Plot all ROC curves
-        plt.figure(5)
+        plt.figure(6)
         plt.plot(fpr["micro"], tpr["micro"],
                  label='micro-average ROC curve (area = {0:0.2f})'
                        ''.format(roc_auc["micro"]),
@@ -160,7 +162,7 @@ class plotting():
 
 
         # Zoom in view of the upper left corner.
-        plt.figure(6)
+        plt.figure(7)
         plt.xlim(0, 0.2)
         plt.ylim(0.8, 1)
         plt.plot(fpr["micro"], tpr["micro"],

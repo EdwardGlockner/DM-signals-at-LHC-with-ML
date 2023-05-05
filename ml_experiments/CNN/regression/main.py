@@ -98,7 +98,6 @@ def main():
             model.train()
             end = time.time()
             print(f"Time: {end-start} seconds")
-            model.plot_performance()
             check = False 
 
 #---RUN CODE-------------+
