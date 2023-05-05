@@ -10,7 +10,7 @@ np_config.enable_numpy_behavior()
 
 
 class plotting():
-    def __init__(self, y_test, y_pred, history, save_path):
+    def __init__(self, y_test, y_pred, history, model_name, save_path):
         """
 
         """
@@ -18,23 +18,81 @@ class plotting():
         self.y_pred = y_pred
         self.history = history
         self.save_path = save_path
+        self.model_name = model_name
 
 
-    def accuracy(self):
+    def loss(self, show=False):
         """
 
         """
-        plt.plot(self.history.history["accuracy"], label = "accuracy")
-        plt.plot(self.history.history["val_accuracy"], label = "val_accuracy")
+        plt.figure(1)
+        plt.plot(self.history.history["loss"], label = "train_loss", color="darkorange", linewidth=2)
+        plt.plot(self.history.history["val_loss"], label = "val_loss", color="navy", linewidth=2)
+        plt.xlabel("Epochs")
+        plt.ylabel("Accuracy")
+        plt.title("Loss versus epochs")
+        plt.ylim([0 ,1])
+        plt.legend(loc="upper right")
+
+        plt.savefig(self.save_path + "/" + self.model_name + "_loss_plot.png")
+
+        if show:
+            plt.show()
+
+    def rmse(self, show=False):
+        """
+
+        """
+        plt.figure(2)
+        plt.plot(self.history.history["rmse"], label = "rmse", color="darkorange", linewidth=2)
+        plt.plot(self.history.history["val_rmse"], label = "val_rmse", color="navy", linewidth=2)
+        plt.xlabel("Epochs")
+        plt.ylabel("RMSE")
+        plt.title("RMSE versus epochs")
+        plt.ylim([0, 1])
+        plt.legend(loc="lower right")
+    
+        plt.savefig(self.save_path + "/" + self.model_name + "_accuracy_plot.png")
+
+        if show:
+            plt.show()
+
+
+
+    def accuracy(self, show=False):
+        """
+
+        """
+        plt.figure(3)
+        plt.plot(self.history.history["accuracy"], label = "accuracy", color="darkorange", linewidth=2)
+        plt.plot(self.history.history["val_accuracy"], label = "val_accuracy", color="navy", linewidth=2)
+        plt.xlabel("Epochs")
+        plt.ylabel("Accuracy")
+        plt.title("Accuracy versus epochs")
+        plt.ylim([0, 1])
+        plt.legend(loc="lower right")
+    
+        plt.savefig(self.save_path + "/" + self.model_name + "_accuracy_plot.png")
+
+        if show:
+            plt.show()
+
+        plt.figure(4)
+        plt.plot(self.history.history["accuracy"], label = "accuracy", color="darkorange", linewidth=2)
+        plt.plot(self.history.history["val_accuracy"], label = "val_accuracy", color="navy", linewidth=2)
         plt.xlabel("Epochs")
         plt.ylabel("Accuracy")
         plt.title("Accuracy versus epochs")
         plt.ylim([0.5, 1])
         plt.legend(loc="lower right")
-        plt.show()
+    
+        plt.savefig(self.save_path + "/" + self.model_name + "_accuracy_plot_zoom.png")
 
+        if show:
+            plt.show()
+ 
 
-    def roc(self, num_classes):
+    def roc(self, num_classes, show=False):
         """
 
         """
@@ -70,7 +128,7 @@ class plotting():
         roc_auc["macro"] = auc(fpr["macro"], tpr["macro"])
 
         # Plot all ROC curves
-        plt.figure(1)
+        plt.figure(5)
         plt.plot(fpr["micro"], tpr["micro"],
                  label='micro-average ROC curve (area = {0:0.2f})'
                        ''.format(roc_auc["micro"]),
@@ -93,12 +151,16 @@ class plotting():
         plt.xlabel('False Positive Rate')
         plt.ylabel('True Positive Rate')
         plt.title('Some extension of Receiver operating characteristic to multi-class')
-        plt.legend(loc="lower right")
-        plt.show()
+        plt.legend(loc="lower right", fontsize="small")
+ 
+        plt.savefig(self.save_path + "/" + self.model_name + "_roc_plot.png")
+
+        if show:
+            plt.show()
 
 
         # Zoom in view of the upper left corner.
-        plt.figure(2)
+        plt.figure(6)
         plt.xlim(0, 0.2)
         plt.ylim(0.8, 1)
         plt.plot(fpr["micro"], tpr["micro"],
@@ -112,7 +174,7 @@ class plotting():
                  color='navy', linestyle=':', linewidth=4)
 
         colors = cycle(['aqua', 'darkorange', 'cornflowerblue'])
-        for i, color in zip(range(num_classes), colors):
+        for i, color in zip(range(10), colors):
             plt.plot(fpr[i], tpr[i], color=color, lw=lw,
                      label='ROC curve of class {0} (area = {1:0.2f})'
                      ''.format(i, roc_auc[i]))
@@ -121,6 +183,10 @@ class plotting():
         plt.xlabel('False Positive Rate')
         plt.ylabel('True Positive Rate')
         plt.title('Some extension of Receiver operating characteristic to multi-class')
-        plt.legend(loc="lower right")
-        plt.show()
-     
+        plt.legend(loc="lower right", fontsize="small")
+  
+        plt.savefig(self.save_path + "/" + self.model_name + "_roc_plot_zoom.png")
+
+        if show:
+            plt.show()
+

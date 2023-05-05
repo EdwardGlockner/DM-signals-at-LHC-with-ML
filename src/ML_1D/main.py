@@ -22,6 +22,7 @@ def usage():
     print("Gives a prefix to the model name. The files will be named: <model_prefix>_Classification_bCNN_1D_<timestamp>.")
     print("model_prefix is by default set to ''.\n")
 
+
 def arg_parse(argv):
     """
 

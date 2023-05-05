@@ -12,9 +12,7 @@ import sys
 sys.path.append(str(sys.path[0][:-14]))
 dirname = os.getcwd()
 dirname = dirname.replace("ml_experiments/CNN/classification","")
-print(dirname)
 sys.path.insert(1, os.path.join(dirname, "src/helper_functions"))
-print(dirname)
 from plotting import plotting
 
 class CNN_model():
@@ -32,7 +30,6 @@ class CNN_model():
         @returns:
             None
         """
-        print(type(y_train))
         self.X_train = X_train
         self.y_train = y_train
         self.X_test = X_test
@@ -58,15 +55,7 @@ class CNN_model():
         model = models.Sequential()
         model.add(layers.Conv2D(32, (3, 3), activation="relu", input_shape=(28, 28, 1)))
         model.add(layers.MaxPooling2D((2, 2)))
-        model.add(layers.Conv2D(32, (3, 3), activation="relu"))
-        model.add(layers.BatchNormalization())
-        model.add(layers.MaxPooling2D((2, 2)))
         model.add(layers.Flatten())
-        model.add(layers.Dense(64, activation="relu"))
-        model.add(layers.Dropout(.2))
-        model.add(layers.Dense(16, activation="relu"))
-        model.add(layers.BatchNormalization())
-        model.add(layers.Dropout(.2))
         model.add(layers.Dense(10, activation="softmax"))
 
         print(model.summary())
@@ -140,10 +129,12 @@ class CNN_model():
                 shutil.move(dirname_here + "/" + "test" + ".json", dirname_here + "/val_stats/" + "test" + ".json") 
             except FileNotFoundError as e:
                 print(f"Could not save validation statistics. Error: {e}")
-
-        plotter = plotting(self.y_test, predictions, self.history, "test")
-        plotter.accuracy()
-        plotter.roc(num_classes = 10)
+        
+        model_name = "test_CNN"
+        plotter = plotting(self.y_test, predictions, self.history, model_name, "/Users/edwardglockner/OneDrive - Uppsala universitet/Teknisk Fysik/Termin 6 VT23/Kandidatarbete/DM-signals-at-LHC-with-ML/ml_experiments/CNN/classification")
+        plotter.loss(show=True)
+        plotter.accuracy(show=True)
+        plotter.roc(num_classes = 10, show=True)
 
     def train(self, print_perf=True):
         """
