@@ -21,7 +21,17 @@
   <a href="https://instagram.com/alexandresanlim">
     <img src="https://img.shields.io/badge/Keras-FF0000?style=for-the-badge&logo=keras&logoColor=white" />        
   </a>&nbsp;&nbsp;
+</p>
 
+<p align='center'>
+  <a href="https://github.com/EdwardGlockner/DM-signals-at-LHC-with-ML/graphs/contributors">
+    <img src="https://img.shields.io/github/license/{EdwardGlockner}/{DM-signals-at-LHC-with-ML}.svg" />
+  </a>
+  <a href="https://github.com/EdwardGlockner/DM-signals-at-LHC-with-ML/graphs/contributors">
+    <img src="https://badge-size.herokuapp.com/{username}/{repo}/{branch}/{filename}" />
+  </a>
+  
+  
 </p>
 
 
