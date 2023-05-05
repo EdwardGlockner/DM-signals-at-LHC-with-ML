@@ -54,9 +54,31 @@ TBA
 <!-- Run Locally -->
 ## Run Locally
 
+Start by cloning the repository
+
+```bash
+  git clone https://github.com/EdwardGlockner/DM-signals-at-LHC-with-ML.git
+```
+
+Below are tutorials for both the data generation part in MadGraph, and also the deep learning part in Python.
+
 ### Data generation
 
 ### Deep learning
+
+Go to the project directory
+
+```bash
+  cd my-project
+```
+
+Install the necessary libraries by running the `install.py`. The python version for which the libraries will be installed for can be modified through the -v flag, which is set to none by default.
+
+```bash
+  python install.py -v <python-version>
+```
+
+and navigate to one of the assignment folders. Open the folder in MATLAB. Drag the helper functions to the same directory as the .mlx file and run the live script. If you don't have the ability to run MATLAB, you can see the .pdf-files.
 
 ---
 <!-- Contact -->
