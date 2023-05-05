@@ -1,6 +1,12 @@
 # Dark Matter Signals at the LHC using Machine Learning
 
-![image]({https://img.shields.io/badge/TensorFlow-FF6F00?style=for-the-badge&logo=tensorflow&logoColor=white})
+<p align='center'>
+  
+  <a href="https://www.linkedin.com/in/alexandresanlim/">
+    <img src="https://img.shields.io/badge/TensorFlow-FF6F00?style=for-the-badge&logo=tensorflow&logoColor=white" />
+  </a>&nbsp;&nbsp;
+</p>
+
 
 <!-- Table of Contents -->
 # Table of Contents
