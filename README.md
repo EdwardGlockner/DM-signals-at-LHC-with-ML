@@ -23,32 +23,29 @@
   </a>&nbsp;&nbsp;
 </p>
 
+## About the Project
+This is a project by Edward Glöckner, Max Andersson and Carl Löfkvist. It was supervised by Stefano Moretti, Prashant Singh, Rikard Enberg, Harri Waltari at Uppsala University. The project investigates the role deep learning can have in the discovery of new physics.
 
+The project can be divided into two sub-projects, where the first is simulating proton-proton collisions generating data, and the second is analyzing the data using deep learning techniques. 
 
 <!-- Table of Contents -->
 # Table of Contents
-- [About the Project](#about-the-project)
-  * [Introduction](#introduction)
-  * [Goals](#goals)
-  * [Event Generation](#event-generation)
-  * [Deep Learning](#deep-learning)
-  * [Paper](#paper)
+  - [Introduction](#introduction)
+  - [Goals](#goals)
+  - [Event Generation](#event-generation)
+  - [Deep Learning](#deep-learning)
+  - [Paper](#paper)
 
 - [Prerequisites](#prerequisites)
 - [Run Locally](#run-locally)
  * [Data generation](#data-generation)
- # [Deep learning](#deep-learning)
+ * [Deep learning](#deep-learning)
 
 - [Contact](#contact)
 - [Links](#links)
 - [License](#license)
 
 ---
-## About the Project
-This is a project by Edward Glöckner, Max Andersson and Carl Löfkvist. It was supervised by Stefano Moretti, Prashant Singh, Rikard Enberg, Harri Waltari at Uppsala University. The project investigates the role deep learning can have in the discovery of new physics.
-
-The project can be divided into two sub-projects, where the first is simulating proton-proton collisions generating data, and the second is analyzing the data using deep learning techniques. 
-
 ### Introduction
 The search for evidence of a dark matter particle is one of the hottest topics is physics today. As high energy physics experiments at the Large Hadron Collider (LHC) at CERN is yet to produce fruitful results in this pursuit, some have resorted to Monte Carlo simulation tools to gain further knowledge in the area. In such programs, high energy physics can be conducted on new models and paradigms that extends the standard model using sophisticated and sound tools. In this project, the production of so a called dark matter candidate particle from high energy proton-proton collisions are investigated using such tools. The tool of choice for this project is *[MadGraph](https://nloaccess.in2p3.fr/tools/MG5/index)*
 
