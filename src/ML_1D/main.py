@@ -84,13 +84,6 @@ bar = "+---------------------+"
 
 
 #---FUNCTIONS------------+
-def preprocess():
-    """
-
-    """
-    pass
-
-
 def get_sets(folder_csv_path):
     """
 
@@ -170,6 +163,7 @@ def val_regression(data_sets, input_shape, model):
 #---MAIN-----------------+
 def main(run_mode, model_prefix):
     clear()
+    # Create all the datasets
     folder_csv_path = dirname + "src/data_preparation/data_prep_1D/raw_data_all.csv"
     data_sets, input_shape = get_sets(folder_csv_path) 
     X_train, y_train_cl, y_train_re, X_test, y_test_cl, y_test_re, X_val, y_val_cl, y_val_re = data_sets
@@ -180,10 +174,12 @@ def main(run_mode, model_prefix):
     re_data_set_val = [X_val, y_val_re]
 
     num_classes = len(np.unique(y_train_cl))
-
+    
+    # Train the models
     cl_model = train_classification(cl_data_set, input_shape, num_classes, model_prefix)
     re_model = train_regression(re_data_set, input_shape, model_prefix) 
-
+    
+    # Validate the models
     if run_mode == "trainval":
         val_classification(cl_data_set_val, input_shape, num_classes, cl_model)
         val_regression(re_data_set_val, input_shape, re_model)

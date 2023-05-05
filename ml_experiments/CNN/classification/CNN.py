@@ -1,8 +1,21 @@
 import tensorflow as tf
+import shutil
+import os
 from tensorflow.keras import datasets, layers, models
 import matplotlib.pyplot as plt 
 import numpy as np
 from sklearn.metrics import confusion_matrix, classification_report
+import json
+import sys
+
+#---FIXING PATH----------+
+sys.path.append(str(sys.path[0][:-14]))
+dirname = os.getcwd()
+dirname = dirname.replace("ml_experiments/CNN/classification","")
+print(dirname)
+sys.path.insert(1, os.path.join(dirname, "src/helper_functions"))
+print(dirname)
+from plotting import plotting
 
 class CNN_model():
     def __init__(self, X_train, y_train, X_test, y_test, epochs=5):
@@ -85,7 +98,44 @@ class CNN_model():
                       loss = tf.keras.losses.CategoricalCrossentropy(from_logits=False),
                       metrics = ["accuracy"])
 
- 
+    def evaluate_model(self, X_val, y_val, save_stats=True):
+        """
+        asdfasdf
+
+        @arguments:
+            X_val: <>
+            y_val: <>
+            save_stats: <>
+        @returns:
+
+        """
+        try:
+            results = self.model.evaluate(X_val, y_val, batch_size=128)
+        except OverflowError as e:
+            print(f"Error occured in <evaluate_model>. Error: {e}")
+            return None
+
+        predictions = self.model.predict(self.X_test[:])
+        stats = {
+            'loss': results[0],
+            'accuracy': results[1],
+            'prediction': predictions.tolist()
+        }
+
+
+        if save_stats:
+            with open("test" + '.json', 'w') as f:
+                json.dump(stats, f)
+            dirname_here = os.getcwd()
+            try:
+                shutil.move(dirname_here + "/" + "test" + ".json", dirname_here + "/val_stats/" + "test" + ".json") 
+            except FileNotFoundError as e:
+                print(f"Could not save validation statistics. Error: {e}")
+
+        plotter = plotting(self.y_test, predictions, self.history, "test")
+        plotter.accuracy()
+        plotter.roc()
+
     def train(self, print_perf=True):
         """
         asdfasdf
@@ -96,7 +146,7 @@ class CNN_model():
         @returns:
             None
         """
-        self.history = self.model.fit(self.X_train, self.y_train, epochs = 1000,
+        self.history = self.model.fit(self.X_train, self.y_train, epochs = 3,
                             validation_data = (self.X_test, self.y_test), callbacks = [tf.keras.callbacks.EarlyStopping(monitor='val_loss', 
                                 min_delta=0, 
                                 patience=1, 
@@ -108,27 +158,7 @@ class CNN_model():
 
         self.model.save("./model.h5")
         test_loss, test_acc = self.model.evaluate(self.X_test, self.y_test, verbose=2)
-
-
-    def plot_performance(self):
-        """
-        asdfasdfasdf
-
-        @arguments
-            None
-
-        @returns:
-            None
-
-        """
-        plt.plot(self.history.history["accuracy"], label = "accuracy")
-        plt.plot(self.history.history["val_accuracy"], label = "val_accuracy")
-        plt.xlabel("Epochs")
-        plt.ylabel("Accuracy")
-        plt.ylim([0.5, 1])
-        plt.legend(loc="lower right")
-        plt.show()
-   
+        self.evaluate_model(self.X_test, self.y_test)
 
 class Callback(tf.keras.callbacks.Callback):
     def on_epoch_end(self, epoch, logs={}):

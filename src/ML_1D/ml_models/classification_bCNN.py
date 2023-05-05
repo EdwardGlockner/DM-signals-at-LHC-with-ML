@@ -181,7 +181,7 @@ class classification_bCNN():
         stats = {
             'loss': results[0],
             'accuracy': results[1],
-            'prediction': predictions
+            'prediction': predictions.tolist()
         }
 
         if save_stats:
