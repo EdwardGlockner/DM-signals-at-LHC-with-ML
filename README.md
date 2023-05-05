@@ -1,5 +1,7 @@
 # Dark Matter Signals at the LHC using Machine Learning
 
+<img src="{https://img.shields.io/badge/TensorFlow-FF6F00?style=for-the-badge&logo=tensorflow&logoColor=white}" />
+
 <!-- Table of Contents -->
 # Table of Contents
 - [About the Project](#about-the-project)
