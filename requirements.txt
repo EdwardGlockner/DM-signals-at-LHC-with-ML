@@ -3,5 +3,5 @@ numpy
 tensorflow
 matplotlib
 scikit-learn
-open-cv
+opencv-python
 Pillow

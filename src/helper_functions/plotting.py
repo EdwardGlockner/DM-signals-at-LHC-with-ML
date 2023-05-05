@@ -34,7 +34,7 @@ class plotting():
         plt.show()
 
 
-    def roc(self):
+    def roc(self, num_classes):
         """
 
         """
@@ -44,7 +44,7 @@ class plotting():
         fpr = dict()
         tpr = dict()
         roc_auc = dict()
-        for i in range(10):
+        for i in range(num_classes):
             fpr[i], tpr[i], _ = roc_curve(self.y_test[:, i], self.y_pred[:, i])
             roc_auc[i] = auc(fpr[i], tpr[i])
 
@@ -55,15 +55,15 @@ class plotting():
         # Compute macro-average ROC curve and ROC area
 
         # First aggregate all false positive rates
-        all_fpr = np.unique(np.concatenate([fpr[i] for i in range(10)]))
+        all_fpr = np.unique(np.concatenate([fpr[i] for i in range(num_classes)]))
 
         # Then interpolate all ROC curves at this points
         mean_tpr = np.zeros_like(all_fpr)
-        for i in range(10):
+        for i in range(num_classes):
             mean_tpr += interp(all_fpr, fpr[i], tpr[i])
 
         # Finally average it and compute AUC
-        mean_tpr /= 10 
+        mean_tpr /= num_classes 
 
         fpr["macro"] = all_fpr
         tpr["macro"] = mean_tpr
@@ -82,7 +82,7 @@ class plotting():
                  color='navy', linestyle=':', linewidth=4)
 
         colors = cycle(['aqua', 'darkorange', 'cornflowerblue'])
-        for i, color in zip(range(10), colors):
+        for i, color in zip(range(num_classes), colors):
             plt.plot(fpr[i], tpr[i], color=color, lw=lw,
                      label='ROC curve of class {0} (area = {1:0.2f})'
                      ''.format(i, roc_auc[i]))
@@ -112,7 +112,7 @@ class plotting():
                  color='navy', linestyle=':', linewidth=4)
 
         colors = cycle(['aqua', 'darkorange', 'cornflowerblue'])
-        for i, color in zip(range(10), colors):
+        for i, color in zip(range(num_classes), colors):
             plt.plot(fpr[i], tpr[i], color=color, lw=lw,
                      label='ROC curve of class {0} (area = {1:0.2f})'
                      ''.format(i, roc_auc[i]))

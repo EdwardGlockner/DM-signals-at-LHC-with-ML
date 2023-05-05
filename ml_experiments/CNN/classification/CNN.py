@@ -96,7 +96,9 @@ class CNN_model():
         # Compile the model
         self.model.compile(optimizer = "adam",
                       loss = tf.keras.losses.CategoricalCrossentropy(from_logits=False),
-                      metrics = ["accuracy"])
+                      metrics = ["accuracy", tf.keras.metrics.AUC(), tf.keras.metrics.Precision(), \
+                              tf.keras.metrics.Recall(), tf.keras.metrics.TruePositives(), tf.keras.metrics.TrueNegatives(), \
+                              tf.keras.metrics.FalsePositives(), tf.keras.metrics.FalseNegatives()])
 
     def evaluate_model(self, X_val, y_val, save_stats=True):
         """
@@ -119,6 +121,13 @@ class CNN_model():
         stats = {
             'loss': results[0],
             'accuracy': results[1],
+            'AUC': results[2],
+            'precision': results[3],
+            'recall': results[4],
+            'TP': results[5],
+            'TN': results[6],
+            'FP': results[7],
+            'FN': results[8],
             'prediction': predictions.tolist()
         }
 
@@ -134,7 +143,7 @@ class CNN_model():
 
         plotter = plotting(self.y_test, predictions, self.history, "test")
         plotter.accuracy()
-        plotter.roc()
+        plotter.roc(num_classes = 10)
 
     def train(self, print_perf=True):
         """
@@ -157,7 +166,6 @@ class CNN_model():
                                 restore_best_weights=True)])
 
         self.model.save("./model.h5")
-        test_loss, test_acc = self.model.evaluate(self.X_test, self.y_test, verbose=2)
         self.evaluate_model(self.X_test, self.y_test)
 
 class Callback(tf.keras.callbacks.Callback):
