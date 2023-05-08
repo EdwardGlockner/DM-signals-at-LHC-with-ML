@@ -6,6 +6,14 @@ from sklearn.metrics import confusion_matrix, classification_report
 import os
 import shutil
 
+"""
+Class classification_bCNN. 
+A bayesian convolutional neural network implemented using tensorflow and tensorflow_probability.
+The class allows the user to train and compile the model, evaluate on new datasets and producing statistics.
+The class makes it easy to save the model for future use, save images of the
+network architecture and save the results and statistics of the training and validation.
+WARNING: The data preparation should be handled outside of this class.
+"""
 class regression_CNN():
     def __init__(self, X_train, y_train, X_test, y_test, input_shape, model_name = "regression_CNN_1D", epochs=1000):
         """

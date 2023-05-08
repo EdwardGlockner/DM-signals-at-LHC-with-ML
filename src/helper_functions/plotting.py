@@ -1,3 +1,4 @@
+#---Imports--------------+
 from matplotlib import pyplot as plt
 from itertools import cycle
 from sklearn.metrics import auc
@@ -6,12 +7,23 @@ import numpy as np
 from scipy import interp
 from tensorflow.python.ops.numpy_ops import np_config
 
-np_config.enable_numpy_behavior()
+np_config.enable_numpy_behavior() # Allow numpy like behaviour in tensorflow
 
-
+"""
+Class plotting.
+An interface for plotting different performance metrics for a network running 
+on validation data.
+The different methods allows to meassure the performance of both regression models
+aswell as binary, and multi-class classification networks.
+Available metrics are: arbitrary loss function, arbitrary accuracy, 
+root mean squared error and ROC-curves.
+"""
 class plotting():
     def __init__(self, y_test, y_pred, history, model_name, save_path):
         """
+        Constructor for the plotting class
+
+        @arguments:
 
         """
         self.y_test = y_test

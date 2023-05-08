@@ -6,8 +6,6 @@ import tensorflow as tf
 import sys
 import os
 import tensorflow_probability as tfp
-from matplotlib import pyplot as plt
-import numpy as np
 from tensorflow.keras import datasets, layers, models
 tfd = tfp.distributions
 tfpl = tfp.layers
@@ -21,24 +19,33 @@ dirname = os.getcwd()
 dirname = dirname.replace("src/ML_1D","")
 sys.path.insert(1, os.path.join(dirname, "src/helper_functions"))
 
+# Local imports
 from plotting import plotting
 
-
+"""
+Class classification_bCNN. 
+A bayesian convolutional neural network implemented using tensorflow and tensorflow_probability.
+The class allows the user to train and compile the model, evaluate on new datasets and producing statistics.
+The class makes it easy to save the model for future use, save images of the
+network architecture and save the results and statistics of the training and validation.
+WARNING: The data preparation should be handled outside of this class, including
+normalization, shuffling and so on.
 """
 
-"""
 class classification_bCNN():
     def __init__(self, X_train, y_train, X_test, y_test, input_shape, num_classes, model_name = "classification_bCNN_1D", epochs=1000):
         """
+        Constructor for the classification_bCNN class
+
         @arguments:
-            X_train:     <numpy.ndarray>
-            y_train:     <tensorflow.python.framework.ops.EagerTensor>
-            X_test:      <numpy.ndarray>
-            y_test:      <tensorflow.python.framework.ops.EagerTensor>
-            input_shape: <tuple> On the form: (width, height, channels)
+            X_train:     <numpy.ndarray> Arbitrary input data set used for training 
+            y_train:     <tensorflow::EagerTensor> Output labels for the training set
+            X_test:      <numpy.ndarray> Arbitrary input data used for testing
+            y_test:      <tensorflow::EagerTensor> Output labels for the testing set
+            input_shape: <tuple> Shape of the input data sets. On the form: (width, height, channels)
             num_classes: <int> Numer of classification labels
             model_name:  <string> Given name of the model for plots and saved files.
-            epochs:      <int> By default 1000, because early stopping is used for regularization
+            epochs:      <int> Maximum numbers of epochs. By default 1000 since early stopping is used for regularization
         @returns:
             None
         """
@@ -56,7 +63,8 @@ class classification_bCNN():
     
     def _create_model(self, print_sum=True):
         """
-        Adds all the layers of the model and finally returning it.
+        Hidden method, used for creating the bCNN model.
+        Adds all the layers of the model and finally returns it.
         Prints out the model architecture by default.
 
         @arguments:
@@ -93,10 +101,10 @@ class classification_bCNN():
         Used as a loss function for the training of bCNN.
 
         @arguments:
-            y_true: <tensorflow.python.framework.ops.Tensor>
-            y_pred: <tensorflow_probability.python.layers.internal.distribution_tensor_coercible._TensorCoercible>
+            y_true: <tensorflow::Tensor> The actual output labels for a given set.
+            y_pred: <tensorflow_probability::_TensorCoercible> The predicted output labels for the same set.
         @returns:
-            neg_log_lik: <tensorflow.python.framework.ops.Tensor>
+            neg_log_lik: <tensorflow::Tensor> The negative log likelihood.
         """
 
         neg_log_lik = -y_pred.log_prob(y_true)
@@ -106,14 +114,14 @@ class classification_bCNN():
 
     def compile(self):
         """
-        Saves an image of the model architecture and compiles it. 
-
+        Compiles and save an image of the model architecture. 
+        The image is saved in /src/ML_1D/model_pngs/
         @arguments:
             None
         @returns:
             None
         """
-
+        # Try plotting the architecture of the network
         try:
             tf.keras.utils.plot_model(
                 self.model,
@@ -134,23 +142,29 @@ class classification_bCNN():
 
         except FileNotFoundError as e:
             print(f"Could not save image of model architecture. Error: {e}")
-
+        
+        # Compiles the model
         self.model.compile(optimizer = "adam",
                            loss = self.n_ll,
                             metrics = ["accuracy", tf.keras.metrics.AUC(), tf.keras.metrics.Precision(), \
                               tf.keras.metrics.Recall(), tf.keras.metrics.TruePositives(), tf.keras.metrics.TrueNegatives(), \
                               tf.keras.metrics.FalsePositives(), tf.keras.metrics.FalseNegatives()])
 
+
     def evaluate_model(self, X_val, y_val, save_stats=True):
         """
-        asdfasdf
+        Evaluates the compiled and trained model on a new validation set.
+        Creates all the different performance metrics and saves it to a .json file,
+        in src/ML_1D/val_stats/
+        Also creates plots of the ROC curves and accuracy, which is saved to
+        src/ML_1D/
 
         @arguments:
-            X_val: <>
-            y_val: <>
-            save_stats: <>
+            X_val: <numpy.ndarray> Arbitrary input data used for validation. Same input shape as the trained model is needed.
+            y_val: <tensorflow::EagerTensor> Output labels for the validation data
+            save_stats: <bool> Whether to save the .json file or not.
         @returns:
-
+            None
         """
         try:
             results = self.model.evaluate(X_val, y_val, batch_size=128)
@@ -173,19 +187,21 @@ class classification_bCNN():
             'y_test': y_val.tolist()
         }
 
+        dirname_here = os.getcwd()
         if save_stats:
-            with open("test" + '.json', 'w') as f:
+            with open(self.model_name + "_val_data" + '.json', 'w') as f:
                 json.dump(stats, f)
-            dirname_here = os.getcwd()
             try:
-                shutil.move(dirname_here + "/" + "test" + ".json", \
+                shutil.move(dirname_here + "/" + self.model_name + "_val_data" + ".json", \
                         dirname_here + "/val_stats/" + self.model_name + ".json") 
             except FileNotFoundError as e:
                 print(f"Could not save validation statistics. Error: {e}")
-        
-        plotter = plotting(self.y_test, predictions, self.history, self.model_name, "/Users/edwardglockner/OneDrive - Uppsala universitet/Teknisk Fysik/Termin 6 VT23/Kandidatarbete/DM-signals-at-LHC-with-ML/ml_experiments/CNN/classification")
+       
+        # Create the plotting object and create all the plots
+        plotter = plotting(self.y_test, predictions, self.history, self.model_name, dirname_here + "/plots")
         plotter.loss(cl_or_re="cl", show=True)
         plotter.accuracy(show=True)
+        plotter.accuracy_zoom(show=True)
         plotter.roc(num_classes = 10, show=True)
 
 
@@ -198,7 +214,7 @@ class classification_bCNN():
         @returns:
             None
         """
-
+        # Trains the model
         self.history = self.model.fit(self.X_train, self.y_train, epochs = self.epochs,
                             validation_data = (self.X_test, self.y_test), callbacks = [tf.keras.callbacks.EarlyStopping(monitor='val_loss', 
                                 min_delta=0, 
@@ -208,7 +224,8 @@ class classification_bCNN():
                                 baseline=None,
                                 restore_best_weights=True,
                                 start_from_epoch=1)])
-        
+
+        # Saves the model as a loadable .h5 file 
         if save_model:
             try:
                 self.model.save(self.model_name + ".h5")
@@ -221,24 +238,5 @@ class classification_bCNN():
 
         
     def analyze_model_prediction(self, data, true_label, model, image_num, run_ensamble=False):
-        """
-        not implemented
-        @arguments:
-            data:
-            true_label:
-            model:
-            image_num:
-            run_ensamble: <bool>
-        @returns:
-            None
-        """
-        """
-        if run_ensamble:
-            ensamble_size = 200
-        else:
-            ensamble_size = 1
-
-        #image = 
-        """
         raise NotImplementedError
     
