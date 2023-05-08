@@ -158,7 +158,7 @@ class classification_bCNN():
             print(f"Error occured in <evaluate_model>. Error: {e}")
             return None
 
-        predictions = self.model.predict(self.X_test[:])
+        predictions = self.model.predict(X_val[:])
         stats = {
             'loss': results[0],
             'accuracy': results[1],
@@ -169,7 +169,8 @@ class classification_bCNN():
             'TN': results[6],
             'FP': results[7],
             'FN': results[8],
-            'prediction': predictions.tolist()
+            'prediction': predictions.tolist(),
+            'y_test': y_val.tolist()
         }
 
         if save_stats:
@@ -177,12 +178,12 @@ class classification_bCNN():
                 json.dump(stats, f)
             dirname_here = os.getcwd()
             try:
-                shutil.move(dirname_here + "/" + "test" + ".json", dirname_here + "/val_stats/" + "test" + ".json") 
+                shutil.move(dirname_here + "/" + "test" + ".json", \
+                        dirname_here + "/val_stats/" + self.model_name + ".json") 
             except FileNotFoundError as e:
                 print(f"Could not save validation statistics. Error: {e}")
         
-        model_name = "test_CNN"
-        plotter = plotting(self.y_test, predictions, self.history, model_name, "/Users/edwardglockner/OneDrive - Uppsala universitet/Teknisk Fysik/Termin 6 VT23/Kandidatarbete/DM-signals-at-LHC-with-ML/ml_experiments/CNN/classification")
+        plotter = plotting(self.y_test, predictions, self.history, self.model_name, "/Users/edwardglockner/OneDrive - Uppsala universitet/Teknisk Fysik/Termin 6 VT23/Kandidatarbete/DM-signals-at-LHC-with-ML/ml_experiments/CNN/classification")
         plotter.loss(cl_or_re="cl", show=True)
         plotter.accuracy(show=True)
         plotter.roc(num_classes = 10, show=True)

@@ -1,4 +1,5 @@
 import numpy as np
+from sklearn.utils import shuffle
 from matplotlib import pyplot as plt
 import matplotlib.image as mpimg
 import os
@@ -16,7 +17,10 @@ def create_datasets(dataset):
 
     else:
         return None
-
+    
+    # Shuffle the datasets
+    X_train, y_train = shuffle(X_train, y_train)
+    X_test, y_test = shuffle(X_test, y_test)
     # Reshape and normalize
     X_train = X_train.reshape(X_train.shape[0], X_train.shape[1], X_train.shape[2], 1)
     X_train = X_train / 255

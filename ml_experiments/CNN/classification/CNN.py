@@ -106,7 +106,7 @@ class CNN_model():
             print(f"Error occured in <evaluate_model>. Error: {e}")
             return None
 
-        predictions = self.model.predict(self.X_test[:])
+        predictions = self.model.predict(X_val[:])
         stats = {
             'loss': results[0],
             'accuracy': results[1],
@@ -117,7 +117,8 @@ class CNN_model():
             'TN': results[6],
             'FP': results[7],
             'FN': results[8],
-            'prediction': predictions.tolist()
+            'prediction': predictions.tolist(),
+            'y_test': y_val.tolist()
         }
 
         if save_stats:
