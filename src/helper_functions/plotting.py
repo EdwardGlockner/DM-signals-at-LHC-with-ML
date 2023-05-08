@@ -19,14 +19,20 @@ Available metrics are: arbitrary loss function, arbitrary accuracy,
 root mean squared error and ROC-curves.
 """
 class plotting():
-    def __init__(self, y_test, y_pred, history, model_name, save_path):
+    def __init__(self, y_val, y_pred, history, model_name, save_path):
         """
         Constructor for the plotting class
 
         @arguments:
-
+            y_val: <tensorflow::EagerTensor> The actual output labels/values for the validation set.
+            y_pred: <numpy.ndarray> The prediction output labels/values for the same set.
+            history: <tensorflow::History> The training history of the model.
+            model_name: <string> The given name of the network, which will be used to save plots.
+            save_path: <string> The full path to the folder where to plots will be saved.
+        @returns:
+            None
         """
-        self.y_test = y_test
+        self.y_val = y_val
         self.y_pred = y_pred
         self.history = history
         self.save_path = save_path
@@ -35,7 +41,11 @@ class plotting():
     
     def loss(self, cl_or_re, show=False):
         """
-
+        Plots the loss (obtained from the history object) versus number of epochs.
+        
+        @arguments:
+            cl_or_re: <string> Whether the model is a regression one, or a classification one.
+            show: <bool> To show the plots or not
         """
         plt.figure(2)
         plt.plot(self.history.history["loss"], label = "train_loss", color="darkorange", linewidth=2)
@@ -56,7 +66,12 @@ class plotting():
 
     def rmse(self, show=False):
         """
+        Plots the RMSE of a regression model.
 
+        @arguments:
+            show: <bool> To show plots or not
+        @returns:
+            None
         """
         plt.figure(3)
         plt.plot(self.history.history["root_mean_squared_error"], label = "rmse", color="darkorange", linewidth=2)
@@ -75,7 +90,12 @@ class plotting():
 
     def accuracy(self, show=False):
         """
+        Plots the accuracy of the model, both a normal plot and a zoomed plot.
 
+        @arguments:
+            show: <bool> To show plots or not.
+        @returns:
+            None
         """
         plt.figure(4)
         plt.plot(self.history.history["accuracy"], label = "accuracy", color="darkorange", linewidth=2)
@@ -108,7 +128,13 @@ class plotting():
 
     def roc(self, num_classes, show=False):
         """
+        Plots the ROC curve of the model, both a normal one and a zoomed one.
 
+        @arguments:
+            num_classes: <int> The number of classes for the classification.
+            show: <bool> To show plots or not
+        @returns:
+            None
         """
         # Plot linewidth.
         lw = 2
@@ -117,11 +143,11 @@ class plotting():
         tpr = dict()
         roc_auc = dict()
         for i in range(num_classes):
-            fpr[i], tpr[i], _ = roc_curve(self.y_test[:, i], self.y_pred[:, i])
+            fpr[i], tpr[i], _ = roc_curve(self.y_val[:, i], self.y_pred[:, i])
             roc_auc[i] = auc(fpr[i], tpr[i])
 
         # Compute micro-average ROC curve and ROC area
-        fpr["micro"], tpr["micro"], _ = roc_curve(self.y_test.ravel(), self.y_pred.ravel())
+        fpr["micro"], tpr["micro"], _ = roc_curve(self.y_val.ravel(), self.y_pred.ravel())
         roc_auc["micro"] = auc(fpr["micro"], tpr["micro"])
 
         # Compute macro-average ROC curve and ROC area

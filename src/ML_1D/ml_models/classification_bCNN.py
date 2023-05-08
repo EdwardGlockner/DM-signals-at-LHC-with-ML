@@ -186,7 +186,6 @@ class classification_bCNN():
             'prediction': predictions.tolist(),
             'y_test': y_val.tolist()
         }
-
         dirname_here = os.getcwd()
         if save_stats:
             with open(self.model_name + "_val_data" + '.json', 'w') as f:
@@ -225,7 +224,7 @@ class classification_bCNN():
                                 restore_best_weights=True,
                                 start_from_epoch=1)])
 
-        # Saves the model as a loadable .h5 file 
+        # Save a loadable .h5 file   
         if save_model:
             try:
                 self.model.save(self.model_name + ".h5")

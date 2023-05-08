@@ -13,14 +13,30 @@ os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2' # Ignore tensorflow warning
 # Usage: python main.py -r <run_mode> -m <model_prefix>
 
 def usage():
-    print("\nUsage:")
-    print("main_training.py -r run_mode | -m model_prefix | -h help\n")
+    print("\n")
+    print(" /$$$$$$  /$$   /$$ /$$   /$$")
+    print(" /$$__  $$| $$$ | $$| $$$ | $$")
+    print("| $$  \__/| $$$$| $$| $$$$| $$")
+    print("| $$      | $$ $$ $$| $$ $$ $$")
+    print("| $$      | $$  $$$$| $$  $$$$")
+    print("| $$    $$| $$\  $$$| $$\  $$$")
+    print("|  $$$$$$/| $$ \  $$| $$ \  $$")
+    print(" \______/ |__/  \__/|__/  \__/")
+
+    print("\n------------------Usage-----------------")
+    print("main_training.py -r run_mode | -t model_type | -n model_prefix | -h help\n")
+
     print("-r \t Options: 'train', 'trainval'")
     print("Specifies if the program should be run in training mode, or training and validation mode.")
-    print("run_mode is by default set to 't'.\n")
-    print("-m \t Options: any string")
+    print("run_mode is by default set to 'train'.\n")
+
+    print("-t \t Options: 'cl', 're', clre'")
+    print("Specifies if the program should run the classification model, or the regression model")
+    print("model_type is by default set to 'cl'.\n")
+
+    print("-n \t Options: any string")
     print("Gives a prefix to the model name. The files will be named: <model_prefix>_Classification_bCNN_1D_<timestamp>.")
-    print("model_prefix is by default set to ''.\n")
+    print("model_prefix is by default set to 'test'.\n")
 
 
 def arg_parse(argv):
@@ -28,9 +44,11 @@ def arg_parse(argv):
 
     """
     run_mode = ""
+    model_type = ""
     model_prefix = ""
+
     try:
-        opts, args = getopt.getopt(argv, "r:m:", ["run_mode", "model_prefix"])
+        opts, args = getopt.getopt(argv, "r:t:n:", ["run_mode", "model_type", "model_prefix"])
 
     except getopt.GetoptError:
         usage()
@@ -40,19 +58,26 @@ def arg_parse(argv):
         if opt == "-h":
             usage()
             sys.exit()
+
         if opt == "-r":
             run_mode = arg
 
-        if opt == "-m":
+        if opt == "-t":
+            model_type = arg
+
+        if opt == "-n":
             model_prefix = arg
     
     if not run_mode:
-        run_mode = "train"
+        run_mode = "train" 
 
     if not model_prefix:
-        model_prefix = ""
+        model_prefix = "test"  
 
-    return run_mode, model_prefix
+    if not model_type:
+        model_type = "cl"
+    
+    return run_mode, model_type, model_prefix
 
 
 #---FIXING PATH----------+
@@ -162,7 +187,7 @@ def val_regression(data_sets, input_shape, model, img_save_path):
     X_val, y_val = data_sets
 
 #---MAIN-----------------+
-def main(run_mode, model_prefix):
+def main(run_mode, model_type, model_prefix):
     clear()
     # Create all the datasets
     folder_csv_path = dirname + "src/data_preparation/data_prep_1D/raw_data_all.csv"
@@ -177,18 +202,32 @@ def main(run_mode, model_prefix):
     num_classes = len(np.unique(y_train_cl))
     
     # Train the models
-    cl_model = train_classification(cl_data_set, input_shape, num_classes, model_prefix)
-    re_model = train_regression(re_data_set, input_shape, model_prefix) 
-    
+    if model_type == "cl":
+        cl_model = train_classification(cl_data_set, input_shape, num_classes, model_prefix)
+    elif model_type == "re":
+        re_model = train_regression(re_data_set, input_shape, model_prefix) 
+    elif model_type == "clre":
+        cl_model = train_classification(cl_data_set, input_shape, num_classes, model_prefix)
+        re_model = train_regression(re_data_set, input_shape, model_prefix) 
+
+    else:
+        print("Not a valid model_type. See python main.py -h for help.")
+        return
     # Validate the models
+
     if run_mode == "trainval":
         img_save_path = dirname + "src/ML_1D/plots"
-        val_classification(cl_data_set_val, input_shape, num_classes, cl_model, img_save_path)
-        val_regression(re_data_set_val, input_shape, re_model, img_save_path)
+        if model_type == "cl":
+            val_classification(cl_data_set_val, input_shape, num_classes, cl_model, img_save_path)
+        elif model_type == "re":
+            val_regression(re_data_set_val, input_shape, re_model, img_save_path)
+        elif model_type == "clre":
+            val_classification(cl_data_set_val, input_shape, num_classes, cl_model, img_save_path)
+            val_regression(re_data_set_val, input_shape, re_model, img_save_path)
 
 
 #---RUN CODE-------------+
 if __name__ == "__main__":
-    run_mode, model_prefix = arg_parse(sys.argv[1:])
-    main(run_mode, model_prefix)
+    run_mode, model_type, model_prefix = arg_parse(sys.argv[1:])
+    main(run_mode, model_type, model_prefix)
 
