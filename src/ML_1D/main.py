@@ -157,6 +157,7 @@ def val_regression(data_sets, input_shape, model, img_save_path):
         print(f"Error in function <val_regression>. Expected 2 datasets, got {len(data_sets)}")
 
     X_val, y_val = data_sets
+    model.evaluate_model(X_val, y_val, img_save_path)
 
 #---MAIN-----------------+
 def main(run_mode, model_type, model_prefix):
@@ -176,8 +177,10 @@ def main(run_mode, model_type, model_prefix):
     # Train the models
     if model_type == "cl":
         cl_model = train_classification(cl_data_set, input_shape, num_classes, model_prefix)
+
     elif model_type == "re":
         re_model = train_regression(re_data_set, input_shape, model_prefix) 
+
     elif model_type == "clre":
         cl_model = train_classification(cl_data_set, input_shape, num_classes, model_prefix)
         re_model = train_regression(re_data_set, input_shape, model_prefix) 
@@ -191,8 +194,10 @@ def main(run_mode, model_type, model_prefix):
         img_save_path = dirname + "src/ML_1D/plots"
         if model_type == "cl":
             val_classification(cl_data_set_val, input_shape, num_classes, cl_model, img_save_path)
+
         elif model_type == "re":
             val_regression(re_data_set_val, input_shape, re_model, img_save_path)
+
         elif model_type == "clre":
             val_classification(cl_data_set_val, input_shape, num_classes, cl_model, img_save_path)
             val_regression(re_data_set_val, input_shape, re_model, img_save_path)

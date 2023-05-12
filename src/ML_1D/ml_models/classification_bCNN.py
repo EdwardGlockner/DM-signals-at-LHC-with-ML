@@ -24,7 +24,7 @@ from plotting import plotting
 
 """
 Class classification_bCNN. 
-A bayesian convolutional neural network implemented using tensorflow and tensorflow_probability.
+A classification bayesian convolutional neural network implemented using tensorflow and tensorflow_probability.
 The class allows the user to train and compile the model, evaluate on new datasets and producing statistics.
 The class makes it easy to save the model for future use, save images of the
 network architecture and save the results and statistics of the training and validation.
