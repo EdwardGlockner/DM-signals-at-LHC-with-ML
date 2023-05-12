@@ -5,79 +5,51 @@ import sys
 import time
 import numpy as np
 import os
-import getopt
+import argparse
 
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2' # Ignore tensorflow warning
 
 #---Argument Parsing-----+
-# Usage: python main.py -r <run_mode> -m <model_prefix>
+def arg_parse():
+    def usage():
+        print("\n")
+        print(" /$$$$$$  /$$   /$$ /$$   /$$")
+        print(" /$$__  $$| $$$ | $$| $$$ | $$")
+        print("| $$  \__/| $$$$| $$| $$$$| $$")
+        print("| $$      | $$ $$ $$| $$ $$ $$")
+        print("| $$      | $$  $$$$| $$  $$$$")
+        print("| $$    $$| $$\  $$$| $$\  $$$")
+        print("|  $$$$$$/| $$ \  $$| $$ \  $$")
+        print(" \______/ |__/  \__/|__/  \__/")
 
-def usage():
-    print("\n")
-    print(" /$$$$$$  /$$   /$$ /$$   /$$")
-    print(" /$$__  $$| $$$ | $$| $$$ | $$")
-    print("| $$  \__/| $$$$| $$| $$$$| $$")
-    print("| $$      | $$ $$ $$| $$ $$ $$")
-    print("| $$      | $$  $$$$| $$  $$$$")
-    print("| $$    $$| $$\  $$$| $$\  $$$")
-    print("|  $$$$$$/| $$ \  $$| $$ \  $$")
-    print(" \______/ |__/  \__/|__/  \__/")
+        print("\n------------------Usage-----------------")
+        print("main_training.py --run run_mode | --type model_type | --name model_prefix | -h help\n")
 
-    print("\n------------------Usage-----------------")
-    print("main_training.py -r run_mode | -t model_type | -n model_prefix | -h help\n")
+        print("--run \t Options: 'train', 'trainval'")
+        print("Specifies if the program should be run in training mode, or training and validation mode.")
+        print("run_mode is by default set to 'train'.\n")
 
-    print("-r \t Options: 'train', 'trainval'")
-    print("Specifies if the program should be run in training mode, or training and validation mode.")
-    print("run_mode is by default set to 'train'.\n")
+        print("--type \t Options: 'cl', 're', clre'")
+        print("Specifies if the program should run the classification model, or the regression model")
+        print("model_type is by default set to 'cl'.\n")
 
-    print("-t \t Options: 'cl', 're', clre'")
-    print("Specifies if the program should run the classification model, or the regression model")
-    print("model_type is by default set to 'cl'.\n")
-
-    print("-n \t Options: any string")
-    print("Gives a prefix to the model name. The files will be named: <model_prefix>_Classification_bCNN_1D_<timestamp>.")
-    print("model_prefix is by default set to 'test'.\n")
+        print("--name \t Options: any string")
+        print("Gives a prefix to the model name. The files will be named: <model_prefix>_Classification_bCNN_1D_<timestamp>.")
+        print("model_prefix is by default set to 'test'.\n")
 
 
-def arg_parse(argv):
-    """
+    parser = argparse.ArgumentParser(description="Machine Learning DM", add_help=False)
+    parser.add_argument('--run', type=str, default='train', help='Run mode')
+    parser.add_argument('--type', type=str, default='cl', help='Model type')
+    parser.add_argument('--name', type=str, default='test', help='Model name')
+    parser.add_argument('-h', '--help', action='store_true', help='Show help message')
+    args = parser.parse_args()
 
-    """
-    run_mode = ""
-    model_type = ""
-    model_prefix = ""
-
-    try:
-        opts, args = getopt.getopt(argv, "r:t:n:", ["run_mode", "model_type", "model_prefix"])
-
-    except getopt.GetoptError:
+    if args.help:
         usage()
-        sys.exit(2)
+        exit()
 
-    for opt, arg in opts:
-        if opt == "-h":
-            usage()
-            sys.exit()
-
-        if opt == "-r":
-            run_mode = arg
-
-        if opt == "-t":
-            model_type = arg
-
-        if opt == "-n":
-            model_prefix = arg
-    
-    if not run_mode:
-        run_mode = "train" 
-
-    if not model_prefix:
-        model_prefix = "test"  
-
-    if not model_type:
-        model_type = "cl"
-    
-    return run_mode, model_type, model_prefix
+    return args.run, args.type, args.name
 
 
 #---FIXING PATH----------+
@@ -228,6 +200,9 @@ def main(run_mode, model_type, model_prefix):
 
 #---RUN CODE-------------+
 if __name__ == "__main__":
-    run_mode, model_type, model_prefix = arg_parse(sys.argv[1:])
+    run_mode, model_type, model_prefix = arg_parse()
+    print(run_mode)
+    print(model_type)
+    print(model_prefix)
     main(run_mode, model_type, model_prefix)
 
