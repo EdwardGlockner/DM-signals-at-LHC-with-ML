@@ -1,0 +1,17 @@
+TODOS:
+    1. Modify the parton_cards to plot the correct histograms (see notes.txt)
+    2. When those work, make sure that uppmax_run.sh saves the correct histogram
+        arrays to the correct output folders and csv files
+    3. Check so everything works correctly, by submitting test jobs
+    4. Write a new data_prep_1D_z.py, and look over data_prep_1D_jet, so they
+        work for the new changes
+    5. Generate new param_cards.dat for neutralino and sneutrino
+    6. Should now be 2000 events per histogram
+    (7. Calle (never trust him) has tried to remove all traces of 'neutrino', now 'sneutrino')
+    7. Dubbelcheck uppmax_parallel.py so it works with our new changes.
+
+
+GOAL FOR THE WEEK:
+    1. Done with event generation
+    2. Begun training our models (experimenting locally, maybe try uppmax)
+    3. Write on our report
