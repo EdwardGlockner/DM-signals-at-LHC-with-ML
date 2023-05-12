@@ -119,7 +119,10 @@ class regression_CNN():
         except FileNotFoundError as e:
             print(f"Could not save image of model architecture. Error: {e}")
 
-        self.model.compile(optimizer = "sgd", loss = "mse", metrics = [tf.keras.metrics.RootMeanSquaredError()])
+        self.model.compile(optimizer = "sgd", loss = "mse", metrics = [tf.keras.metrics.RootMeanSquaredError(), \
+                tf.keras.metrics.MeanAbsoluteError(), tf.keras.metrics.MeanAbsolutePercentageError(), \
+                tf.keras.metrics.MeanSquaredLogarithmicError(), tf.keras.metrics.CosineSimilarity(), \
+                tf.keras.metrics.LogCoshError()])
 
     
     def evaluate_model(self, X_val, y_val, save_stats=True):
@@ -144,9 +147,16 @@ class regression_CNN():
         predictions = self.model.predict(X_val[:])
         stats = {
             'loss': results[0],
+            'RMSE': results[1],
+            'MAE': results[2],
+            'MAPE': results[3],
+            'MSLE': results[4],
+            'CosSim': results[5],
+            'LogCoshE': results[6],
             'prediction': predictions.tolist(),
             'y_test': y_val.tolist()
         }
+
         dirname_here = os.getcwd()
         if save_stats:
             with open(self.model_name + "_val_data" + '.json', 'w') as f:
@@ -160,6 +170,8 @@ class regression_CNN():
         # Create the plotting object and create all the plots
         plotter = plotting(self.y_test, predictions, self.history, self.model_name, dirname_here + "/plots")
         plotter.loss(cl_or_re="cl", show=True)
+        plotter.rmse(show=True)
+
 
     def train(self, save_model=True):
         """
