@@ -1,53 +1,36 @@
+# These are our labels
 MSSM_neutralino_jet
 MSSM_neutrino_jet
 MSSM_neutralino_monoz
 MSSM_neutrino_monoz
 
-RIGHT NOW WE TAKE:
-    MET: selection_1.py 
-    ETA: selection_4,6,8.py
-    TET: selection_0.py (THT: total hadronic thrust) 
-    (PT: selection_3,5,7.py) 
-
-create one classifier for monoz and one for monojet
-create on regression for monoz and one for monojet
-
-pick leading lepton, better to use both leptons since we are separating 
-monoz and monojet entirely
-Plot TET, see observable
-
-plot ETA(l+[1]) 50 -2.5 2.5
-either lepton is fine since they should be similarly distributed
-
-Consider MT_MET(l+-[1])
-
-In monoz case there are 3 ETA images: z, l-, l+. Which is interesting?
-In monojet case there are 3 ETA images: p, n1, n2
-
-TET and missing transverse are interchangable in our case
-
-We tested running two jobs in parallel, each generating 2 (*3) histograms each. 
-Total used [h]: 0.6. Which means each job took 0.3. Which mean each image took
-0.15. 
-
-In total 4 classes, and we want 10 000 histograms per class. In total 40000 histos.
-
-40 000 * 0.15 = 6000 h. We are limited to 2000 h
-
-Inputs:
-Monojet: TET, PT, ETA (for the jet)
-MonoZ: ETA (for one of the leptons), MT_MET (for one of the leptons), MET, 
-
-define invisible = 1000022
-1000022 neutralino
-1000012 neutrino
-
-
-plot ETA(j)
-
+# Define particles, already defined in MG5 automatically
 p = g u c d s u- c- d- s-
 j = g u c d s u- c- d- s-
 l+ = e+ mu+
 l- = e- mu-
 vl = ve vm vt
 vl- = ve- vm- vt-
+
+# Classifier
+create one classifier for monoz and one for monojet
+create one regression for monoz and one for monojet
+
+# To change plots:
+Edit /crex/proj/mldmuuwp1/Scripts_generate/MSSM_neutralino_jet/Cards/madanalysis5_parton_card.dat
+See observable.py in ...HEPTOOLS/madanalysis5/madanalysis5/madanalysis/observable/observable_list.py
+
+# Monojet
+Inputs: TET, PT(j), ETA(j)
+
+# MonoZ
+Inputs: ETA (for one of the leptons), PT (for one of the leptons), MT_MET (for one of the leptons), MET
+(plot ETA(l+[1]) 50 -2.5 2.5)
+(plot MT_MET(l+-[1]))
+(either lepton is fine since they should be similarly distributed)
+
+# Set invisible to invisible in MG5
+define invisible = 1000022
+1000022 neutralino
+1000012 neutrino
+
