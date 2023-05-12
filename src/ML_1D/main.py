@@ -52,17 +52,18 @@ def arg_parse():
     return args.run, args.type, args.name
 
 
-#---FIXING PATH----------+
-sys.path.append(str(sys.path[0][:-14]))
+#---FIXING DIRNAME-------+
 dirname = os.getcwd()
 dirname = dirname.replace("src/ML_1D","")
-sys.path.insert(1, os.path.join(dirname, "src/data_preparation/data_prep_1D"))
-sys.path.insert(1, os.path.join(dirname, "src/ML_1D/ml_models"))
+current_dir = os.path.dirname(os.path.abspath(__file__))
+parent_dir = os.path.dirname(current_dir)
+sys.path.append(parent_dir)
 
 #---LOCAL IMPORTS--------+
-from classification_bCNN import classification_bCNN
-from regression_CNN import regression_CNN 
-from data_prep_1D import create_sets_from_csv, shuffle_and_create_sets
+from ml_models.classification_bCNN import classification_bCNN
+from ml_models.regression_CNN import regression_CNN
+from data_prep_1D.data_prep_1D_jet import create_sets_from_csv, \
+        shuffle_and_create_sets
 
 #---GLOBALS--------------+
 try:
@@ -163,7 +164,7 @@ def val_regression(data_sets, input_shape, model, img_save_path):
 def main(run_mode, model_type, model_prefix):
     clear()
     # Create all the datasets
-    folder_csv_path = dirname + "src/data_preparation/data_prep_1D/raw_data_all.csv"
+    folder_csv_path = dirname + "src/ML_1D/data_prep_1D/raw_data_all.csv"
     data_sets, input_shape = get_sets(folder_csv_path) 
     X_train, y_train_cl, y_train_re, X_test, y_test_cl, y_test_re, X_val, y_val_cl, y_val_re = data_sets
     cl_data_set = [X_train, y_train_cl, X_test, y_test_cl]
@@ -206,8 +207,5 @@ def main(run_mode, model_type, model_prefix):
 #---RUN CODE-------------+
 if __name__ == "__main__":
     run_mode, model_type, model_prefix = arg_parse()
-    print(run_mode)
-    print(model_type)
-    print(model_prefix)
     main(run_mode, model_type, model_prefix)
 
