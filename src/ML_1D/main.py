@@ -62,7 +62,7 @@ sys.path.append(parent_dir)
 #---LOCAL IMPORTS--------+
 from ml_models.classification_bCNN import classification_bCNN
 from ml_models.regression_CNN import regression_CNN
-from data_prep_1D.data_prep_1D_jet import create_sets_from_csv, \
+from data_prep_1D.data_prep_1D import create_sets_from_csv, \
         shuffle_and_create_sets
 
 #---GLOBALS--------------+
