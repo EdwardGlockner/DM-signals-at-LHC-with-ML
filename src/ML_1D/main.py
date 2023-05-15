@@ -102,6 +102,7 @@ def train_classification(data_sets, input_shape, num_classes, model_prefix):
     """
     if len(data_sets) != 4:
         print(f"Error in function <train_classification>. Expected 4 datasets, got {len(data_sets)}")
+        
 
         
     X_train, y_train, X_test, y_test = data_sets 
@@ -132,7 +133,7 @@ def train_regression(data_sets, input_shape, model_prefix):
     formatted_time = time.strftime("%a_%b_%d_%H:%M:%S", time.localtime(timestamp))
     model_name = model_prefix + "_" + model_name + formatted_time
 
-    model = regression_CNN(X_train, y_train, X_test, y_test, input_shape, model_name)
+    model = regression_CNN(X_train, y_train, y_train, X_test, y_test, y_test, input_shape, model_name)
     model.compile()
     model.train()
 
@@ -158,7 +159,7 @@ def val_regression(data_sets, input_shape, model, img_save_path):
         print(f"Error in function <val_regression>. Expected 2 datasets, got {len(data_sets)}")
 
     X_val, y_val = data_sets
-    model.evaluate_model(X_val, y_val, img_save_path)
+    model.evaluate_model(X_val, y_val, y_val, img_save_path)
 
 #---MAIN-----------------+
 def main(run_mode, model_type, model_prefix):

@@ -79,6 +79,7 @@ def main():
 
         elif (choice_mod == "2"):
             if choice_set == "1":
+                # HERE
                 X_train, y_train, X_test, y_test = create_datasets("mnist")
 
             elif choice_set == "2":
@@ -88,7 +89,7 @@ def main():
             clear()
             print(bar)
             print(f"model on {dataset} dataset")
-            model = CNN_model(X_train, y_train, X_test, y_test)
+            model = CNN_model(X_train, y_train,  y_train, X_test, y_test,  y_test)
             if choice_set == "1":
                 model.compile("model_mnist")
 

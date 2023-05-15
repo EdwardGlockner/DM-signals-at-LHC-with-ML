@@ -30,14 +30,16 @@ network architecture and save the results and statistics of the training and val
 WARNING: The data preparation should be handled outside of this class.
 """
 class regression_CNN():
-    def __init__(self, X_train, y_train, X_test, y_test, input_shape, model_name = "regression_CNN_1D", epochs=1000):
+    def __init__(self, X_train, X_train_cat, y_train, X_test, X_test_cat, y_test, input_shape, model_name = "regression_CNN_1D", epochs=1000):
         """
         Constructor for the regresion_CNN class
 
         @arguments:
             X_train:     <numpy.ndarray>
+            X_train_cat: <>
             y_train:     <tensorflow.python.framework.ops.EagerTensor>
             X_test:      <numpy.ndarray>
+            X_test_cat:  <>
             y_test:      <tensorflow.python.framework.ops.EagerTensor>
             input_shape: <tuple> On the form (width, height, channels)
             model_name:  <string> Given name of the model for plots and saved files.
@@ -46,8 +48,10 @@ class regression_CNN():
             None
         """
         self.X_train = X_train
+        self.X_train_cat = X_train_cat
         self.y_train = y_train
         self.X_test = X_test
+        self.X_test_cat = X_test_cat
         self.y_test = y_test
         self.input_shape = input_shape
         self.model_name = model_name
@@ -67,18 +71,24 @@ class regression_CNN():
         @returns:
             model: <keras.engine.sequential.Sequential> The full bCNN model
         """
+        # Create the model inputs
+        image_input = layers.Input(shape=self.input_shape)
+        categorical_input = layers.Input(shape=(1,))
+
         # Create the model
-        model = models.Sequential()
-        model.add(layers.Conv1D(32, (3), activation= "relu", input_shape = self.input_shape))
-        model.add(layers.MaxPooling1D((2)))
-        model.add(layers.Conv1D(32, (3), activation = "relu"))
-        model.add(layers.BatchNormalization())
-        model.add(layers.MaxPooling1D((2)))
-        model.add(layers.Flatten())
-        model.add(layers.Dense(64, activation = "relu"))
-        model.add(layers.Dense(16, activation = "relu"))
-        model.add(layers.BatchNormalization())
-        model.add(layers.Dense(1, activation = "linear"))
+        conv1 = layers.Conv1D(32, (3), activation= "relu", input_shape = self.input_shape)(image_input)
+        maxpool1 = layers.MaxPooling1D((2))(conv1)
+        conv2 = layers.Conv1D(32, (3), activation = "relu")(maxpool1)
+        norm1 = layers.BatchNormalization()(conv2)
+        maxpool2 = layers.MaxPooling1D((2))(norm1)
+        flatten = layers.Flatten()(maxpool2)
+        concatenated = layers.concatenate([flatten, categorical_input])
+        dense1 = layers.Dense(64, activation = "relu")(concatenated)
+        dense2 = layers.Dense(16, activation = "relu")(dense1)
+        norm2 = layers.BatchNormalization()(dense2)
+        output = layers.Dense(1, activation = "linear")(norm2)
+
+        model = models.Model(inputs=[image_input, categorical_input], outputs=output)
         
         # Print the model architecture and return the model
         if print_sum:
@@ -125,7 +135,7 @@ class regression_CNN():
                 tf.keras.metrics.LogCoshError()])
 
     
-    def evaluate_model(self, X_val, y_val, save_stats=True):
+    def evaluate_model(self, X_val, X_val_cat, y_val, save_stats=True):
         """
         Evaluates the compiled and trained model on a new validation set.
         Creates all the different performance metrics and saves it to a .json file,
@@ -139,7 +149,7 @@ class regression_CNN():
             None
         """
         try:
-            results = self.model.evaluate(X_val, y_val, batch_size=128)
+            results = self.model.evaluate([X_val, X_val_cat], y_val, batch_size=128)
         except OverflowError as e:
             print(f"Error occured in <evaluate_model>. Error: {e}")
             return None
@@ -183,8 +193,8 @@ class regression_CNN():
             None
         """
         # Trains the model
-        self.history = self.model.fit(self.X_train, self.y_train, epochs = self.epochs,
-                            validation_data = (self.X_test, self.y_test), callbacks = [tf.keras.callbacks.EarlyStopping(monitor='val_loss', 
+        self.history = self.model.fit([self.X_train, self.X_train_cat], self.y_train, epochs = self.epochs,
+                            validation_data = ([self.X_test, self.X_test_cat], self.y_test), callbacks = [tf.keras.callbacks.EarlyStopping(monitor='val_loss', 
                                 min_delta=0, 
                                 patience=2, 
                                 verbose=0, 
@@ -202,4 +212,5 @@ class regression_CNN():
 
             except FileNotFoundError as e:
                 print(f"Could not save model as .h5 file. Error: {e}")
+
 

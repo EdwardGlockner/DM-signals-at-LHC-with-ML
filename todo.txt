@@ -9,6 +9,8 @@ TODOS:
     6. Should now be 2000 events per histogram
     (7. Calle (never trust him) has tried to remove all traces of 'neutrino', now 'sneutrino')
     7. Dubbelcheck uppmax_parallel.py so it works with our new changes.
+    8. Fix regression model
+    9. Move ML stuff into uppmax
 
 
 GOAL FOR THE WEEK:

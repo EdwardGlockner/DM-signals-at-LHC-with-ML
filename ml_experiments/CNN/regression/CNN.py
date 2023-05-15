@@ -16,7 +16,7 @@ sys.path.insert(1, os.path.join(dirname, "src/helper_functions"))
 from plotting import plotting
 
 class CNN_model():
-    def __init__(self, X_train, y_train, X_test, y_test, epochs=5):
+    def __init__(self, X_train, X_cat_train, y_train, X_test, X_cat_test, y_test, epochs=5):
         """
         asdfasdf
 
@@ -31,13 +31,17 @@ class CNN_model():
             None
         """
         self.X_train = X_train
+        self.X_cat_train = X_cat_train
         self.y_train = y_train
         self.X_test = X_test
+        self.X_cat_test = X_cat_test
         self.y_test = y_test
         self.epochs = epochs
         self.model = self._create_model()
         self.history = ""
         self.callback = Callback()
+
+        self.categorical_shape = layers.Input(shape=(1,))
 
 
     def _create_model(self):
@@ -50,16 +54,23 @@ class CNN_model():
         @returns:
             None
         """
-        # Add all the layers
-        model = models.Sequential()
-        model.add(layers.Conv2D(32, (3, 3), activation= "relu", input_shape = (28, 28, 1)))
-        model.add(layers.MaxPooling2D((2, 2)))
-        model.add(layers.Flatten())
-        model.add(layers.Dense(1, activation = "linear"))
-        
-        # Print the model architecture and return the model
-        print(model.summary())
+        # Create the model inputs
+        image_input = layers.Input(shape=(28, 28, 1))
+        categorical_input = layers.Input(shape=(1,))
 
+        # Build the CNN model for the image input
+        conv1 = layers.Conv2D(32, (3, 3), activation="relu")(image_input)
+        maxpool1 = layers.MaxPooling2D((2, 2))(conv1)
+        flatten = layers.Flatten()(maxpool1)
+
+        # Concatenate the flattened image features with the categorical input
+        concatenated = layers.concatenate([flatten, categorical_input])
+
+        # Add the final regression layer
+        output = layers.Dense(1, activation="linear")(concatenated)
+
+        # Create the model
+        model = models.Model(inputs=[image_input, categorical_input], outputs=output)
         return model
 
     def compile(self, model_name):
@@ -141,8 +152,8 @@ class CNN_model():
         @returns:
             None
         """
-        self.history = self.model.fit(self.X_train, self.y_train, epochs = 3,
-                            validation_data = (self.X_test, self.y_test), callbacks = [tf.keras.callbacks.EarlyStopping(monitor='val_loss', 
+        self.history = self.model.fit([self.X_train, self.X_cat_train], self.y_train, epochs = 20,
+                            validation_data = ([self.X_test, self.X_cat_test], self.y_test), callbacks = [tf.keras.callbacks.EarlyStopping(monitor='val_loss', 
                                 min_delta=0, 
                                 patience=2, 
                                 verbose=0, 
