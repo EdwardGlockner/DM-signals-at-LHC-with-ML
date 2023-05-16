@@ -71,8 +71,8 @@ def data_augmentation(X_train, y_train, augment_size):
         rotation_range=10,  # Random rotation in the range of [-10, 10] degrees
         width_shift_range=0.1,  # Random horizontal shift by 0.1 of the total width
         height_shift_range=0.1,  # Random vertical shift by 0.1 of the total height
-        zoom_range=0.1,  # Random zoom by 0.1
-        horizontal_flip=True  # Random horizontal flip
+        zoom_range=0.15,  # Random zoom by 0.1
+        channel_shift_range=2
     )
 
     # Generate augmented data
@@ -137,7 +137,7 @@ def shuffle_and_create_sets(X_data, labels, targets, random_seed = 13, print_sha
     y_train_re, y_val_re, y_test_re = targets_shuffled[0:first_split], targets_shuffled[first_split:second_split], targets_shuffled[second_split:]
     
     # Use data augmentation
-    augmented_X_train_cl, augmented_y_train_cl= data_augmentation(X_train, y_train_cl, augment_size=10)
+    augmented_X_train_cl, augmented_y_train_cl= data_augmentation(X_train, y_train_cl, augment_size=1000)
     augmented_y_train_cl = np.ravel(augmented_y_train_cl)
     X_train_cl = np.concatenate((X_train, augmented_X_train_cl))
     y_train_cl = np.concatenate((y_train_cl, augmented_y_train_cl))

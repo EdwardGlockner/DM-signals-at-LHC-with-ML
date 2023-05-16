@@ -78,13 +78,17 @@ class classification_bCNN():
             layers.Conv1D(filters=32, kernel_size=(3), activation= "relu", padding = "VALID", input_shape = self.input_shape),
             layers.MaxPooling1D(pool_size = (2)),
             layers.Conv1D(filters=32, kernel_size=(3), activation = "relu", padding = "VALID"),
+            layers.MaxPooling1D(pool_size = (2)),
+            layers.Conv1D(filters=32, kernel_size=(3), activation = "relu", padding = "VALID"),
             layers.BatchNormalization(),
             layers.MaxPooling1D(pool_size = (2)),
             layers.Flatten(),
             layers.Dense(64, activation="relu"),
+            layers.Dense(32, activation="relu"),
             layers.BatchNormalization(),
             layers.Dropout(.2),
             layers.Dense(16, activation="relu"),
+            layers.Dense(8, activation="relu"),
             layers.Dense(tfpl.OneHotCategorical.params_size(self.num_classes)),
             tfpl.OneHotCategorical(self.num_classes, convert_to_tensor_fn=tfd.Distribution.mode)
         ])
