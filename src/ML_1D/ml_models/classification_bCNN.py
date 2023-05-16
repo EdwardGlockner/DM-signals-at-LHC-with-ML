@@ -7,6 +7,7 @@ import sys
 import os
 import tensorflow_probability as tfp
 from tensorflow.keras import datasets, layers, models
+import numpy as np
 tfd = tfp.distributions
 tfpl = tfp.layers
 import os
@@ -71,6 +72,7 @@ class classification_bCNN():
         ])
         
         augmented_inputs = augmented_dataset(self.X_train)
+        augmented_inputs = np.expand_dims(augmented_inputs, axis=-1)
         self.X_train = tf.concat([self.X_train, augmented_inputs], axis=0)
         self.y_train = tf.concat([self.y_train, self.y_train], axis=0)  # Adjust labels accordingly
 

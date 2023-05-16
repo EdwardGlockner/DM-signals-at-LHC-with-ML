@@ -59,7 +59,10 @@ class regression_CNN():
         self.epochs = epochs
         self.model = self._create_model()
         self.history = ""
-
+    
+        
+        print(self.X_train[10].shape)
+        print(self.X_train_cat[10].shape)
 
     def _create_model(self, print_sum=True):
         """
@@ -203,6 +206,7 @@ class regression_CNN():
                                 baseline=None,
                                 start_from_epoch=5,
                                 restore_best_weights=True)])
+    
         # Save a loadable .h5 file
         if save_model:
             try:

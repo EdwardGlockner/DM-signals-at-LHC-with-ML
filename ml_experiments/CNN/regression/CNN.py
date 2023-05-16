@@ -42,7 +42,11 @@ class CNN_model():
         self.callback = Callback()
 
         self.categorical_shape = layers.Input(shape=(1,))
-
+        
+        print(self.X_train.shape)
+        print(self.X_cat_train.shape)
+        print(self.X_train[10].shape)
+        print(self.X_cat_train[10].shape)
 
     def _create_model(self):
         """

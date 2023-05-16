@@ -89,7 +89,10 @@ def main():
             clear()
             print(bar)
             print(f"model on {dataset} dataset")
-            model = CNN_model(X_train, y_train,  y_train, X_test, y_test,  y_test)
+            
+            fake_X_train_cat = np.array([1 for i in range(len(y_train))])
+
+            model = CNN_model(X_train, fake_X_train_cat, y_train, X_test, y_test,  y_test)
             if choice_set == "1":
                 model.compile("model_mnist")
 
