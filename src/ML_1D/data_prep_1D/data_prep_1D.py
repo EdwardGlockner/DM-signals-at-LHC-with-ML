@@ -1,11 +1,12 @@
 #---IMPORTS----------+
 import numpy as np
 import pandas as pd
-from imblearn.over_sampling import SMOTE
+from keras.preprocessing.image import ImageDataGenerator
 
 #---FUNCTIONS--------+
 
 def create_sets_from_csv(file_path1, file_path2):
+    print("Reading csv files...")
     """
     asdfasdf
 
@@ -60,22 +61,37 @@ def create_sets_from_csv(file_path1, file_path2):
     return input_data, masses, models
 
 
-def SMOTE_cl(X_train, y_train, sampling_strategy=1.0):
-    print(X_train.shape)
+def data_augmentation(X_train, y_train, augment_size):
+    print("Running data augmentation...")
     # Reshape the input data
-    X_train_2d = X_train.reshape(X_train.shape[0], -1)
+    X_train_3d = X_train.reshape(X_train.shape[0], X_train.shape[1], X_train.shape[2], 1)  # Add an additional dimension
 
-    # Apply SMOTE with the desired sampling strategy
-    smote = SMOTE(sampling_strategy=sampling_strategy)
-    X_train_smote, y_train_smote = smote.fit_resample(X_train_2d, y_train)
+    # Create an instance of ImageDataGenerator
+    datagen = ImageDataGenerator(
+        rotation_range=10,  # Random rotation in the range of [-10, 10] degrees
+        width_shift_range=0.1,  # Random horizontal shift by 0.1 of the total width
+        height_shift_range=0.1,  # Random vertical shift by 0.1 of the total height
+        zoom_range=0.1,  # Random zoom by 0.1
+        horizontal_flip=True  # Random horizontal flip
+    )
 
-    # Reshape the SMOTE-resampled data back to 3D
-    X_train_smote = X_train_smote.reshape(X_train_smote.shape[0], X_train.shape[1], X_train.shape[2])
-    print(X_train_smote.shape)
-    return X_train_smote, y_train_smote
+    # Generate augmented data
+    augmented_data = []
+    augmented_labels = []
+    for X_batch, y_batch in datagen.flow(X_train_3d, y_train, batch_size=1, shuffle=False):
+        augmented_data.append(X_batch.squeeze())  # Remove the additional dimension
+        augmented_labels.append(y_batch)
+        if len(augmented_data) >= augment_size:
+            break
 
+    # Convert augmented data and labels to arrays
+    augmented_data = np.array(augmented_data)
+    augmented_labels = np.array(augmented_labels)
+
+    return augmented_data, augmented_labels
 
 def shuffle_and_create_sets(X_data, labels, targets, random_seed = 13, print_shapes = False):
+    print("Creating sets and shuffling data...")
     """
     Shuffles all the images and labels/targets and creates three datasets with a ratio of 0.64:0.16:0.20.
     The training and testing sets are passed to the model in order to train it, while the validation set
@@ -112,7 +128,7 @@ def shuffle_and_create_sets(X_data, labels, targets, random_seed = 13, print_sha
 
     # Create training, validation and testing sets using 0.64:0.16:0.20
     tot_len = len(X_data)
-    first_split = int(tot_len * 0.64)
+    first_split = int(tot_len * 0.70)
     second_split = int(first_split + tot_len * 0.16)
     
     # cl for classification, re for regression
@@ -120,14 +136,19 @@ def shuffle_and_create_sets(X_data, labels, targets, random_seed = 13, print_sha
     y_train_cl, y_val_cl, y_test_cl = labels_shuffled[0:first_split], labels_shuffled[first_split:second_split], labels_shuffled[second_split:]
     y_train_re, y_val_re, y_test_re = targets_shuffled[0:first_split], targets_shuffled[first_split:second_split], targets_shuffled[second_split:]
     
-    # Print the shapes of the resulting arrays
+    # Use data augmentation
+    augmented_X_train_cl, augmented_y_train_cl= data_augmentation(X_train, y_train_cl, augment_size=10)
+    augmented_y_train_cl = np.ravel(augmented_y_train_cl)
+    X_train_cl = np.concatenate((X_train, augmented_X_train_cl))
+    y_train_cl = np.concatenate((y_train_cl, augmented_y_train_cl))
+
     if print_shapes:
         print("Training set shapes: X_train={}, y_train_cl={}, y_train_re={}".format(X_train.shape, y_train_cl.shape, y_train_re.shape))
         print("Validation set shapes: X_val={}, y_val_cl={}, y_val_re={}".format(X_val.shape, y_val_cl.shape, y_val_re.shape))
         print("Testing set shapes: X_test={}, y_test_cl={}, y_test_re={}".format(X_test.shape, y_test_cl.shape, y_test_re.shape))
     
 
-    return [X_train, y_train_cl, X_test, y_test_cl, X_val, y_val_cl], \
+    return [X_train_cl, y_train_cl, X_test, y_test_cl, X_val, y_val_cl], \
             [X_train, y_train_cl, y_train_re, X_test, y_test_cl, y_test_re, \
             X_val, y_val_cl, y_val_re]
 

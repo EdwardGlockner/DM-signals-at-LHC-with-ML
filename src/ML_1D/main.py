@@ -90,8 +90,8 @@ def get_sets(folder_csv_path1, folder_csv_path2):
     X_data, targets, labels = create_sets_from_csv(folder_csv_path1, folder_csv_path2) 
     count_zero = np.count_nonzero(labels == 0)
     count_one = np.count_nonzero(labels == 1)
-    print(f"Number of zeros: {count_zero}")
-    print(f"Number of ones: {count_one}")
+    #print(f"Number of zeros: {count_zero}")
+    #print(f"Number of ones: {count_one}")
 
     cl, re = shuffle_and_create_sets(X_data, labels, targets, print_shapes=False)
     X_train_cl, y_train_cl, X_test_cl, y_test_cl, X_val_cl, y_val_cl = cl
