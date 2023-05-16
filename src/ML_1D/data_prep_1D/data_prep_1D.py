@@ -36,7 +36,7 @@ def create_sets_from_csv(file_path1, file_path2):
     })
     df = pd.concat([df1, df2], axis=0, ignore_index=True)
     # Remove rows that have NaN values
-    df['eta'] = df['pt'].apply(lambda x: [val for val in x if not np.isnan(val)])
+    df['eta'] = df['eta'].apply(lambda x: [val for val in x if not np.isnan(val)])
     df['pt'] = df['pt'].apply(lambda x: [val for val in x if not np.isnan(val)])
     df['tet'] = df['tet'].apply(lambda x: [val for val in x if not np.isnan(val)])
 
@@ -63,6 +63,9 @@ def create_sets_from_csv(file_path1, file_path2):
 
 
 def data_augmentation_cl(X_train, y_train, augment_size):
+    """
+
+    """
     print("Running data augmentation...")
     # Reshape the input data
     X_train_3d = X_train.reshape(X_train.shape[0], X_train.shape[1], X_train.shape[2], 1)  # Add an additional dimension
@@ -143,19 +146,16 @@ def shuffle_and_create_sets(X_data, labels, targets, random_seed = 13, print_sha
     y_train_re, y_val_re, y_test_re = targets_shuffled[0:first_split], targets_shuffled[first_split:second_split], targets_shuffled[second_split:]
     
     # Use data augmentation
-    augmented_X_train_cl, augmented_y_train_cl= data_augmentation_cl(X_train, y_train_cl, augment_size=1000)
+    augmented_X_train_cl, augmented_y_train_cl= data_augmentation_cl(X_train, y_train_cl, augment_size=1)
     augmented_y_train_cl = np.ravel(augmented_y_train_cl)
     X_train_cl = np.concatenate((X_train, augmented_X_train_cl))
     y_train_cl_aug = np.concatenate((y_train_cl, augmented_y_train_cl))
 
-
-    print(X_train_cl.shape, "asdkjfbkjaldsbf")
     X_train = np.array([np.expand_dims(sample, axis=-1) for sample in X_train])
     X_train_cl = np.array([np.expand_dims(sample, axis=-1) for sample in X_train_cl])
     X_test = np.array([np.expand_dims(sample, axis=-1) for sample in X_test])
     X_val = np.array([np.expand_dims(sample, axis=-1) for sample in X_val])
-    print(X_train_cl.shape, "akdjfbakshdfb")
-    print(X_train_cl[10].shape, "asjdhfblakhsdbfkasbdfklb")
+
     return [X_train_cl, y_train_cl_aug, X_test, y_test_cl, X_val, y_val_cl], \
             [X_train, y_train_cl, y_train_re, X_test, y_test_cl, y_test_re, \
             X_val, y_val_cl, y_val_re]

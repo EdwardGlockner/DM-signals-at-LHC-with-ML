@@ -8,6 +8,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 from sklearn.metrics import confusion_matrix, classification_report
 import os
+import numpy as np
 import shutil
 import json
 import sys
@@ -59,10 +60,7 @@ class regression_CNN():
         self.epochs = epochs
         self.model = self._create_model()
         self.history = ""
-    
         
-        print(self.X_train[10].shape)
-        print(self.X_train_cat[10].shape)
 
     def _create_model(self, print_sum=True):
         """
@@ -132,8 +130,14 @@ class regression_CNN():
 
         except FileNotFoundError as e:
             print(f"Could not save image of model architecture. Error: {e}")
-
-        self.model.compile(optimizer = "sgd", loss = "mse", metrics = [tf.keras.metrics.RootMeanSquaredError(), \
+        
+        """
+        self.model.compile(optimizer = tf.keras.optimizers.Adam(learning_rate=0.20), loss = "mse", metrics = [tf.keras.metrics.RootMeanSquaredError(), \
+                tf.keras.metrics.MeanAbsoluteError(), tf.keras.metrics.MeanAbsolutePercentageError(), \
+                tf.keras.metrics.MeanSquaredLogarithmicError(), tf.keras.metrics.CosineSimilarity(), \
+                tf.keras.metrics.LogCoshError()])
+        """
+        self.model.compile(optimizer = tf.keras.optimizers.SGD(learning_rate=0.001), loss = "mse", metrics = [tf.keras.metrics.RootMeanSquaredError(), \
                 tf.keras.metrics.MeanAbsoluteError(), tf.keras.metrics.MeanAbsolutePercentageError(), \
                 tf.keras.metrics.MeanSquaredLogarithmicError(), tf.keras.metrics.CosineSimilarity(), \
                 tf.keras.metrics.LogCoshError()])
@@ -204,7 +208,7 @@ class regression_CNN():
                                 verbose=0, 
                                 mode='auto', 
                                 baseline=None,
-                                start_from_epoch=5,
+                                start_from_epoch=100,
                                 restore_best_weights=True)])
     
         # Save a loadable .h5 file

@@ -5,6 +5,7 @@ import sys
 import time
 import numpy as np
 import os
+from sklearn.gaussian_process import GaussianProcessClassifier
 import argparse
 
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2' # Ignore tensorflow warning
@@ -60,6 +61,7 @@ parent_dir = os.path.dirname(current_dir)
 sys.path.append(parent_dir)
 
 #---LOCAL IMPORTS--------+
+#from ml_models.classification_GPCNN import classification_GPCNN as classification_bCNN
 from ml_models.classification_bCNN import classification_bCNN
 from ml_models.regression_CNN import regression_CNN
 from data_prep_1D.data_prep_1D import create_sets_from_csv, \
@@ -196,7 +198,23 @@ def main(run_mode, model_type, model_prefix):
     re_data_set_val = [X_val_re_hist, X_val_re_cat,  y_val_re]
 
     num_classes = len(np.unique(y_train_cl))
+    # Testing GP
+    model = GaussianProcessClassifier()
     
+    X_train_reshaped = np.reshape(X_train_cl, (X_train_cl.shape[0], -1))
+    X_test_reshaped = np.reshape(X_test_cl, (X_test_cl.shape[0], -1))
+    X_val_reshaped = np.reshape(X_val_cl, (X_val_cl.shape[0], -1))
+    
+    print(X_train_reshaped.shape)
+    model.fit(X_train_reshaped, y_train_cl)
+    y_pred= model.predict(X_test_reshaped)
+    print(y_pred)
+    print(y_test_cl)
+    print("Train:",model.score(X_train_reshaped,y_train_cl))
+    print("Test:",model.score(X_test_reshaped,y_test_cl))
+    print("Val:",model.score(X_val_reshaped,y_val_cl))
+    # END GP
+
     # Train the models
     if model_type == "cl":
         cl_model = train_classification(cl_data_set, input_shape, num_classes, model_prefix)
