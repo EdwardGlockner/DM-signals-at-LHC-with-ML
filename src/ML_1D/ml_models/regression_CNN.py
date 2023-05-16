@@ -58,9 +58,21 @@ class regression_CNN():
         self.input_shape = input_shape
         self.model_name = model_name
         self.epochs = epochs
+        """ 
+        indices = np.where(self.X_train_cat == 0)[0]
+
+        self.X_train = np.delete(self.X_train, indices, axis=0)
+        self.X_train_cat = np.delete(self.X_train_cat, indices, axis=0)
+        self.y_train = np.delete(self.y_train, indices, axis=0)
+
+        indices = np.where(self.X_test_cat == 0)[0]
+
+        self.X_test = np.delete(self.X_test, indices, axis=0)
+        self.X_test_cat = np.delete(self.X_test_cat, indices, axis=0)
+        self.y_test = np.delete(self.y_test, indices, axis=0)
+        """
         self.model = self._create_model()
         self.history = ""
-        
 
     def _create_model(self, print_sum=True):
         """
@@ -156,6 +168,13 @@ class regression_CNN():
         @returns:
             None
         """
+        """
+        indices = np.where(X_val_cat == 0)[0]
+
+        X_val = np.delete(X_val, indices, axis=0)
+        X_val_cat = np.delete(X_val_cat, indices, axis=0)
+        y_val = np.delete(y_val, indices, axis=0)
+        """
         try:
             results = self.model.evaluate([X_val, X_val_cat], y_val, batch_size=128)
         except OverflowError as e:
@@ -208,7 +227,7 @@ class regression_CNN():
                                 verbose=0, 
                                 mode='auto', 
                                 baseline=None,
-                                start_from_epoch=100,
+                                start_from_epoch=8,
                                 restore_best_weights=True)])
     
         # Save a loadable .h5 file

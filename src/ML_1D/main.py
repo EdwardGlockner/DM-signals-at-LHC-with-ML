@@ -205,14 +205,14 @@ def main(run_mode, model_type, model_prefix):
     X_test_reshaped = np.reshape(X_test_cl, (X_test_cl.shape[0], -1))
     X_val_reshaped = np.reshape(X_val_cl, (X_val_cl.shape[0], -1))
     
-    print(X_train_reshaped.shape)
+    #print(X_train_reshaped.shape)
     model.fit(X_train_reshaped, y_train_cl)
     y_pred= model.predict(X_test_reshaped)
-    print(y_pred)
-    print(y_test_cl)
-    print("Train:",model.score(X_train_reshaped,y_train_cl))
-    print("Test:",model.score(X_test_reshaped,y_test_cl))
-    print("Val:",model.score(X_val_reshaped,y_val_cl))
+    #print(y_pred)
+    #print(y_test_cl)
+    #print("Train:",model.score(X_train_reshaped,y_train_cl))
+    #print("Test:",model.score(X_test_reshaped,y_test_cl))
+    #print("Val:",model.score(X_val_reshaped,y_val_cl))
     # END GP
 
     # Train the models
