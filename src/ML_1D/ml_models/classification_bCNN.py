@@ -12,6 +12,7 @@ tfpl = tfp.layers
 import os
 import shutil
 import json
+from keras.utils import to_categorical
 
 #---FIXING PATH----------+
 sys.path.append(str(sys.path[0][:-14]))
@@ -50,9 +51,9 @@ class classification_bCNN():
             None
         """
         self.X_train = X_train
-        self.y_train = y_train
+        self.y_train = to_categorical(y_train, num_classes)
         self.X_test = X_test
-        self.y_test = y_test
+        self.y_test = to_categorical(y_test, num_classes)
         self.input_shape = input_shape
         self.num_classes = num_classes
         self.model_name = model_name
@@ -166,6 +167,7 @@ class classification_bCNN():
         @returns:
             None
         """
+        y_val = to_categorical(y_val, self.num_classes)
         try:
             results = self.model.evaluate(X_val, y_val, batch_size=128)
         except OverflowError as e:
@@ -200,7 +202,6 @@ class classification_bCNN():
         plotter = plotting(self.y_test, predictions, self.history, self.model_name, dirname_here + "/plots")
         plotter.loss(cl_or_re="cl", show=True)
         plotter.accuracy(show=True)
-        plotter.accuracy_zoom(show=True)
         plotter.roc(num_classes = 10, show=True)
 
 

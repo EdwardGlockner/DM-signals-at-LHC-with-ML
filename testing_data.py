@@ -1,10 +1,19 @@
 #---IMPORTS----------+
 import numpy as np
 import pandas as pd
+import os
+import sys
+
+#---FIXING DIRNAME-------+
+dirname = os.getcwd()
+dirname = dirname.replace("","")
+current_dir = os.path.dirname(os.path.abspath(__file__))
+parent_dir = os.path.dirname(current_dir)
+sys.path.append(parent_dir)
 
 #---FUNCTIONS--------+
 
-def create_sets_from_csv(file_path1, file_path2):
+def create_sets_from_csv(file_path):
     """
     asdfasdf
 
@@ -14,28 +23,18 @@ def create_sets_from_csv(file_path1, file_path2):
 
     """
     # Load the CSV file into a pandas DataFrame
-    df1 = pd.read_csv(file_path1, header=None)
-    df2 = pd.read_csv(file_path2, header=None)
+    df = pd.read_csv(file_path, header=None)
+
     # Create a new dataframw with columns, [mass, model, eta, pt, met]
     # model values = {neutralino_jet, 0; neutrino_jet, 1}
-    df1 = pd.DataFrame({
-        'mass': df1.iloc[:, 0],
-        'model': df1.iloc[:, 1],
-        'eta': df1.iloc[:, 2:47].values.tolist(),
-        'pt': df1.iloc[:, 47:92].values.tolist(),
-        'tet': df1.iloc[:, 92:].values.tolist()
+    df =pd.DataFrame({
+        'mass': df.iloc[:, 0],
+        'model': df.iloc[:, 1],
+        'eta': df.iloc[:, 2:47].values.tolist(),
+        'pt': df.iloc[:, 47:92].values.tolist(),
+        'tet': df.iloc[:, 92:].values.tolist()
     })
-    df2 = pd.DataFrame({
-        'mass': df2.iloc[:, 0],
-        'model': df2.iloc[:, 1],
-        'eta': df2.iloc[:, 2:47].values.tolist(),
-        'pt': df2.iloc[:, 47:92].values.tolist(),
-        'tet': df2.iloc[:, 92:].values.tolist()
-    })
-    print(df1.shape)
-    print(df2.shape)
-    df = pd.concat([df1, df2], axis=0, ignore_index=True)
-    print(df.shape)
+    print(f"Before: {df.shape[0]}")
     # Remove rows that have NaN values
     df['eta'] = df['pt'].apply(lambda x: [val for val in x if not np.isnan(val)])
     df['pt'] = df['pt'].apply(lambda x: [val for val in x if not np.isnan(val)])
@@ -98,7 +97,7 @@ def shuffle_and_create_sets(X_data, labels, targets, random_seed = 13, print_sha
     X_data_shuffled = X_data[permutation]
     labels_shuffled = labels[permutation]
     targets_shuffled = targets[permutation]
-
+    
     # Create training, validation and testing sets using 0.64:0.16:0.20
     tot_len = len(X_data)
     first_split = int(tot_len * 0.64)
@@ -118,4 +117,28 @@ def shuffle_and_create_sets(X_data, labels, targets, random_seed = 13, print_sha
     return X_train, y_train_cl, y_train_re, X_test, y_test_cl, y_test_re, X_val, y_val_cl, y_val_re
 
 
+
+###################################################################################################
+def get_sets(folder_csv_path):
+    """
+
+    """
+    X_data, targets, labels = create_sets_from_csv(folder_csv_path) 
+    X_train, y_train_cl, y_train_re, X_test, y_test_cl,\
+            y_test_re, X_val, y_val_cl, y_val_re =\
+            shuffle_and_create_sets(X_data, labels, targets, print_shapes=False)
+
+    input_shape = (X_train.shape[1], X_train.shape[2])
+
+    return [X_train, y_train_cl, y_train_re, X_test, y_test_cl, y_test_re, X_val, y_val_cl, y_val_re], input_shape
+
+
+def main():
+    folder_csv_path = dirname + "/Storage_data/MSSM_sneutrino_jet/norm_amp_array/raw_data_all.csv"
+    #folder_csv_path = dirname + "/Storage_data/MSSM_neutralino_jet/norm_amp_array/raw_data_all.csv"
+    data_sets, input_shape = get_sets(folder_csv_path) 
+    X_train, y_train_cl, y_train_re, X_test, y_test_cl, y_test_re, X_val, y_val_cl, y_val_re = data_sets
+    print(y_train_cl)
+if __name__ == "__main__":
+    main()
 
