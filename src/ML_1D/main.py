@@ -6,6 +6,8 @@ import time
 import numpy as np
 import os
 from sklearn.gaussian_process import GaussianProcessClassifier
+from sklearn.gaussian_process import GaussianProcessRegressor
+from sklearn.gaussian_process.kernels import RBF
 import argparse
 
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2' # Ignore tensorflow warning
@@ -214,7 +216,35 @@ def main(run_mode, model_type, model_prefix):
     #print("Test:",model.score(X_test_reshaped,y_test_cl))
     #print("Val:",model.score(X_val_reshaped,y_val_cl))
     # END GP
+    
+    # Create an instance of GaussianProcessRegressor
+    kernel = RBF()  # You can choose a different kernel if desired
+    model = GaussianProcessRegressor(kernel=kernel)
 
+# Reshape the input data
+    X_train_reshaped = np.reshape(X_train_re_hist, (X_train_re_hist.shape[0], -1))
+    X_test_reshaped = np.reshape(X_test_re_hist, (X_test_re_hist.shape[0], -1))
+    X_val_reshaped = np.reshape(X_val_re_hist, (X_val_re_hist.shape[0], -1))
+
+    X_train_reshaped = np.concatenate((X_train_reshaped, np.reshape(X_train_re_cat, (-1, 1))), axis=1)
+    X_test_reshaped = np.concatenate((X_test_reshaped, np.reshape(X_test_re_cat, (-1, 1))), axis=1)
+    X_val_reshaped = np.concatenate((X_val_reshaped, np.reshape(X_val_re_cat, (-1, 1))), axis=1)
+
+# Fit the model
+    model.fit(X_train_reshaped, y_train_re)
+
+# Make predictions
+    y_pred = model.predict(X_test_reshaped)
+
+# Calculate the score (e.g., R-squared) on the training, test, and validation data
+    train_score = model.score(X_train_reshaped, y_train_re)
+    test_score = model.score(X_test_reshaped, y_test_re)
+    val_score = model.score(X_val_reshaped, y_val_re)
+
+# Print the scores
+    print("Train score:", train_score)
+    print("Test score:", test_score)
+    print("Validation score:", val_score)
     # Train the models
     if model_type == "cl":
         cl_model = train_classification(cl_data_set, input_shape, num_classes, model_prefix)
