@@ -55,7 +55,7 @@ The complementary program *[MadAnalysis](https://launchpad.net/madanalysis5)* en
 The *goal* of this project is to develop a deep learning model that can, to a satisfactory degree of accuracy, determine whether a proton-proton collision resulted in the production of a dark matter candidate particle. If true, the model outputs a prediction of the mass of the dark matter candidate particle. Both the classification and mass regression models are realized using a Convolutional Neural Newtwork (CNN) and a Bayesian CNN
 
 ### Event Generation
-In context of the LHC, an *event* is the collision of two particles at high energy, and the aftermath that follows. MadGraph enables the generation and manipulation of events, calculation of *[cross sections]*(https://en.wikipedia.org/wiki/Cross_section_(physics)) and sophisticated analyzing of event files with MadAnalysis. Using these programs, histograms of quantities such as Missing Transverse Energy (MET), Transverse Momentum (PT), [Pseudorapidity](https://en.wikipedia.org/wiki/Pseudorapidity) ($\eta$) can be obtained. From these a deep learning model can be trained.
+In context of the LHC, an *event* is the collision of two particles at high energy, and the aftermath that follows. MadGraph enables the generation and manipulation of events, calculation of *[cross sections](https://en.wikipedia.org/wiki/Cross_section_(physics))* and sophisticated analyzing of event files with MadAnalysis. Using these programs, histograms of quantities such as Missing Transverse Energy (MET), Transverse Momentum (PT), [Pseudorapidity](https://en.wikipedia.org/wiki/Pseudorapidity) ($\eta$) can be obtained. From these a deep learning model can be trained.
 
 
 ### Deep Learning
@@ -99,8 +99,6 @@ Install the necessary libraries by running the `install.py`. The python version 
 ```bash
   python install.py -v <python-version>
 ```
-
-and navigate to one of the assignment folders. Open the folder in MATLAB. Drag the helper functions to the same directory as the .mlx file and run the live script. If you don't have the ability to run MATLAB, you can see the .pdf-files.
 
 ---
 <!-- Contact -->
