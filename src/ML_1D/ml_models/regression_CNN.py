@@ -31,7 +31,7 @@ network architecture and save the results and statistics of the training and val
 WARNING: The data preparation should be handled outside of this class.
 """
 class regression_CNN():
-    def __init__(self, X_train, X_train_cat, y_train, X_test, X_test_cat, y_test, input_shape, num_classes, model_name = "regression_CNN_1D", epochs=1000):
+    def __init__(self, X_train, X_train_cat, y_train, X_test, X_test_cat, y_test, input_shape, model_name = "regression_CNN_1D", epochs=1000):
         """
         Constructor for the regresion_CNN class
 
@@ -49,13 +49,12 @@ class regression_CNN():
             None
         """
         self.X_train = X_train
-        self.X_train_cat = to_categorical(X_train_cat, num_classes)
+        self.X_train_cat = X_train_cat
         self.y_train = y_train
         self.X_test = X_test
-        self.X_test_cat = (X_test_cat, num_classes)
+        self.X_test_cat = X_test_cat
         self.y_test = y_test
         self.input_shape = input_shape
-        self.num_classes = num_classes
         self.model_name = model_name
         self.epochs = epochs
         self.model = self._create_model()
@@ -150,7 +149,6 @@ class regression_CNN():
         @returns:
             None
         """
-        X_val_cat = to_categorical(X_val_cat, self.num_classes)
         try:
             results = self.model.evaluate([X_val, X_val_cat], y_val, batch_size=128)
         except OverflowError as e:

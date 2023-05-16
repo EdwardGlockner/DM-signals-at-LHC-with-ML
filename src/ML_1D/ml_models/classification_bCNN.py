@@ -167,9 +167,9 @@ class classification_bCNN():
         @returns:
             None
         """
-        y_val = to_categorical(y_val, self.num_classes)
+        y_val_encode = to_categorical(y_val, self.num_classes)
         try:
-            results = self.model.evaluate(X_val, y_val, batch_size=128)
+            results = self.model.evaluate(X_val, y_val_encode, batch_size=128)
         except OverflowError as e:
             print(f"Error occured in <evaluate_model>. Error: {e}")
             return None
@@ -199,10 +199,10 @@ class classification_bCNN():
                 print(f"Could not save validation statistics. Error: {e}")
        
         # Create the plotting object and create all the plots
-        plotter = plotting(self.y_test, predictions, self.history, self.model_name, dirname_here + "/plots")
+        plotter = plotting(y_val_encode, predictions, self.history, self.model_name, dirname_here + "/plots")
         plotter.loss(cl_or_re="cl", show=True)
         plotter.accuracy(show=True)
-        plotter.roc(num_classes = 10, show=True)
+        plotter.roc(num_classes = self.num_classes, show=True)
 
 
     def train(self, save_model=True):

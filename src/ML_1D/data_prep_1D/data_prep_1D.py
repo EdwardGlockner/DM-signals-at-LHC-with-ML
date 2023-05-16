@@ -1,6 +1,7 @@
 #---IMPORTS----------+
 import numpy as np
 import pandas as pd
+from imblearn.over_sampling import SMOTE
 
 #---FUNCTIONS--------+
 
@@ -32,10 +33,7 @@ def create_sets_from_csv(file_path1, file_path2):
         'pt': df2.iloc[:, 47:92].values.tolist(),
         'tet': df2.iloc[:, 92:].values.tolist()
     })
-    print(df1.shape)
-    print(df2.shape)
     df = pd.concat([df1, df2], axis=0, ignore_index=True)
-    print(df.shape)
     # Remove rows that have NaN values
     df['eta'] = df['pt'].apply(lambda x: [val for val in x if not np.isnan(val)])
     df['pt'] = df['pt'].apply(lambda x: [val for val in x if not np.isnan(val)])
@@ -45,7 +43,6 @@ def create_sets_from_csv(file_path1, file_path2):
     df = df[df['pt'].str.len() > 0]
     df = df[df['tet'].str.len() > 0]
 
-    print(f"After: {df.shape[0]}") 
     # Create separate arrays
     masses = df["mass"].values
     models = df["model"].values
@@ -61,6 +58,21 @@ def create_sets_from_csv(file_path1, file_path2):
     input_data  = np.concatenate([eta_vals[..., np.newaxis], pt_vals[..., np.newaxis], tet_vals[..., np.newaxis]], axis=2)
 
     return input_data, masses, models
+
+
+def SMOTE_cl(X_train, y_train, sampling_strategy=1.0):
+    print(X_train.shape)
+    # Reshape the input data
+    X_train_2d = X_train.reshape(X_train.shape[0], -1)
+
+    # Apply SMOTE with the desired sampling strategy
+    smote = SMOTE(sampling_strategy=sampling_strategy)
+    X_train_smote, y_train_smote = smote.fit_resample(X_train_2d, y_train)
+
+    # Reshape the SMOTE-resampled data back to 3D
+    X_train_smote = X_train_smote.reshape(X_train_smote.shape[0], X_train.shape[1], X_train.shape[2])
+    print(X_train_smote.shape)
+    return X_train_smote, y_train_smote
 
 
 def shuffle_and_create_sets(X_data, labels, targets, random_seed = 13, print_shapes = False):
@@ -83,7 +95,6 @@ def shuffle_and_create_sets(X_data, labels, targets, random_seed = 13, print_sha
         X_val:   <numpy.ndarray> Used for validation after the model is trained. Contains 20 % of the data
         y_val:   <numpy.ndarray> Used for validation after the model is trained. Contains 20 % of the data
     """
-
     # Check if all arrays have the same length as the first array
     same_length = np.all(np.array([len(X_data), len(labels), len(targets)]) == len(X_data))
 
@@ -115,7 +126,10 @@ def shuffle_and_create_sets(X_data, labels, targets, random_seed = 13, print_sha
         print("Validation set shapes: X_val={}, y_val_cl={}, y_val_re={}".format(X_val.shape, y_val_cl.shape, y_val_re.shape))
         print("Testing set shapes: X_test={}, y_test_cl={}, y_test_re={}".format(X_test.shape, y_test_cl.shape, y_test_re.shape))
     
-    return X_train, y_train_cl, y_train_re, X_test, y_test_cl, y_test_re, X_val, y_val_cl, y_val_re
+
+    return [X_train, y_train_cl, X_test, y_test_cl, X_val, y_val_cl], \
+            [X_train, y_train_cl, y_train_re, X_test, y_test_cl, y_test_re, \
+            X_val, y_val_cl, y_val_re]
 
 
 

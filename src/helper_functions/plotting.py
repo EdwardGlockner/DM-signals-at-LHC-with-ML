@@ -214,7 +214,7 @@ class plotting():
                  color='navy', linestyle=':', linewidth=4)
 
         colors = cycle(['aqua', 'darkorange', 'cornflowerblue'])
-        for i, color in zip(range(10), colors):
+        for i, color in zip(range(num_classes), colors):
             plt.plot(fpr[i], tpr[i], color=color, lw=lw,
                      label='ROC curve of class {0} (area = {1:0.2f})'
                      ''.format(i, roc_auc[i]))
