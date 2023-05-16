@@ -60,8 +60,21 @@ class classification_bCNN():
         self.epochs = epochs  
         self.model = self._create_model()
         self.history = None
-
+        print(self.X_train.shape)
+        self.data_augmentation()
+        print(self.X_train.shape)
     
+
+    def data_augmentation(self):
+        augmented_dataset = tf.keras.Sequential([
+            tf.keras.layers.GaussianNoise(stddev=30, input_shape=self.input_shape)
+        ])
+        
+        augmented_inputs = augmented_dataset(self.X_train)
+        self.X_train = tf.concat([self.X_train, augmented_inputs], axis=0)
+        self.y_train = tf.concat([self.y_train, self.y_train], axis=0)  # Adjust labels accordingly
+
+
     def _create_model(self, print_sum=True):
         """
         Hidden method, used for creating the bCNN model.
@@ -88,7 +101,6 @@ class classification_bCNN():
             layers.BatchNormalization(),
             layers.Dropout(.2),
             layers.Dense(16, activation="relu"),
-            layers.Dense(8, activation="relu"),
             layers.Dense(tfpl.OneHotCategorical.params_size(self.num_classes)),
             tfpl.OneHotCategorical(self.num_classes, convert_to_tensor_fn=tfd.Distribution.mode)
         ])
@@ -172,6 +184,7 @@ class classification_bCNN():
             None
         """
         y_val_encode = to_categorical(y_val, self.num_classes)
+
         try:
             results = self.model.evaluate(X_val, y_val_encode, batch_size=128)
         except OverflowError as e:

@@ -99,7 +99,7 @@ def get_sets(folder_csv_path1, folder_csv_path2):
             y_test_re, X_val_re_hist, X_val_re_cat, y_val_re = re
 
     input_shape = (X_train_cl.shape[1], X_train_cl.shape[2])
-
+    
     return [X_train_cl, y_train_cl, X_test_cl, y_test_cl, X_val_cl, y_val_cl], \
             [X_train_re_hist, X_train_re_cat, y_train_re, X_test_re_hist, X_test_re_cat, \
             y_test_re, X_val_re_hist, X_val_re_cat, y_val_re], input_shape
@@ -111,8 +111,7 @@ def train_classification(data_sets, input_shape, num_classes, model_prefix):
     """
     if len(data_sets) != 4:
         print(f"Error in function <train_classification>. Expected 4 datasets, got {len(data_sets)}")
-        
-
+        return
         
     X_train, y_train, X_test, y_test = data_sets 
 
@@ -132,17 +131,18 @@ def train_regression(data_sets, input_shape, model_prefix):
     """
 
     """
-    if len(data_sets) != 4:
+    if len(data_sets) != 6:
         print(f"Error in function <train_regression>. Expected 4 datasts, got {len(data_sets)}")
+        return
 
-    X_train, X_train_cl, y_train, X_test, X_test_cl, y_test = data_sets
+    X_train_hist, X_train_cat, y_train, X_test_hist, X_test_cat, y_test = data_sets
 
-    model_name = "regression_CNN_1D"
+    model_name = "regression_CNN_1D_"
     timestamp = time.time()
     formatted_time = time.strftime("%a_%b_%d_%H:%M:%S", time.localtime(timestamp))
     model_name = model_prefix + "_" + model_name + formatted_time
 
-    model = regression_CNN(X_train, X_train_cl, y_train, X_test, X_test_cl, y_test, input_shape, model_name)
+    model = regression_CNN(X_train_hist, X_train_cat, y_train, X_test_hist, X_test_cat, y_test, input_shape, model_name)
     model.compile()
     model.train()
 
@@ -155,6 +155,7 @@ def val_classification(data_sets, input_shape, num_classes, model, img_save_path
     """
     if len(data_sets) != 2:
         print(f"Error in function <val_classification>. Expected 2 datasets, got {len(data_sets)}")
+        return
     
     X_val, y_val = data_sets
     model.evaluate_model(X_val, y_val, img_save_path)
@@ -164,8 +165,9 @@ def val_regression(data_sets, input_shape, model, img_save_path):
     """
 
     """
-    if len(data_sets) != 2:
+    if len(data_sets) != 3:
         print(f"Error in function <val_regression>. Expected 2 datasets, got {len(data_sets)}")
+        return
 
     X_val_hist, X_val_cat, y_val = data_sets
     model.evaluate_model(X_val_hist, X_val_cat, y_val, img_save_path)
@@ -181,12 +183,11 @@ def main(run_mode, model_type, model_prefix):
     neutralino_z_path = dirname + "/Storage_data/MSSM_neutralino_z/norm_amp_array/raw_data_all.csv"
 
     data_set_cl, data_set_re, input_shape = get_sets(sneutrino_jet_path, neutralino_jet_path) 
+
     X_train_cl, y_train_cl, X_test_cl, y_test_cl, X_val_cl, y_val_cl = data_set_cl
     X_train_re_hist, X_train_re_cat, y_train_re, X_test_re_hist, X_test_re_cat, \
             y_test_re, X_val_re_hist, X_val_re_cat, y_val_re = data_set_re
     
-
-
     cl_data_set = [X_train_cl, y_train_cl, X_test_cl, y_test_cl]
     re_data_set = [X_train_re_hist, X_train_re_cat, y_train_re, X_test_re_hist, \
             X_test_re_cat,  y_test_re]

@@ -61,7 +61,7 @@ def create_sets_from_csv(file_path1, file_path2):
     return input_data, masses, models
 
 
-def data_augmentation(X_train, y_train, augment_size):
+def data_augmentation_cl(X_train, y_train, augment_size):
     print("Running data augmentation...")
     # Reshape the input data
     X_train_3d = X_train.reshape(X_train.shape[0], X_train.shape[1], X_train.shape[2], 1)  # Add an additional dimension
@@ -89,6 +89,11 @@ def data_augmentation(X_train, y_train, augment_size):
     augmented_labels = np.array(augmented_labels)
 
     return augmented_data, augmented_labels
+
+
+def dat_augmentation_re(X_train_hist, y_train, augment_size):
+    return
+
 
 def shuffle_and_create_sets(X_data, labels, targets, random_seed = 13, print_shapes = False):
     print("Creating sets and shuffling data...")
@@ -137,18 +142,13 @@ def shuffle_and_create_sets(X_data, labels, targets, random_seed = 13, print_sha
     y_train_re, y_val_re, y_test_re = targets_shuffled[0:first_split], targets_shuffled[first_split:second_split], targets_shuffled[second_split:]
     
     # Use data augmentation
-    augmented_X_train_cl, augmented_y_train_cl= data_augmentation(X_train, y_train_cl, augment_size=1000)
+    augmented_X_train_cl, augmented_y_train_cl= data_augmentation_cl(X_train, y_train_cl, augment_size=5000)
     augmented_y_train_cl = np.ravel(augmented_y_train_cl)
     X_train_cl = np.concatenate((X_train, augmented_X_train_cl))
-    y_train_cl = np.concatenate((y_train_cl, augmented_y_train_cl))
+    y_train_cl_aug = np.concatenate((y_train_cl, augmented_y_train_cl))
 
-    if print_shapes:
-        print("Training set shapes: X_train={}, y_train_cl={}, y_train_re={}".format(X_train.shape, y_train_cl.shape, y_train_re.shape))
-        print("Validation set shapes: X_val={}, y_val_cl={}, y_val_re={}".format(X_val.shape, y_val_cl.shape, y_val_re.shape))
-        print("Testing set shapes: X_test={}, y_test_cl={}, y_test_re={}".format(X_test.shape, y_test_cl.shape, y_test_re.shape))
-    
 
-    return [X_train_cl, y_train_cl, X_test, y_test_cl, X_val, y_val_cl], \
+    return [X_train_cl, y_train_cl_aug, X_test, y_test_cl, X_val, y_val_cl], \
             [X_train, y_train_cl, y_train_re, X_test, y_test_cl, y_test_re, \
             X_val, y_val_cl, y_val_re]
 

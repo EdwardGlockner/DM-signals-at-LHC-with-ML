@@ -155,7 +155,7 @@ class regression_CNN():
             print(f"Error occured in <evaluate_model>. Error: {e}")
             return None
 
-        predictions = self.model.predict(X_val[:])
+        predictions = self.model.predict([X_val[:], X_val_cat[:]])
         stats = {
             'loss': results[0],
             'RMSE': results[1],
