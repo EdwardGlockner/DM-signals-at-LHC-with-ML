@@ -67,7 +67,7 @@ from data_prep_1D.data_prep_1D import create_sets_from_csv, \
 
 #---GLOBALS--------------+
 try:
-    if sys.platform in ["darwin", "linux", "linux2"]: #macOS
+    if sys.platform in ["darwin", "linux", "linux2"]: #macOS, Linux
         clear = lambda: os.system("clear")
 
     elif sys.platform in ["win32", "win64"]: #windows
