@@ -1,1 +1,15 @@
-Analysera vilka klasser och vilka massor där modellerna är bäst
+
+Todo in src:
+    1. Analysera vilka klasser och ilka massor där modellerna är bäst och sämst. (Diskutera varför i rapporten)
+    1.5 Gör en analys av bayesian CNN, analysera sannolikheterna och de olika klasserna. Finns en bra medium.com inlägg för detta. Snyggt för rapporten samt ger förståelse för modellen.
+    2. Plotta snyggare plottar (använd calles mallar)
+    3. Fixa och experimentera med data augmentation. Undersök vilka som är relevanta för oss (se Yong Shengs mail). Samt undersök hur många vi kan använda.
+    4. Implementera grid search för learning rate (eftersom modellerna är väldigt känsliga för detta). Går att göra en wrapper i tensorflow för sk-learns gridsearch.
+    5. Fixa allt hopp i classification:
+        Möjliga anledningar och lösningar
+        5.1 Debugga data preparation (både i den råa datan, data_prep filen samt hur modellerna och main.py använder datan)
+        5.2 Debugga om det har med optimizers att göra (prova olika och olika learning rate). (Personligen (Edward) tror jag att det är detta som är problemet)
+        5.3 Undersök om det har med complexiteten i modellen att göra (för komplex, för lite komplex).
+        5.4 Undersök olika regularization techniques (kan vara att den overfittar/underfittar
+    6. Implementera en Gaussian Process för regression. Den funkar inte och behövs skrivas om.
+
