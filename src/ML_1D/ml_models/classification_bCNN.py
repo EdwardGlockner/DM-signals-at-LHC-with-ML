@@ -90,18 +90,18 @@ class classification_bCNN():
         model = models.Sequential([
             layers.Conv1D(filters=32, kernel_size=(3), activation= "relu", padding = "VALID", input_shape = self.input_shape),
             layers.MaxPooling1D(pool_size = (2)),
-            layers.Conv1D(filters=32, kernel_size=(3), activation = "relu", padding = "VALID"),
-            layers.MaxPooling1D(pool_size = (2)),
-            layers.Conv1D(filters=32, kernel_size=(3), activation = "relu", padding = "VALID"),
-            layers.BatchNormalization(),
-            layers.MaxPooling1D(pool_size = (2)),
+            #layers.Conv1D(filters=32, kernel_size=(3), activation = "relu", padding = "VALID"),
+            #layers.MaxPooling1D(pool_size = (2)),
+            #layers.Conv1D(filters=32, kernel_size=(3), activation = "relu", padding = "VALID"),
+            #layers.BatchNormalization(),
+            #layers.MaxPooling1D(pool_size = (2)),
             layers.Flatten(),
-            layers.Dense(64, activation="relu"),
-            layers.Dense(32, activation="relu"),
+            #layers.Dense(64, activation="relu"),
+            #layers.Dense(32, activation="relu"),
             layers.BatchNormalization(),
-            layers.Dropout(.2),
-            layers.Dense(16, activation="relu"),
+            layers.Dense(8, activation="relu"),
             layers.Dense(tfpl.OneHotCategorical.params_size(self.num_classes)),
+            layers.Dropout(.2),
             tfpl.OneHotCategorical(self.num_classes, convert_to_tensor_fn=tfd.Distribution.mode)
         ])
 
@@ -143,10 +143,10 @@ class classification_bCNN():
             tf.keras.utils.plot_model(
                 self.model,
                 to_file=self.model_name + '.png',
-                show_shapes=True,
+                show_shapes=False,
                 show_dtype=False,
-                show_layer_names=True,
-                rankdir='TB',
+                show_layer_names=False,
+                rankdir="LR",
                 expand_nested=False,
                 dpi=96,
                 layer_range=None,
@@ -186,7 +186,7 @@ class classification_bCNN():
         y_val_encode = to_categorical(y_val, self.num_classes)
 
         try:
-            results = self.model.evaluate(X_val, y_val_encode, batch_size=128)
+            results = self.model.evaluate(X_val, y_val_encode, batch_size=64)
         except OverflowError as e:
             print(f"Error occured in <evaluate_model>. Error: {e}")
             return None
@@ -232,15 +232,15 @@ class classification_bCNN():
             None
         """
         # Trains the model
-        self.history = self.model.fit(self.X_train, self.y_train, epochs = self.epochs,
+        self.history = self.model.fit(self.X_train, self.y_train, epochs = self.epochs, batch_size=32,
                             validation_data = (self.X_test, self.y_test), callbacks = [tf.keras.callbacks.EarlyStopping(monitor='val_loss', 
                                 min_delta=0, 
-                                patience=1, 
+                                patience=2, 
                                 verbose=0, 
                                 mode='auto', 
                                 baseline=None,
                                 restore_best_weights=True,
-                                start_from_epoch=7)])
+                                start_from_epoch=100)])
 
         # Save a loadable .h5 file   
         if save_model:

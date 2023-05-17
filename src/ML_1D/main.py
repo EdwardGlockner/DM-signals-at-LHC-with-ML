@@ -68,6 +68,8 @@ from data_prep_1D.data_prep_1D import create_sets_from_csv, \
         shuffle_and_create_sets
 
 #---GLOBALS--------------+
+np.set_printoptions(threshold=np.inf)
+
 try:
     if sys.platform in ["darwin", "linux", "linux2"]: #macOS, Linux
         clear = lambda: os.system("clear")
@@ -85,13 +87,13 @@ bar = "+---------------------+"
 
 
 #---FUNCTIONS------------+
-def get_sets(folder_csv_path1, folder_csv_path2):
+def get_sets(*folder_csv_path):
     """
 
     """
-    X_data, targets, labels = create_sets_from_csv(folder_csv_path1, folder_csv_path2) 
-    count_zero = np.count_nonzero(labels == 0)
-    count_one = np.count_nonzero(labels == 1)
+    X_data, targets, labels = create_sets_from_csv(*folder_csv_path) 
+    #count_zero = np.count_nonzero(labels == 0)
+    #count_one = np.count_nonzero(labels == 1)
     #print(f"Number of zeros: {count_zero}")
     #print(f"Number of ones: {count_one}")
 
@@ -99,9 +101,14 @@ def get_sets(folder_csv_path1, folder_csv_path2):
     X_train_cl, y_train_cl, X_test_cl, y_test_cl, X_val_cl, y_val_cl = cl
     X_train_re_hist, X_train_re_cat, y_train_re, X_test_re_hist, X_test_re_cat, \
             y_test_re, X_val_re_hist, X_val_re_cat, y_val_re = re
-
-    input_shape = (X_train_cl.shape[1], X_train_cl.shape[2])
     
+    input_shape = (X_train_cl.shape[1], X_train_cl.shape[2])
+    #print(np.count_nonzero(y_train_cl == 0))
+    #print(np.count_nonzero(y_train_cl == 1))
+    #print(np.count_nonzero(y_test_cl == 0))
+    #print(np.count_nonzero(y_test_cl == 1))
+    #print(np.count_nonzero(y_val_cl == 0))
+    #print(np.count_nonzero(y_val_cl == 1))
     return [X_train_cl, y_train_cl, X_test_cl, y_test_cl, X_val_cl, y_val_cl], \
             [X_train_re_hist, X_train_re_cat, y_train_re, X_test_re_hist, X_test_re_cat, \
             y_test_re, X_val_re_hist, X_val_re_cat, y_val_re], input_shape
@@ -222,11 +229,14 @@ def main(run_mode, model_type, model_prefix):
     clear()
     # Create all the datasets
     sneutrino_jet_path = dirname + "/Storage_data/MSSM_sneutrino_jet/norm_amp_array/raw_data_all.csv"
+    sneutrino_jet_path2 = dirname + "/Storage_data/MSSM_sneutrino_jet/data_all.csv"
     neutralino_jet_path = dirname + "/Storage_data/MSSM_neutralino_jet/norm_amp_array/raw_data_all.csv"
+    neutralino_jet_path2 = dirname + "/Storage_data/MSSM_neutralino_jet/data_all.csv"
     sneutrino_z_path = dirname + "/Storage_data/MSSM_neutralino_z/norm_amp_array/raw_data_all.csv"
     neutralino_z_path = dirname + "/Storage_data/MSSM_neutralino_z/norm_amp_array/raw_data_all.csv"
 
-    data_set_cl, data_set_re, input_shape = get_sets(sneutrino_jet_path, neutralino_jet_path) 
+    data_set_cl, data_set_re, input_shape = get_sets(sneutrino_jet_path, \
+            sneutrino_jet_path2, neutralino_jet_path, neutralino_jet_path2) 
 
     X_train_cl, y_train_cl, X_test_cl, y_test_cl, X_val_cl, y_val_cl = data_set_cl
     X_train_re_hist, X_train_re_cat, y_train_re, X_test_re_hist, X_test_re_cat, \
@@ -245,22 +255,22 @@ def main(run_mode, model_type, model_prefix):
     if model_type == "cl":
         cl_model = train_classification(cl_data_set, input_shape, num_classes, model_prefix)
         # Run Gaussian Process
-        #GP_classification([X_train_cl, y_train_cl, X_test_cl, y_test_cl, X_val_cl, y_val_cl])
+        GP_classification([X_train_cl, y_train_cl, X_test_cl, y_test_cl, X_val_cl, y_val_cl])
 
     elif model_type == "re":
         re_model = train_regression(re_data_set, input_shape, model_prefix) 
         # Run Gaussian Process
-        #GP_regression([X_train_re_hist, X_train_re_cat, y_train_re, X_test_re_hist, \
-        #        X_test_re_cat, y_test_re, X_val_re_hist, X_val_re_cat, y_val_re])
+        GP_regression([X_train_re_hist, X_train_re_cat, y_train_re, X_test_re_hist, \
+                X_test_re_cat, y_test_re, X_val_re_hist, X_val_re_cat, y_val_re])
 
     elif model_type == "clre":
         cl_model = train_classification(cl_data_set, input_shape, num_classes, model_prefix)
         re_model = train_regression(re_data_set, input_shape, model_prefix) 
 
         # Run Gaussian Process
-        #GP_classification([X_train_cl, y_train_cl, X_test_cl, y_test_cl, X_val_cl, y_val_cl])
-        #GP_regression([X_train_re_hist, X_train_re_cat, y_train_re, X_test_re_hist, \
-        #        X_test_re_cat, y_test_re, X_val_re_hist, X_val_re_cat, y_val_re])
+        GP_classification([X_train_cl, y_train_cl, X_test_cl, y_test_cl, X_val_cl, y_val_cl])
+        GP_regression([X_train_re_hist, X_train_re_cat, y_train_re, X_test_re_hist, \
+                X_test_re_cat, y_test_re, X_val_re_hist, X_val_re_cat, y_val_re])
 
 
     else:

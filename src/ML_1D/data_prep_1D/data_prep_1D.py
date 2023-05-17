@@ -2,6 +2,8 @@
 import numpy as np
 import pandas as pd
 from keras.preprocessing.image import ImageDataGenerator
+import random
+from datetime import datetime
 
 #---FUNCTIONS--------+
 
@@ -54,6 +56,7 @@ def create_sets_from_csv(*file_paths):
     tet_vals = np.array([np.array(sublist) for sublist in tet_vals])
     # Concatenate into three channels
     input_data  = np.concatenate([eta_vals[..., np.newaxis], pt_vals[..., np.newaxis], tet_vals[..., np.newaxis]], axis=2)
+
     return input_data, masses, models
 
 
@@ -94,7 +97,7 @@ def dat_augmentation_re(X_train_hist, y_train, augment_size):
     return
 
 
-def shuffle_and_create_sets(X_data, labels, targets, random_seed = 13, print_shapes = False):
+def shuffle_and_create_sets(X_data, labels, targets, print_shapes = False):
     print("Creating sets and shuffling data...")
     """
     Shuffles all the images and labels/targets and creates three datasets with a ratio of 0.64:0.16:0.20.
@@ -105,7 +108,6 @@ def shuffle_and_create_sets(X_data, labels, targets, random_seed = 13, print_sha
         X_data:    <numpy.ndarray> Array of all the input data stored in 3 channels.
         labels: <numpy.ndarray> Array of class labels for classification
         targets: <numpy.ndarray> Array of target values for regression
-        random_seed:     <int> Random seed for the shuffling
         print_shapes:    <bool> Whether to print the shapes of the sets or not
     @returns:
         X_train: <numpy.ndarray> Contains 64 % of the data
@@ -123,25 +125,32 @@ def shuffle_and_create_sets(X_data, labels, targets, random_seed = 13, print_sha
         return [], [], [], [], [], []
     
     # Randomly shuffle the sets
-    np.random.seed(random_seed)
-    permutation = np.random.permutation(len(X_data))
 
+    random.seed(datetime.now().timestamp())
+    np.random.seed(random.randint(0, 100))
+    permutation = np.random.permutation(len(X_data))
+    
     X_data_shuffled = X_data[permutation]
     labels_shuffled = labels[permutation]
     targets_shuffled = targets[permutation]
-
-    # Create training, validation and testing sets using 0.64:0.16:0.20
+    # Create training, validation and testing sets using 0.60:0.20:0.20
     tot_len = len(X_data)
-    first_split = int(tot_len * 0.70)
-    second_split = int(first_split + tot_len * 0.16)
-    
+    first_split = int(tot_len * 0.60)
+    second_split = int(first_split + tot_len * 0.20)
+    print(tot_len)
+    print(first_split)
+    print(second_split)
     # cl for classification, re for regression
     X_train, X_val, X_test = X_data_shuffled[0:first_split], X_data_shuffled[first_split:second_split], X_data_shuffled[second_split:]
     y_train_cl, y_val_cl, y_test_cl = labels_shuffled[0:first_split], labels_shuffled[first_split:second_split], labels_shuffled[second_split:]
     y_train_re, y_val_re, y_test_re = targets_shuffled[0:first_split], targets_shuffled[first_split:second_split], targets_shuffled[second_split:]
-    
+
+    return [X_train, y_train_cl, X_test, y_test_cl, X_val, y_val_cl], \
+            [X_test, y_train_cl, y_train_re, X_test, y_test_cl, y_test_re, \
+            X_val, y_val_cl, y_val_re]
+
     # Use data augmentation
-    augmented_X_train_cl, augmented_y_train_cl= data_augmentation_cl(X_train, y_train_cl, augment_size=200000)
+    augmented_X_train_cl, augmented_y_train_cl= data_augmentation_cl(X_train, y_train_cl, augment_size=0)
     augmented_y_train_cl = np.ravel(augmented_y_train_cl)
     print(y_train_cl.shape, "before")
     X_train_cl = np.concatenate((X_train, augmented_X_train_cl))

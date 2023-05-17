@@ -143,7 +143,6 @@ class regression_CNN():
         except FileNotFoundError as e:
             print(f"Could not save image of model architecture. Error: {e}")
         
-        """
         self.model.compile(optimizer = tf.keras.optimizers.Adam(learning_rate=0.20), loss = "mse", metrics = [tf.keras.metrics.RootMeanSquaredError(), \
                 tf.keras.metrics.MeanAbsoluteError(), tf.keras.metrics.MeanAbsolutePercentageError(), \
                 tf.keras.metrics.MeanSquaredLogarithmicError(), tf.keras.metrics.CosineSimilarity(), \
@@ -153,7 +152,7 @@ class regression_CNN():
                 tf.keras.metrics.MeanAbsoluteError(), tf.keras.metrics.MeanAbsolutePercentageError(), \
                 tf.keras.metrics.MeanSquaredLogarithmicError(), tf.keras.metrics.CosineSimilarity(), \
                 tf.keras.metrics.LogCoshError()])
-
+        """
     
     def evaluate_model(self, X_val, X_val_cat, y_val, save_stats=True):
         """
@@ -227,7 +226,7 @@ class regression_CNN():
                                 verbose=0, 
                                 mode='auto', 
                                 baseline=None,
-                                start_from_epoch=8,
+                                start_from_epoch=20,
                                 restore_best_weights=True)])
     
         # Save a loadable .h5 file
