@@ -66,6 +66,7 @@ from ml_models.GP_cl import classification_GP
 from ml_models.GP_re import regression_GP
 from data_prep_1D.data_prep_1D import create_sets_from_csv, \
         shuffle_and_create_sets
+from data_prep_1D.data_prep_2D_v2 import load_sets
 
 #---GLOBALS--------------+
 np.set_printoptions(threshold=np.inf)
@@ -91,6 +92,7 @@ def get_sets(*folder_csv_path):
     """
 
     """
+    """
     X_data, targets, labels = create_sets_from_csv(*folder_csv_path) 
     #count_zero = np.count_nonzero(labels == 0)
     #count_one = np.count_nonzero(labels == 1)
@@ -112,7 +114,10 @@ def get_sets(*folder_csv_path):
     return [X_train_cl, y_train_cl, X_test_cl, y_test_cl, X_val_cl, y_val_cl], \
             [X_train_re_hist, X_train_re_cat, y_train_re, X_test_re_hist, X_test_re_cat, \
             y_test_re, X_val_re_hist, X_val_re_cat, y_val_re], input_shape
-
+    """
+    cl, re = load_sets()
+    input_shape = cl[0].shape[1], cl[0].shape[2] # Shape of X_train
+    return cl, re, input_shape
 
 def train_classification(data_sets, input_shape, num_classes, model_prefix):
     """

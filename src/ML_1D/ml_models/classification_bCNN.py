@@ -93,7 +93,7 @@ class classification_bCNN():
             #layers.Conv1D(filters=32, kernel_size=(3), activation = "relu", padding = "VALID"),
             #layers.MaxPooling1D(pool_size = (2)),
             #layers.Conv1D(filters=32, kernel_size=(3), activation = "relu", padding = "VALID"),
-            #layers.BatchNormalization(),
+            layers.BatchNormalization(),
             #layers.MaxPooling1D(pool_size = (2)),
             layers.Flatten(),
             #layers.Dense(64, activation="relu"),
@@ -101,7 +101,7 @@ class classification_bCNN():
             layers.BatchNormalization(),
             layers.Dense(8, activation="relu"),
             layers.Dense(tfpl.OneHotCategorical.params_size(self.num_classes)),
-            layers.Dropout(.2),
+            layers.Dropout(.3),
             tfpl.OneHotCategorical(self.num_classes, convert_to_tensor_fn=tfd.Distribution.mode)
         ])
 
@@ -161,7 +161,7 @@ class classification_bCNN():
             print(f"Could not save image of model architecture. Error: {e}")
         
         # Compiles the model
-        self.model.compile(optimizer = "adam",
+        self.model.compile(optimizer = tf.keras.optimizers.Adam(),
                            loss = self.n_ll,
                             metrics = ["accuracy", tf.keras.metrics.AUC(), tf.keras.metrics.Precision(), \
                               tf.keras.metrics.Recall(), tf.keras.metrics.TruePositives(), tf.keras.metrics.TrueNegatives(), \
@@ -232,6 +232,7 @@ class classification_bCNN():
             None
         """
         # Trains the model
+        """
         self.history = self.model.fit(self.X_train, self.y_train, epochs = self.epochs, batch_size=32,
                             validation_data = (self.X_test, self.y_test), callbacks = [tf.keras.callbacks.EarlyStopping(monitor='val_loss', 
                                 min_delta=0, 
@@ -240,7 +241,10 @@ class classification_bCNN():
                                 mode='auto', 
                                 baseline=None,
                                 restore_best_weights=True,
-                                start_from_epoch=100)])
+                                start_from_epoch=30)])
+        """
+        self.history = self.model.fit(self.X_train, self.y_train, epochs = 1000, batch_size=32,
+                            validation_data = (self.X_test, self.y_test))
 
         # Save a loadable .h5 file   
         if save_model:
