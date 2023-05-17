@@ -5,7 +5,7 @@ from keras.preprocessing.image import ImageDataGenerator
 
 #---FUNCTIONS--------+
 
-def create_sets_from_csv(file_path1, file_path2):
+def create_sets_from_csv(*file_paths):
     print("Reading csv files...")
     """
     asdfasdf
@@ -15,26 +15,21 @@ def create_sets_from_csv(file_path1, file_path2):
     @returns:
 
     """
-    # Load the CSV file into a pandas DataFrame
-    df1 = pd.read_csv(file_path1, header=None)
-    df2 = pd.read_csv(file_path2, header=None)
-    # Create a new dataframw with columns, [mass, model, eta, pt, met]
-    # model values = {neutralino_jet, 0; neutrino_jet, 1}
-    df1 = pd.DataFrame({
-        'mass': df1.iloc[:, 0],
-        'model': df1.iloc[:, 1],
-        'eta': df1.iloc[:, 2:47].values.tolist(),
-        'pt': df1.iloc[:, 47:92].values.tolist(),
-        'tet': df1.iloc[:, 92:].values.tolist()
-    })
-    df2 = pd.DataFrame({
-        'mass': df2.iloc[:, 0],
-        'model': df2.iloc[:, 1],
-        'eta': df2.iloc[:, 2:47].values.tolist(),
-        'pt': df2.iloc[:, 47:92].values.tolist(),
-        'tet': df2.iloc[:, 92:].values.tolist()
-    })
-    df = pd.concat([df1, df2], axis=0, ignore_index=True)
+    dfs = []
+    for file_path in file_paths:
+        df_temp = pd.read_csv(file_path, header=None)
+        df_temp = pd.DataFrame({
+            'mass': df_temp.iloc[:, 0],
+            'model': df_temp.iloc[:, 1],
+            'eta': df_temp.iloc[:, 2:47].values.tolist(),
+            'pt': df_temp.iloc[:, 47:92].values.tolist(),
+            'tet': df_temp.iloc[:, 92:].values.tolist()
+            })
+
+        dfs.append(df_temp)
+
+    df = pd.concat(dfs, axis=0, ignore_index=True)
+
     # Remove rows that have NaN values
     df['eta'] = df['eta'].apply(lambda x: [val for val in x if not np.isnan(val)])
     df['pt'] = df['pt'].apply(lambda x: [val for val in x if not np.isnan(val)])

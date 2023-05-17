@@ -1,0 +1,1 @@
+Analysera vilka klasser och vilka massor där modellerna är bäst
