@@ -60,9 +60,10 @@ parent_dir = os.path.dirname(current_dir)
 sys.path.append(parent_dir)
 
 #---LOCAL IMPORTS--------+
-#from ml_models.classification_GPCNN import classification_GPCNN as classification_bCNN
 from ml_models.classification_bCNN import classification_bCNN
 from ml_models.regression_CNN import regression_CNN
+from ml_models.GP_cl import classification_GP
+from ml_models.GP_re import regression_GP
 from data_prep_1D.data_prep_1D import create_sets_from_csv, \
         shuffle_and_create_sets
 
@@ -167,11 +168,53 @@ def val_regression(data_sets, input_shape, model, img_save_path):
 
     """
     if len(data_sets) != 3:
-        print(f"Error in function <val_regression>. Expected 2 datasets, got {len(data_sets)}")
+        print(f"Error in function <val_regression>. Expected 3 datasets, got {len(data_sets)}")
         return
 
     X_val_hist, X_val_cat, y_val = data_sets
     model.evaluate_model(X_val_hist, X_val_cat, y_val, img_save_path)
+
+
+def GP_classification(data_sets):
+    """
+
+    """
+    if len(data_sets) != 6:
+        print(f"Error in function <GP_classification>. Expected 6 datasets, got {len(data_sets)}")
+        return
+
+    X_train, y_train, X_test, y_test, X_val, y_val = data_sets
+
+    model_name = "GP_classification_"
+    timestamp = time.time()
+    formatted_time = time.strftime("%a_%b_%d_%H:%M:%S", time.localtime(timestamp))
+    model_name = model_prefix + "_" + model_name + formatted_time
+
+    GaussProc_cl = classification_GP(X_train, y_train, X_test, y_test, X_val, \
+            y_val, model_name)
+    GaussProc_cl.train()
+    GaussProc_cl.evaluate(print_perf=False)
+
+
+def GP_regression(data_sets):
+    """
+
+    """
+    if len(data_sets) != 9:
+        print(f"Error in function <GP_regression>. Expected 9 datasets, got {len(data_sets)}")
+
+    X_train_hist, X_train_cat, y_train, X_test_hist, X_test_cat, y_test, \
+            X_val_hist, X_val_cat, y_val = data_sets
+
+    model_name = "GP_regression_"
+    timestamp = time.time()
+    formatted_time = time.strftime("%a_%b_%d_%H:%M:%S", time.localtime(timestamp))
+    model_name = model_prefix + "_" + model_name + formatted_time
+
+    GaussProc_re = regression_GP(X_train_hist, X_train_cat, y_train, X_test_hist, \
+            X_test_cat, y_test, X_val_hist, X_val_cat, y_val, model_name)
+    GaussProc_re.train()
+    GaussProc_re.evaluate(print_perf=False)
 
 
 #---MAIN-----------------+
@@ -201,17 +244,29 @@ def main(run_mode, model_type, model_prefix):
     # Train the models
     if model_type == "cl":
         cl_model = train_classification(cl_data_set, input_shape, num_classes, model_prefix)
+        # Run Gaussian Process
+        #GP_classification([X_train_cl, y_train_cl, X_test_cl, y_test_cl, X_val_cl, y_val_cl])
 
     elif model_type == "re":
         re_model = train_regression(re_data_set, input_shape, model_prefix) 
+        # Run Gaussian Process
+        #GP_regression([X_train_re_hist, X_train_re_cat, y_train_re, X_test_re_hist, \
+        #        X_test_re_cat, y_test_re, X_val_re_hist, X_val_re_cat, y_val_re])
 
     elif model_type == "clre":
         cl_model = train_classification(cl_data_set, input_shape, num_classes, model_prefix)
         re_model = train_regression(re_data_set, input_shape, model_prefix) 
 
+        # Run Gaussian Process
+        #GP_classification([X_train_cl, y_train_cl, X_test_cl, y_test_cl, X_val_cl, y_val_cl])
+        #GP_regression([X_train_re_hist, X_train_re_cat, y_train_re, X_test_re_hist, \
+        #        X_test_re_cat, y_test_re, X_val_re_hist, X_val_re_cat, y_val_re])
+
+
     else:
         print("Not a valid model_type. See python main.py -h for help.")
         return
+
     # Validate the models
 
     if run_mode == "trainval":
@@ -225,6 +280,7 @@ def main(run_mode, model_type, model_prefix):
         elif model_type == "clre":
             val_classification(cl_data_set_val, input_shape, num_classes, cl_model, img_save_path)
             val_regression(re_data_set_val, input_shape, re_model, img_save_path)
+    
 
 
 #---RUN CODE-------------+

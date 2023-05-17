@@ -61,9 +61,7 @@ class classification_bCNN():
         self.epochs = epochs  
         self.model = self._create_model()
         self.history = None
-        print(self.X_train.shape)
-        self.data_augmentation()
-        print(self.X_train.shape)
+        #self.data_augmentation()
     
 
     def data_augmentation(self):
@@ -242,7 +240,7 @@ class classification_bCNN():
                                 mode='auto', 
                                 baseline=None,
                                 restore_best_weights=True,
-                                start_from_epoch=1)])
+                                start_from_epoch=7)])
 
         # Save a loadable .h5 file   
         if save_model:
