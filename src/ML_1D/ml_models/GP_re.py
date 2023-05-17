@@ -1,69 +1,65 @@
 #---Imports--------------+
 from sklearn.gaussian_process import GaussianProcessRegressor
-from sklearn.gaussian_process.kernels import RBF
+from sklearn.gaussian_process.kernels import RBF, Matern, RationalQuadratic
 import numpy as np
 import os
 import shutil
 import json
-
+import torch
+import gpytorch
+from gpytorch.kernels import RBFKernel, MaternKernel, ScaleKernel
+from gpytorch.models import ExactGP
+from gpytorch.likelihoods import GaussianLikelihood
 
 """
 
 """
-class regression_GP():
-    def __init__(self, X_train_hist, X_train_cat, y_train, X_test_hist, \
-            X_test_cat, y_test, X_val_hist, X_val_cat, y_val, model_name="regression_GP"):
-        """
+class regression_GP(ExactGP):
+    def __init__(self, X_train_hist, X_train_cat, y_train, X_test_hist, X_test_cat, y_test, X_val_hist, X_val_cat, y_val, likelihood, model_name="regression_GP"):
+        super().__init__(X_train_hist, y_train, likelihood)
+        self.mean_module = gpytorch.means.ConstantMean()
+        self.covar_module = ScaleKernel(RBFKernel())
 
-        """
-        self.model_name = model_name
+        # Prepare input sets
+        self.X_train = self._prepare_input(X_train_hist, X_train_cat)
+        self.y_train = y_train
+        self.X_test = self._prepare_input(X_test_hist, X_test_cat)
+        self.y_test = y_test
+        self.X_val = self._prepare_input(X_val_hist, X_val_cat)
+        self.y_val = y_val
 
-        self.X_train, self.y_train, self.X_test, self.y_test = self._prepare_input_sets(X_train_hist, \
-                X_train_cat, y_train,  X_test_hist, X_test_cat, y_test, \
-                X_val_hist, X_val_cat, y_val)
-        self.model = self._create_model()
-         
-    
-    def _prepare_input_sets(self, X_train_hist, X_train_cat, y_train, X_test_hist, X_test_cat, \
-            y_test, X_val_hist, X_val_cat, y_val):
-        """
+    def forward(self, x):
+        with gpytorch.settings.fast_pred_var():
+            mean_x = self.mean_module(x)
+            covar_x = self.covar_module(x)
+            return gpytorch.distributions.MultivariateNormal(mean_x, covar_x)
 
-        """
-        # Reshape the input data
-        X_train_reshaped = np.reshape(X_train_hist, (X_train_hist.shape[0], -1))
-        X_test_reshaped = np.reshape(X_test_hist, (X_test_hist.shape[0], -1))
-        X_val_reshaped = np.reshape(X_val_hist, (X_val_hist.shape[0], -1))
+    def train_model(self, likelihood, num_iterations, lr):
+        self.train()
+        likelihood.train()
 
-        X_train_reshaped = np.concatenate((X_train_reshaped, np.reshape(X_train_cat, (-1, 1))), axis=1)
-        X_test_reshaped = np.concatenate((X_test_reshaped, np.reshape(X_test_cat, (-1, 1))), axis=1)
-        X_val_reshaped = np.concatenate((X_val_reshaped, np.reshape(X_val_cat, (-1, 1))), axis=1)
-        
-        # Stack the testing and validation set together
-        X_test_val = np.vstack((X_test_reshaped, X_val_reshaped))
-        y_test_val = np.hstack((y_test, y_val))
-        return X_train_reshaped, y_train, X_test_val, y_test_val 
+        optimizer = torch.optim.Adam(self.parameters(), lr=lr)
+        mll = gpytorch.mlls.ExactMarginalLogLikelihood(likelihood, self)
 
+        for i in range(num_iterations):
+            optimizer.zero_grad()
+            output = self(self.X_train)
+            loss = -mll(output, self.y_train)
+            loss.backward()
+            optimizer.step()
 
-    def _create_model(self):
-        """
-
-        """
-        kernel = RBF()
-        model = GaussianProcessRegressor(kernel=kernel)
-        return model 
-        
-        
+    def _prepare_input(self, X_hist, X_cat):
+        X_reshaped = X_hist.reshape(X_hist.shape[0], -1)
+        X_cat_reshaped = X_cat.reshape(-1, 1)
+        return torch.from_numpy(np.concatenate((X_reshaped, X_cat_reshaped), axis=1)).float()
+ 
+    """ 
     def train(self):
-        """
 
-        """
         self.model.fit(self.X_train, self.y_train)
 
 
     def evaluate(self, print_perf=True, save_stats=True):
-        """
-        
-        """
         y_pred = self.model.predict(self.X_test)
         train_score = self.model.score(self.X_train, self.y_train)
         test_score = self.model.score(self.X_test, self.y_test)
@@ -88,7 +84,7 @@ class regression_GP():
                         dirname_here + "/val_stats/" + self.model_name + ".json") 
             except FileNotFoundError as e:
                 print(f"Could not save validation statistics. Error: {e}")
-       
+    """ 
  
 
  

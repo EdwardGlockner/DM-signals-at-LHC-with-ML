@@ -143,7 +143,7 @@ class regression_CNN():
         except FileNotFoundError as e:
             print(f"Could not save image of model architecture. Error: {e}")
         
-        self.model.compile(optimizer = tf.keras.optimizers.Adam(learning_rate=0.08), loss = "mse", metrics = [tf.keras.metrics.RootMeanSquaredError(), \
+        self.model.compile(optimizer = tf.keras.optimizers.Adam(learning_rate=0.10), loss = "mse", metrics = [tf.keras.metrics.RootMeanSquaredError(), \
                 tf.keras.metrics.MeanAbsoluteError(), tf.keras.metrics.MeanAbsolutePercentageError(), \
                 tf.keras.metrics.MeanSquaredLogarithmicError(), tf.keras.metrics.CosineSimilarity(), \
                 tf.keras.metrics.LogCoshError()])
@@ -213,7 +213,6 @@ class regression_CNN():
             None
         """
         # Trains the model
-        """
         self.history = self.model.fit([self.X_train, self.X_train_cat], self.y_train, epochs = self.epochs,
                             validation_data = ([self.X_test, self.X_test_cat], self.y_test), callbacks = [tf.keras.callbacks.EarlyStopping(monitor='val_loss', 
                                 min_delta=0, 
@@ -221,14 +220,9 @@ class regression_CNN():
                                 verbose=0, 
                                 mode='auto', 
                                 baseline=None,
-                                start_from_epoch=20,
+                                start_from_epoch=55,
                                 restore_best_weights=True)])
-        """
-        self.history = self.model.fit([self.X_train, self.X_train_cat], self.y_train, epochs = self.epochs,
-                            validation_data = ([self.X_test, self.X_test_cat], self.y_test))
-
     
-
         # Save a loadable .h5 file
         if save_model:
             try:

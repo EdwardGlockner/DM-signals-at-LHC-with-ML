@@ -6,6 +6,10 @@ import time
 import numpy as np
 import os
 import argparse
+from gpytorch.likelihoods import GaussianLikelihood
+from gpytorch.kernels import RBFKernel, MaternKernel, ScaleKernel
+import torch
+import gpytorch
 
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2' # Ignore tensorflow warning
 
@@ -222,11 +226,34 @@ def GP_regression(data_sets):
     timestamp = time.time()
     formatted_time = time.strftime("%a_%b_%d_%H:%M:%S", time.localtime(timestamp))
     model_name = model_prefix + "_" + model_name + formatted_time
+    
+    likelihood = GaussianLikelihood()
 
+    X_train_hist = torch.from_numpy(X_train_hist).float()
+    X_train_cat = torch.from_numpy(X_train_cat).float()
+    y_train = torch.from_numpy(y_train).float()
+
+    X_test_hist = torch.from_numpy(X_test_hist).float()
+    X_test_val = torch.from_numpy(X_test_cat).float()
+    y_test = torch.from_numpy(y_test).float()
+
+    X_val_hist = torch.from_numpy(X_val_hist).float()
+    X_val_cat = torch.from_numpy(X_val_cat).float()
+    y_val = torch.from_numpy(y_val).float
     GaussProc_re = regression_GP(X_train_hist, X_train_cat, y_train, X_test_hist, \
-            X_test_cat, y_test, X_val_hist, X_val_cat, y_val, model_name)
-    GaussProc_re.train()
-    GaussProc_re.evaluate(print_perf=False)
+            X_test_cat, y_test, X_val_hist, X_val_cat, y_val, likelihood, model_name)
+
+    GaussProc_re.train_model(likelihood,num_iterations=100, lr=0.1)
+
+    GaussProc_re.eval()
+    with torch.no_grad():
+        predictions = GaussProc_re(X_test_hist)
+
+    mse = torch.mean((predictions - y_test) ** 2)
+    rmse = torch.sqrt(mse)
+
+    print("Mean Squared Error (MSE):", mse.item())
+    print("Root Mean Squared Error (RMSE):", rmse.item())
 
 
 #---MAIN-----------------+
@@ -265,8 +292,8 @@ def main(run_mode, model_type, model_prefix):
     elif model_type == "re":
         re_model = train_regression(re_data_set, input_shape, model_prefix) 
         # Run Gaussian Process
-        GP_regression([X_train_re_hist, X_train_re_cat, y_train_re, X_test_re_hist, \
-                X_test_re_cat, y_test_re, X_val_re_hist, X_val_re_cat, y_val_re])
+        #GP_regression([X_train_re_hist, X_train_re_cat, y_train_re, X_test_re_hist, \
+    #        X_test_re_cat, y_test_re, X_val_re_hist, X_val_re_cat, y_val_re])
 
     elif model_type == "clre":
         cl_model = train_classification(cl_data_set, input_shape, num_classes, model_prefix)
@@ -274,8 +301,8 @@ def main(run_mode, model_type, model_prefix):
 
         # Run Gaussian Process
         GP_classification([X_train_cl, y_train_cl, X_test_cl, y_test_cl, X_val_cl, y_val_cl])
-        GP_regression([X_train_re_hist, X_train_re_cat, y_train_re, X_test_re_hist, \
-                X_test_re_cat, y_test_re, X_val_re_hist, X_val_re_cat, y_val_re])
+        #GP_regression([X_train_re_hist, X_train_re_cat, y_train_re, X_test_re_hist, \
+        #        X_test_re_cat, y_test_re, X_val_re_hist, X_val_re_cat, y_val_re])
 
 
     else:
