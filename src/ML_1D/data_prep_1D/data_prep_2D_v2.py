@@ -39,7 +39,7 @@ def load_sets(aug=True):
     
     if aug:
         augmented_X_train, augmented_model_train = data_aug(X_train, model_train, \
-                augment_size = 2000)
+                augment_size = 1000)
         augmented_model_train = np.ravel(augmented_model_train)
 
         cl_dataset = [np.concatenate((X_train, augmented_X_train)), \
@@ -108,6 +108,7 @@ def data_aug(X_train, y_train, augment_size):
         width_shift_range=0.2,  # Random horizontal shift by 0.1 of the total width
         height_shift_range=0.2,  # Random vertical shift by 0.1 of the total height
         zoom_range=0.15,  # Random zoom by 0.1
+        #add rotation
     )
 
     # Generate augmented data

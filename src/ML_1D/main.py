@@ -218,32 +218,65 @@ def GP_regression(data_sets):
     """
     def _data_prep(X_train_hist, X_train_cat, y_train, X_test_hist, X_test_cat, \
             y_test, X_val_hist, X_val_cat, y_val):
+        X_train_hist = np.reshape(X_train_hist, (X_train_hist.shape[0], -1))
+        X_test_hist = np.reshape(X_test_hist, (X_test_hist.shape[0], -1))
+        X_val_hist = np.reshape(X_val_hist, (X_val_hist.shape[0], -1))
+
         X_train_hist = torch.from_numpy(X_train_hist).float()
         X_train_cat = torch.from_numpy(X_train_cat).float()
         y_train = torch.from_numpy(y_train).float()
-        X_train_hist = X_train_hist.reshape(X_train_hist.shape[0], -1)
+
         X_train_cat = X_train_cat.reshape(-1, 1)
-        X_train = torch.from_numpy(np.concatenate((X_train_hist, X_train_cat), axis=1)).float()
+
+        X_train_0 = X_train_hist[X_train_cat[:, 0] == 0]
+        y_train_0 = y_train[X_train_cat[:, 0] == 0]
+
+        X_train_1 = X_train_hist[X_train_cat[:, 0] == 1]
+        y_train_1 = y_train[X_train_cat[:, 0] == 1]
 
         X_test_hist = torch.from_numpy(X_test_hist).float()
         X_test_cat = torch.from_numpy(X_test_cat).float()
         y_test = torch.from_numpy(y_test).float()
-        X_test_hist = X_test_hist.reshape(X_test_hist.shape[0], -1)
+
         X_test_cat = X_test_cat.reshape(-1, 1)
-        X_test = torch.from_numpy(np.concatenate((X_test_hist, X_test_cat), axis=1)).float()
+        
+        X_test_0 = X_test_hist[X_test_cat[:, 0] == 0]
+        y_test_0 = y_test[X_test_cat[:, 0] == 0]
+
+        X_test_1 = X_test_hist[X_test_cat[:, 0] == 1]
+        y_test_1 = y_test[X_test_cat[:, 0] == 1]
 
         X_val_hist = torch.from_numpy(X_val_hist).float()
         X_val_cat = torch.from_numpy(X_val_cat).float()
-        y_val = torch.from_numpy(y_val).float
-        X_val_hist = X_val_hist.reshape(X_val_hist.shape[0], -1)
-        X_val_cat = X_val_cat.reshape(-1, 1)
-        X_val = torch.from_numpy(np.concatenate((X_val_hist, X_val_cat), axis=1)).float()
+        y_val = torch.from_numpy(y_val).float()
 
+        X_val_cat = X_val_cat.reshape(-1, 1)
+
+        X_val_0 = X_val_hist[X_val_cat[:, 0] == 0]
+        y_val_0 = y_val[X_val_cat[:, 0] == 0]
+
+        X_val_1 = X_val_hist[X_val_cat[:, 0] == 1]
+        y_val_1 = y_val[X_val_cat[:, 0] == 1]
+
+        # Stack the testing and validation set together
+        X_test_val_0 = np.vstack((X_test_0, X_val_0))
+        y_test_val_0 = np.hstack((y_test_0, y_val_0))
+        
+        X_test_val_1 = np.vstack((X_test_1, X_val_1))
+        y_test_val_1 = np.hstack((y_test_1, y_val_1))
+
+        return X_train_0, y_train_0, X_test_val_0, y_test_val_0, \
+                X_train_1, y_train_1, X_test_val_1, y_test_val_1
+     
     if len(data_sets) != 9:
         print(f"Error in function <GP_regression>. Expected 9 datasets, got {len(data_sets)}")
 
     X_train_hist, X_train_cat, y_train, X_test_hist, X_test_cat, y_test, \
             X_val_hist, X_val_cat, y_val = data_sets
+
+    X_train_0, y_train_0, X_test_0, y_test_0, X_train_1, y_train_1, X_test_1, \
+            y_test_1 = _data_prep(X_train_hist, X_train_cat, y_train, X_test_hist, \
+            X_test_cat, y_test, X_val_hist, X_val_cat, y_val)
 
     model_name = "GP_regression_"
     timestamp = time.time()
@@ -253,25 +286,27 @@ def GP_regression(data_sets):
     likelihood = GaussianLikelihood()
 
 
-    GaussProc_re = regression_GP(X_train, y_train, X_test, y_test, X_val, \
-            y_val, likelihood, model_name)
+    GaussProc_re = regression_GP(X_train_0, y_train_0, X_test_0, y_test_0, \
+            likelihood, model_name)
 
     GaussProc_re.train_model(likelihood,num_iterations=100, lr=0.1)
 
-    # Make predictions
+    # Convert NumPy array to PyTorch tensor
+    X_test_0 = torch.tensor(X_test_0, dtype=torch.float32)
+
+# Make predictions
     with torch.no_grad(), gpytorch.settings.fast_pred_var():
         GaussProc_re.eval()
         likelihood.eval()
-        predictions = GaussProc_re(X_test)
+        predictions = GaussProc_re(X_test_0)
 
-    # Extract the mean values from predictions
+# Extract the mean values from predictions
     predictions_mean = predictions.mean
-    print(y_train)
-    # Calculate MSE
-    mse = torch.mean((predictions_mean - y_test) ** 2)
+
+# Calculate MSE
+    mse = torch.mean((predictions_mean - y_test_0) ** 2)
 
     print("Mean Squared Error (MSE):", mse)
-
 
 #---MAIN-----------------+
 def main(run_mode, model_type, model_prefix):
