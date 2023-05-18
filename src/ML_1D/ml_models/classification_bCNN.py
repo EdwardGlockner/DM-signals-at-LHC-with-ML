@@ -14,6 +14,7 @@ import os
 import shutil
 import json
 from keras.utils import to_categorical
+from sklearn.model_selection import GridSearchCV
 
 #---FIXING PATH----------+
 sys.path.append(str(sys.path[0][:-14]))
@@ -111,7 +112,33 @@ class classification_bCNN():
 
         return model
 
-    
+ 
+    def grid_search_lr(self):
+        """
+
+        """
+        def build_model(learning_rate):
+            """
+
+            """
+            model = self._create_model(print_sum=False)
+            optimizer = tf.keras.optimizers.Adam(learning_rate=learning_rate)
+            model.compile(optimizer=optimizer, loss=self.n_ll, metrics=['accuracy'])
+
+            return model
+
+        lrs = np.linspace(0.01, 0.4, 15).tolist()
+        param_grid = {'learning_rate': lrs}
+        model = tf.keras.wrappers.scikit_learn.KerasClassifier(build_fn=build_model)
+        grid_search = GridSearchCV(estimator=model, param_grid=param_grid, cv=3, error_score='raise')
+        grid_search.fit(self.X_train, self.y_train)
+        best_params = grid_search.best_params_
+        best_score = grid_search.best_score_
+        print(best_params)
+        print(best_score)
+        return best_params["learning_rate"]
+
+   
     def n_ll(self, y_true, y_pred):
         """
         Calculates the negative log likelihood function. 
@@ -160,8 +187,9 @@ class classification_bCNN():
         except FileNotFoundError as e:
             print(f"Could not save image of model architecture. Error: {e}")
         
+        learning_rate = self.grid_search_lr()
         # Compiles the model
-        self.model.compile(optimizer = tf.keras.optimizers.Adam(),
+        self.model.compile(optimizer = tf.keras.optimizers.Adam(learning_rate=learning_rate),
                            loss = self.n_ll,
                             metrics = ["accuracy", tf.keras.metrics.AUC(), tf.keras.metrics.Precision(), \
                               tf.keras.metrics.Recall(), tf.keras.metrics.TruePositives(), tf.keras.metrics.TrueNegatives(), \
@@ -232,19 +260,17 @@ class classification_bCNN():
             None
         """
         # Trains the model
-        """
         self.history = self.model.fit(self.X_train, self.y_train, epochs = self.epochs, batch_size=32,
                             validation_data = (self.X_test, self.y_test), callbacks = [tf.keras.callbacks.EarlyStopping(monitor='val_loss', 
                                 min_delta=0, 
-                                patience=2, 
+                                patience=3, 
                                 verbose=0, 
                                 mode='auto', 
                                 baseline=None,
                                 restore_best_weights=True,
-                                start_from_epoch=30)])
-        """
-        self.history = self.model.fit(self.X_train, self.y_train, epochs = 1000, batch_size=32,
-                            validation_data = (self.X_test, self.y_test))
+                                start_from_epoch=5)])
+        #self.history = self.model.fit(self.X_train, self.y_train, epochs = 1000, batch_size=32,
+        #                    validation_data = (self.X_test, self.y_test))
 
         # Save a loadable .h5 file   
         if save_model:

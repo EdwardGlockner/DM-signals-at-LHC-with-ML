@@ -13,4 +13,5 @@ Todo in src:
         6.3 Undersök om det har med complexiteten i modellen att göra (för komplex, för lite komplex).
         6.4 Undersök olika regularization techniques (kan vara att den overfittar/underfittar
     7. Implementera en Gaussian Process för regression. Den funkar inte och behövs skrivas om.
-
+    8. Fixa statistik för hur många av varje klass vi har, hur mycket är augmented, osv
+    9. Ändra i regressor så att det blir en för monoz och en för monojet, finns för lite data för att lära sig annars

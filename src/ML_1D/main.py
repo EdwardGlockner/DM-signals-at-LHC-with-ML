@@ -119,7 +119,7 @@ def get_sets(*folder_csv_path):
             [X_train_re_hist, X_train_re_cat, y_train_re, X_test_re_hist, X_test_re_cat, \
             y_test_re, X_val_re_hist, X_val_re_cat, y_val_re], input_shape
     """
-    cl, re = load_sets()
+    cl, re = load_sets(aug=False)
     input_shape = cl[0].shape[1], cl[0].shape[2] # Shape of X_train
     return cl, re, input_shape
 

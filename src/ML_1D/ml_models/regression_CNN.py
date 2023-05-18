@@ -13,6 +13,7 @@ import shutil
 import json
 import sys
 from keras.utils import to_categorical
+from sklearn.model_selection import GridSearchCV
 
 #---FIXING PATH----------+
 sys.path.append(str(sys.path[0][:-14]))
@@ -111,6 +112,59 @@ class regression_CNN():
         return model
 
 
+    def grid_search_lr(self):
+        """
+
+        """
+        """
+        def build_model(learning_rate):
+            model = self._create_model(print_sum=False)
+            optimizer = tf.keras.optimizers.Adam(learning_rate=learning_rate)
+            model.compile(optimizer=optimizer, loss='mse', metrics=[tf.keras.metrics.MeanAbsoluteError()])
+
+            return model
+        
+        print(self.X_train.shape)  # Should match the number of samples in self.y_train
+        print(self.X_train_cat.shape)  # Should match the number of samples in self.y_train
+        print(self.y_train.shape)
+        lrs = np.linspace(0.005, 0.4, 20).tolist()
+        param_grid = {'learning_rate': lrs} 
+        model = tf.keras.wrappers.scikit_learn.KerasRegressor(build_fn=build_model)
+        grid_search = GridSearchCV(estimator=model, param_grid=param_grid, cv=3, error_score='raise')
+        grid_search.fit(np.array([self.X_train, self.X_train_cat]), np.array(self.y_train))
+        best_params = grid_search.best_params_
+        best_score = grid_search.best_score_
+        print(best_params)
+        print(best_score)
+        """
+        best_score = float('inf')
+        best_params = {}
+
+        lrs = np.linspace(0.005, 0.25, 20).tolist()
+
+        for lr in lrs:
+            # Create the model
+            model = self._create_model()
+            optimizer = tf.keras.optimizers.Adam(learning_rate=lr)
+            model.compile(optimizer=optimizer, loss='mse', metrics=['mse'])
+
+            # Train the model
+            history = model.fit([self.X_train, self.X_train_cat], self.y_train, \
+                    epochs=10, validation_data=([self.X_test, self.X_test_cat], \
+                    self.y_test))
+
+            # Evaluate the model
+            val_loss = history.history['val_loss'][-1]
+
+            # Update the best score and best parameters
+            if val_loss < best_score:
+                best_score = val_loss
+                best_params = {'learning_rate': lr}
+        print(best_score)
+        print(best_params)
+        return best_params['learning_rate']
+
+
     def compile(self):
         """
         Compiles and save an image of the model architecture. 
@@ -143,11 +197,13 @@ class regression_CNN():
         except FileNotFoundError as e:
             print(f"Could not save image of model architecture. Error: {e}")
         
-        self.model.compile(optimizer = tf.keras.optimizers.Adam(learning_rate=0.10), loss = "mse", metrics = [tf.keras.metrics.RootMeanSquaredError(), \
+        learning_rate = self.grid_search_lr()
+        self.model.compile(optimizer = tf.keras.optimizers.Adam(learning_rate=learning_rate), loss = "mse", metrics = [tf.keras.metrics.RootMeanSquaredError(), \
                 tf.keras.metrics.MeanAbsoluteError(), tf.keras.metrics.MeanAbsolutePercentageError(), \
                 tf.keras.metrics.MeanSquaredLogarithmicError(), tf.keras.metrics.CosineSimilarity(), \
                 tf.keras.metrics.LogCoshError()])
     
+
     def evaluate_model(self, X_val, X_val_cat, y_val, save_stats=True):
         """
         Evaluates the compiled and trained model on a new validation set.
@@ -220,7 +276,7 @@ class regression_CNN():
                                 verbose=0, 
                                 mode='auto', 
                                 baseline=None,
-                                start_from_epoch=55,
+                                start_from_epoch=20,
                                 restore_best_weights=True)])
     
         # Save a loadable .h5 file
