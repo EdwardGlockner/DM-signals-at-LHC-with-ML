@@ -192,7 +192,7 @@ class classification_bCNN():
         
         #learning_rate = self.grid_search_lr()
         # Compiles the model
-        self.model.compile(optimizer = tf.keras.optimizers.Adam(learning_rate=0.0001),
+        self.model.compile(optimizer = tf.keras.optimizers.Adam(learning_rate=0.00005),
                            loss = tf.keras.losses.CategoricalCrossentropy(from_logits=False),
                             metrics = ["accuracy", tf.keras.metrics.AUC(), tf.keras.metrics.Precision(), \
                               tf.keras.metrics.Recall(), tf.keras.metrics.TruePositives(), tf.keras.metrics.TrueNegatives(), \
@@ -270,8 +270,8 @@ class classification_bCNN():
                                 verbose=0, 
                                 mode='auto', 
                                 baseline=None,
-                                restore_best_weights=True,
-                                start_from_epoch=1000)])
+                                restore_best_weights=False,
+                                start_from_epoch=50)])
         #self.history = self.model.fit(self.X_train, self.y_train, epochs = 1000, batch_size=32,
         #                    validation_data = (self.X_test, self.y_test))
 

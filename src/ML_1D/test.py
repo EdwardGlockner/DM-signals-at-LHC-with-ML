@@ -164,7 +164,7 @@ def main():
     num_classes = 2
 
     # Load the model
-    model_name = "Testing_classification_bCNN_1D_Thu_May_18_11:41:32.h5" 
+    model_name = "Testing_classification_bCNN_1D_Thu_May_18_14:31:20.h5" 
 
     if "classification" in model_name:
         model_type = "cl"
