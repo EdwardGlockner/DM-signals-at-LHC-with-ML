@@ -39,7 +39,7 @@ def load_sets(aug=True):
     
     if aug:
         augmented_X_train, augmented_model_train = data_aug(X_train, model_train, \
-                augment_size = 1000)
+                augment_size = 500)
         augmented_model_train = np.ravel(augmented_model_train)
 
         cl_dataset = [np.concatenate((X_train, augmented_X_train)), \

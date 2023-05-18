@@ -146,14 +146,14 @@ class CNN_model():
         @returns:
             None
         """
-        self.history = self.model.fit(self.X_train, self.y_train, epochs = 3,
+        self.history = self.model.fit(self.X_train, self.y_train, epochs = self.epochs,
                             validation_data = (self.X_test, self.y_test), callbacks = [tf.keras.callbacks.EarlyStopping(monitor='val_loss', 
                                 min_delta=0, 
                                 patience=1, 
                                 verbose=0, 
                                 mode='auto', 
                                 baseline=None,
-                                start_from_epoch=1,
+                                start_from_epoch=10,
                                 restore_best_weights=True)])
 
         self.model.save("./model.h5")

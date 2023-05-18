@@ -15,3 +15,4 @@ Typ klar    5. Implementera grid search för learning rate (eftersom modellerna 
 Håller på med    7. Implementera en Gaussian Process för regression. Den funkar inte och behövs skrivas om.
     8. Fixa statistik för hur många av varje klass vi har, hur mycket är augmented, osv
     9. Ändra i regressor så att det blir en för neutrino och en för neutralino, finns för lite data för att lära sig annars
+    10. Gör ett bash och python script som loadar en model, och kör på helt osedd data

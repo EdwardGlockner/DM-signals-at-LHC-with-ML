@@ -65,17 +65,6 @@ class classification_bCNN():
         #self.data_augmentation()
     
 
-    def data_augmentation(self):
-        augmented_dataset = tf.keras.Sequential([
-            tf.keras.layers.GaussianNoise(stddev=30, input_shape=self.input_shape)
-        ])
-        
-        augmented_inputs = augmented_dataset(self.X_train)
-        augmented_inputs = np.expand_dims(augmented_inputs, axis=-1)
-        self.X_train = tf.concat([self.X_train, augmented_inputs], axis=0)
-        self.y_train = tf.concat([self.y_train, self.y_train], axis=0)  # Adjust labels accordingly
-
-
     def _create_model(self, print_sum=True):
         """
         Hidden method, used for creating the bCNN model.
@@ -88,6 +77,7 @@ class classification_bCNN():
             model: <keras.engine.sequential.Sequential> The full bCNN model
         """
         # Create the model
+        """
         model = models.Sequential([
             layers.Conv1D(filters=32, kernel_size=(3), activation= "relu", padding = "VALID", input_shape = self.input_shape),
             layers.MaxPooling1D(pool_size = (2)),
@@ -105,6 +95,19 @@ class classification_bCNN():
             layers.Dropout(.3),
             tfpl.OneHotCategorical(self.num_classes, convert_to_tensor_fn=tfd.Distribution.mode)
         ])
+        """
+        model = models.Sequential()
+        model.add(layers.Conv1D(filters=32, kernel_size=(3), activation="relu", padding ="VALID",  input_shape=self.input_shape))
+        model.add(layers.MaxPooling1D(pool_size=(2)))
+        model.add(layers.Conv1D(filters=32, kernel_size=(3), activation="relu", padding="VALID"))
+        model.add(layers.BatchNormalization())
+        model.add(layers.MaxPooling1D(pool_size=(2)))
+        model.add(layers.Flatten())
+        layers.Dense(32, activation="relu")
+        layers.Dense(8, activation="relu")
+
+        model.add(layers.Dense(self.num_classes, activation="softmax"))
+
 
         # Print the architecture and return the model
         if print_sum:
@@ -187,10 +190,10 @@ class classification_bCNN():
         except FileNotFoundError as e:
             print(f"Could not save image of model architecture. Error: {e}")
         
-        learning_rate = self.grid_search_lr()
+        #learning_rate = self.grid_search_lr()
         # Compiles the model
-        self.model.compile(optimizer = tf.keras.optimizers.Adam(learning_rate=learning_rate),
-                           loss = self.n_ll,
+        self.model.compile(optimizer = tf.keras.optimizers.Adam(learning_rate=0.0001),
+                           loss = tf.keras.losses.CategoricalCrossentropy(from_logits=False),
                             metrics = ["accuracy", tf.keras.metrics.AUC(), tf.keras.metrics.Precision(), \
                               tf.keras.metrics.Recall(), tf.keras.metrics.TruePositives(), tf.keras.metrics.TrueNegatives(), \
                               tf.keras.metrics.FalsePositives(), tf.keras.metrics.FalseNegatives()])
@@ -268,7 +271,7 @@ class classification_bCNN():
                                 mode='auto', 
                                 baseline=None,
                                 restore_best_weights=True,
-                                start_from_epoch=5)])
+                                start_from_epoch=1000)])
         #self.history = self.model.fit(self.X_train, self.y_train, epochs = 1000, batch_size=32,
         #                    validation_data = (self.X_test, self.y_test))
 
