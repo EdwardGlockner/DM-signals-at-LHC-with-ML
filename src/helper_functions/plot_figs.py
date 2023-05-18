@@ -51,7 +51,12 @@ with open(filename, 'r') as file:
 # Plot frame
 frame = gridspec.GridSpec(1,1) 
 
-masses_jet = neutralino_jet["mass"]
+mass_neutralino_jet = neutralino_jet["mass"]
+mass_sneutrino_jet = sneutrino_jet["mass"]
+
+#mass_neutralino_z = neutralino_z["mass"]
+mass_sneutrino_z = sneutrino_z["mass"]
+
 colors = ["green", "blue", "red", "black", "orange", "yellow", "purple"]
 
 # Mono-jet data
@@ -118,9 +123,19 @@ def set_configurations(quantity):
 def gen_fig():
   return plt.figure(figsize=(8.75,6.25),dpi=80)
 
-def set_data(data, binning, weight, color, pad_num, quantity):
+def set_data(data, binning, weight, color, pad_num, quantity, signature):
+  if signature == "neutralino_jet":
+    mass = mass_neutralino_jet
+  elif signature == "sneutrino_jet":
+    mass = mass_sneutrino_jet
+  elif signature == "neutralino_z":
+    pass
+    #mass = mass_neutralino_z
+  elif signature == "sneutrino_z":
+    mass = mass_sneutrino_z
+
   pad_num.hist(x=data, bins=binning, weights=weight,\
-         label=f'$m_{{DM}} = ${masses_jet[i]} GeV', histtype="step", rwidth=1.0,\
+         label=f'$m_{{DM}} = ${mass[i]} GeV', histtype="step", rwidth=1.0,\
          color=None, edgecolor=color, linewidth=1, linestyle="solid",\
          bottom=None, cumulative=False, align="mid", orientation="vertical")
 
@@ -133,7 +148,7 @@ fig = gen_fig()
 pad = fig.add_subplot(frame[0])
 
 for i in range(0, runs):
-  set_data(eta_xData_jet, eta_xBinning_jet, eta_neutralino_jet[i], colors[i], pad, "eta")
+  set_data(eta_xData_jet, eta_xBinning_jet, eta_neutralino_jet[i], colors[i], pad, "eta", "neutralino_jet")
   plt.xlabel(r"Mono-jet Neutralino $\eta$ $[ j_{1} ]$ ", fontsize=16,color="black")
 
 # Neutralino jet PT plots
@@ -141,7 +156,7 @@ fig = gen_fig()
 pad = fig.add_subplot(frame[0])
 
 for i in range(0, runs):
-  set_data(pt_xData_jet, pt_xBinning_jet, pt_neutralino_jet[i], colors[i], pad, "pt")
+  set_data(pt_xData_jet, pt_xBinning_jet, pt_neutralino_jet[i], colors[i], pad, "pt", "neutralino_jet")
   plt.xlabel(r"Mono-jet Neutralino $p_{T}$ $[ j_{1} ]$ $(GeV/c)$ ", fontsize=16,color="black")
   
 # Neutralino jet TET plots
@@ -149,7 +164,7 @@ fig = gen_fig()
 pad = fig.add_subplot(frame[0])
 
 for i in range(0, runs):
-  set_data(tet_xData_jet, tet_xBinning_jet, tet_neutralino_jet[i], colors[i], pad, "tet")
+  set_data(tet_xData_jet, tet_xBinning_jet, tet_neutralino_jet[i], colors[i], pad, "tet", "neutralino_jet")
   plt.xlabel(r"Mono-jet Neutralino $E_{T}$ $(GeV)$ ", fontsize=16,color="black")
 
 #--------------------Snutrino---------------------
@@ -158,7 +173,7 @@ fig = gen_fig()
 pad = fig.add_subplot(frame[0])
 
 for i in range(0, runs):
-  set_data(eta_xData_jet, eta_xBinning_jet, eta_sneutrino_jet[i], colors[i], pad, "eta")
+  set_data(eta_xData_jet, eta_xBinning_jet, eta_sneutrino_jet[i], colors[i], pad, "eta", "sneutrino_jet")
   plt.xlabel(r"Mono-jet Sneutrino $E_{T}$ $(GeV)$ ", fontsize=16,color="black")
 
 # Snutrino jet PT plots
@@ -166,7 +181,7 @@ fig = gen_fig()
 pad = fig.add_subplot(frame[0])
 
 for i in range(0, runs):
-  set_data(pt_xData_jet, pt_xBinning_jet, pt_sneutrino_jet[i], colors[i], pad, "pt")
+  set_data(pt_xData_jet, pt_xBinning_jet, pt_sneutrino_jet[i], colors[i], pad, "pt", "sneutrino_jet")
   plt.xlabel(r"Mono-jet Sneutrino $p_{T}$ $[ j_{1} ]$ $(GeV/c)$ ", fontsize=16,color="black")
   
 # Snutrino jet TET plots
@@ -174,7 +189,7 @@ fig = gen_fig()
 pad = fig.add_subplot(frame[0])
 
 for i in range(0, runs):
-  set_data(tet_xData_jet, tet_xBinning_jet, tet_sneutrino_jet[i], colors[i], pad, "tet")
+  set_data(tet_xData_jet, tet_xBinning_jet, tet_sneutrino_jet[i], colors[i], pad, "tet", "sneutrino_jet")
   plt.xlabel(r"Mono-jet Sneutrino $E_{T}$ $(GeV)$ ", fontsize=16,color="black")
 
 #--------------------MONOZ-------------------------
@@ -217,7 +232,7 @@ fig = gen_fig()
 pad = fig.add_subplot(frame[0])
 
 for i in range(0, runs):
-  set_data(eta_xData_z, eta_xBinning_z, eta_sneutrino_z[i], colors[i], pad, "eta")
+  set_data(eta_xData_z, eta_xBinning_z, eta_sneutrino_z[i], colors[i], pad, "eta", "sneutrino_z")
   plt.xlabel(r"Mono-z Sneutrino $\eta$ $[ l+_{1} ]$ ", fontsize=16,color="black")
 
 # Neutralino z PT plots
@@ -225,7 +240,7 @@ fig = gen_fig()
 pad = fig.add_subplot(frame[0])
 
 for i in range(0, runs):
-  set_data(pt_xData_z, pt_xBinning_z, pt_sneutrino_z[i], colors[i], pad, "pt")
+  set_data(pt_xData_z, pt_xBinning_z, pt_sneutrino_z[i], colors[i], pad, "pt", "sneutrino_z")
   plt.xlabel(r"Mono-z Sneutrino $p_{T}$ $[ l+_{1} ]$ $(GeV/c)$ ", fontsize=16,color="black")
   
 # Neutralino z TET plots
@@ -233,7 +248,7 @@ fig = gen_fig()
 pad = fig.add_subplot(frame[0])
 
 for i in range(0, runs):
-  set_data(tet_xData_z, tet_xBinning_z, tet_sneutrino_z[i], colors[i], pad, "tet")
+  set_data(tet_xData_z, tet_xBinning_z, tet_sneutrino_z[i], colors[i], pad, "tet", "sneutrino_z")
   plt.xlabel(r"Mono-z Sneutrino $M_{T}$ $[ l+_{1} ]$ $(GeV/c^{2})$ ", fontsize=16,color="black")
 
 # Neutralino z MT_TET plots
@@ -241,7 +256,7 @@ fig = gen_fig()
 pad = fig.add_subplot(frame[0])
 
 for i in range(0, runs):
-  set_data(mt_met_xData_z, mt_met_xBinning_z, mt_met_sneutrino_z[i], colors[i], pad, "tet")
+  set_data(mt_met_xData_z, mt_met_xBinning_z, mt_met_sneutrino_z[i], colors[i], pad, "tet", "sneutrino_z")
   plt.xlabel(r"Mono-z Sneutrino $E_{T}$ $(GeV)$ ", fontsize=16,color="black")
 
 
