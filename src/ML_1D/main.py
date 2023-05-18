@@ -216,6 +216,29 @@ def GP_regression(data_sets):
     """
 
     """
+    def _data_prep(X_train_hist, X_train_cat, y_train, X_test_hist, X_test_cat, \
+            y_test, X_val_hist, X_val_cat, y_val):
+        X_train_hist = torch.from_numpy(X_train_hist).float()
+        X_train_cat = torch.from_numpy(X_train_cat).float()
+        y_train = torch.from_numpy(y_train).float()
+        X_train_hist = X_train_hist.reshape(X_train_hist.shape[0], -1)
+        X_train_cat = X_train_cat.reshape(-1, 1)
+        X_train = torch.from_numpy(np.concatenate((X_train_hist, X_train_cat), axis=1)).float()
+
+        X_test_hist = torch.from_numpy(X_test_hist).float()
+        X_test_cat = torch.from_numpy(X_test_cat).float()
+        y_test = torch.from_numpy(y_test).float()
+        X_test_hist = X_test_hist.reshape(X_test_hist.shape[0], -1)
+        X_test_cat = X_test_cat.reshape(-1, 1)
+        X_test = torch.from_numpy(np.concatenate((X_test_hist, X_test_cat), axis=1)).float()
+
+        X_val_hist = torch.from_numpy(X_val_hist).float()
+        X_val_cat = torch.from_numpy(X_val_cat).float()
+        y_val = torch.from_numpy(y_val).float
+        X_val_hist = X_val_hist.reshape(X_val_hist.shape[0], -1)
+        X_val_cat = X_val_cat.reshape(-1, 1)
+        X_val = torch.from_numpy(np.concatenate((X_val_hist, X_val_cat), axis=1)).float()
+
     if len(data_sets) != 9:
         print(f"Error in function <GP_regression>. Expected 9 datasets, got {len(data_sets)}")
 
@@ -229,31 +252,25 @@ def GP_regression(data_sets):
     
     likelihood = GaussianLikelihood()
 
-    X_train_hist = torch.from_numpy(X_train_hist).float()
-    X_train_cat = torch.from_numpy(X_train_cat).float()
-    y_train = torch.from_numpy(y_train).float()
 
-    X_test_hist = torch.from_numpy(X_test_hist).float()
-    X_test_val = torch.from_numpy(X_test_cat).float()
-    y_test = torch.from_numpy(y_test).float()
-
-    X_val_hist = torch.from_numpy(X_val_hist).float()
-    X_val_cat = torch.from_numpy(X_val_cat).float()
-    y_val = torch.from_numpy(y_val).float
-    GaussProc_re = regression_GP(X_train_hist, X_train_cat, y_train, X_test_hist, \
-            X_test_cat, y_test, X_val_hist, X_val_cat, y_val, likelihood, model_name)
+    GaussProc_re = regression_GP(X_train, y_train, X_test, y_test, X_val, \
+            y_val, likelihood, model_name)
 
     GaussProc_re.train_model(likelihood,num_iterations=100, lr=0.1)
 
-    GaussProc_re.eval()
-    with torch.no_grad():
-        predictions = GaussProc_re(X_test_hist)
+    # Make predictions
+    with torch.no_grad(), gpytorch.settings.fast_pred_var():
+        GaussProc_re.eval()
+        likelihood.eval()
+        predictions = GaussProc_re(X_test)
 
-    mse = torch.mean((predictions - y_test) ** 2)
-    rmse = torch.sqrt(mse)
+    # Extract the mean values from predictions
+    predictions_mean = predictions.mean
+    print(y_train)
+    # Calculate MSE
+    mse = torch.mean((predictions_mean - y_test) ** 2)
 
-    print("Mean Squared Error (MSE):", mse.item())
-    print("Root Mean Squared Error (RMSE):", rmse.item())
+    print("Mean Squared Error (MSE):", mse)
 
 
 #---MAIN-----------------+
@@ -292,8 +309,8 @@ def main(run_mode, model_type, model_prefix):
     elif model_type == "re":
         re_model = train_regression(re_data_set, input_shape, model_prefix) 
         # Run Gaussian Process
-        #GP_regression([X_train_re_hist, X_train_re_cat, y_train_re, X_test_re_hist, \
-    #        X_test_re_cat, y_test_re, X_val_re_hist, X_val_re_cat, y_val_re])
+        GP_regression([X_train_re_hist, X_train_re_cat, y_train_re, X_test_re_hist, \
+            X_test_re_cat, y_test_re, X_val_re_hist, X_val_re_cat, y_val_re])
 
     elif model_type == "clre":
         cl_model = train_classification(cl_data_set, input_shape, num_classes, model_prefix)
@@ -301,8 +318,8 @@ def main(run_mode, model_type, model_prefix):
 
         # Run Gaussian Process
         GP_classification([X_train_cl, y_train_cl, X_test_cl, y_test_cl, X_val_cl, y_val_cl])
-        #GP_regression([X_train_re_hist, X_train_re_cat, y_train_re, X_test_re_hist, \
-        #        X_test_re_cat, y_test_re, X_val_re_hist, X_val_re_cat, y_val_re])
+        GP_regression([X_train_re_hist, X_train_re_cat, y_train_re, X_test_re_hist, \
+                X_test_re_cat, y_test_re, X_val_re_hist, X_val_re_cat, y_val_re])
 
 
     else:

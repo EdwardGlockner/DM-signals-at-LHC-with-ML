@@ -15,17 +15,17 @@ from gpytorch.likelihoods import GaussianLikelihood
 
 """
 class regression_GP(ExactGP):
-    def __init__(self, X_train_hist, X_train_cat, y_train, X_test_hist, X_test_cat, y_test, X_val_hist, X_val_cat, y_val, likelihood, model_name="regression_GP"):
-        super().__init__(X_train_hist, y_train, likelihood)
+    def __init__(self, X_train, y_train, X_test, y_test, X_val, y_val, \
+            likelihood, model_name="regression_GP"):
+        super().__init__(X_train, y_train, likelihood)
         self.mean_module = gpytorch.means.ConstantMean()
         self.covar_module = ScaleKernel(RBFKernel())
 
-        # Prepare input sets
-        self.X_train = self._prepare_input(X_train_hist, X_train_cat)
+        self.X_train = X_train
         self.y_train = y_train
-        self.X_test = self._prepare_input(X_test_hist, X_test_cat)
+        self.X_test = X_test
         self.y_test = y_test
-        self.X_val = self._prepare_input(X_val_hist, X_val_cat)
+        self.X_val = X_val
         self.y_val = y_val
 
     def forward(self, x):
@@ -48,11 +48,7 @@ class regression_GP(ExactGP):
             loss.backward()
             optimizer.step()
 
-    def _prepare_input(self, X_hist, X_cat):
-        X_reshaped = X_hist.reshape(X_hist.shape[0], -1)
-        X_cat_reshaped = X_cat.reshape(-1, 1)
-        return torch.from_numpy(np.concatenate((X_reshaped, X_cat_reshaped), axis=1)).float()
- 
+
     """ 
     def train(self):
 
