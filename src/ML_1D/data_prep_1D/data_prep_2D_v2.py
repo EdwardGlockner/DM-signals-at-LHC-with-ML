@@ -42,6 +42,7 @@ def load_sets():
 
     return cl_dataset, re_dataset
    
+
 def df_input(file_path):
     """
 
@@ -60,9 +61,11 @@ def df_input(file_path):
     eta_vals = np.array([np.array(sublist) for sublist in eta_vals])
     pt_vals = np.array([np.array(sublist) for sublist in pt_vals])
     tet_vals = np.array([np.array(sublist) for sublist in tet_vals])
+
     # Concatenate into three channels
     input_data  = np.concatenate([eta_vals[..., np.newaxis], pt_vals[..., np.newaxis], tet_vals[..., np.newaxis]], axis=2)
     return input_data
+
 
 def df_mass_model(file_path):
     """
@@ -75,9 +78,5 @@ def df_mass_model(file_path):
 
     values = df['values'].values
     return values
-
-
-
-
 
 

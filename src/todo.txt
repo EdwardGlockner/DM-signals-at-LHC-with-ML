@@ -1,8 +1,8 @@
 
 Todo in src:
-    1. Analysera vilka klasser och ilka massor där modellerna är bäst och sämst. (Diskutera varför i rapporten)
+    1. Analysera vilka klasser och vilka massor där modellerna är bäst och sämst. (Diskutera varför i rapporten)
     1.5 Gör en analys av bayesian CNN, analysera sannolikheterna och de olika klasserna. Finns en bra medium.com inlägg för detta. Snyggt för rapporten samt ger förståelse för modellen.
-    2. Gör classification och regression för monoz. Behöver göra en nya data_prep, samt modifiera lite i model_name, samt plotting.py.
+    2. Gör classification och regression för monoz. Behöver ändra i data_prep, samt modifiera lite i model_name, samt plotting.py.
     3. Plotta snyggare plottar (använd calles mallar)
     4. Fixa och experimentera med data augmentation. Undersök vilka som är relevanta för oss (se Yong Shengs mail). Samt undersök hur många vi kan använda.
     5. Implementera grid search för learning rate (eftersom modellerna är väldigt känsliga för detta). Går att göra en wrapper i tensorflow för sk-learns gridsearch.
