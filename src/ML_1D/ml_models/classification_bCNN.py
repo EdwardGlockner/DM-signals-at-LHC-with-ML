@@ -53,10 +53,7 @@ class classification_bCNN():
             None
         """
         self.X_train = X_train
-        unique_classes = np.unique(y_train)
-        print("Unique classes:", unique_classes)
         self.y_train = to_categorical(y_train, num_classes)
-        print(self.y_train)
         self.X_test = X_test
         self.y_test = to_categorical(y_test, num_classes)
         self.input_shape = input_shape
@@ -202,60 +199,6 @@ class classification_bCNN():
                               tf.keras.metrics.FalsePositives(), tf.keras.metrics.FalseNegatives()])
 
 
-    def evaluate_model(self, X_val, y_val, save_stats=True):
-        """
-        Evaluates the compiled and trained model on a new validation set.
-        Creates all the different performance metrics and saves it to a .json file,
-        in src/ML_1D/val_stats/
-        Also creates plots of the ROC curves and accuracy, which is saved to
-        src/ML_1D/
-
-        @arguments:
-            X_val: <numpy.ndarray> Arbitrary input data used for validation. Same input shape as the trained model is needed.
-            y_val: <tensorflow::EagerTensor> Output labels for the validation data
-            save_stats: <bool> Whether to save the .json file or not.
-        @returns:
-            None
-        """
-        y_val_encode = to_categorical(y_val, self.num_classes)
-
-        try:
-            results = self.model.evaluate(X_val, y_val_encode, batch_size=64)
-        except OverflowError as e:
-            print(f"Error occured in <evaluate_model>. Error: {e}")
-            return None
-
-        predictions = self.model.predict(X_val[:])
-        stats = {
-            'loss': results[0],
-            'accuracy': results[1],
-            'AUC': results[2],
-            'precision': results[3],
-            'recall': results[4],
-            'TP': results[5],
-            'TN': results[6],
-            'FP': results[7],
-            'FN': results[8],
-            'prediction': predictions.tolist(),
-            'y_test': y_val.tolist()
-        }
-        dirname_here = os.getcwd()
-        if save_stats:
-            with open(self.model_name + "_val_data" + '.json', 'w') as f:
-                json.dump(stats, f)
-            try:
-                shutil.move(dirname_here + "/" + self.model_name + "_val_data" + ".json", \
-                        dirname_here + "/val_stats/" + self.model_name + ".json") 
-            except FileNotFoundError as e:
-                print(f"Could not save validation statistics. Error: {e}")
-       
-        # Create the plotting object and create all the plots
-        plotter = plotting(y_val_encode, predictions, self.history, self.model_name, dirname_here + "/plots")
-        plotter.loss(cl_or_re="cl", show=True)
-        plotter.accuracy(show=True)
-        plotter.roc(num_classes = self.num_classes, show=True)
-
-
     def train(self, save_model=True):
         """
         Trains the model using early stopping as regularization technique.
@@ -274,7 +217,7 @@ class classification_bCNN():
                                 mode='auto', 
                                 baseline=None,
                                 restore_best_weights=False,
-                                start_from_epoch=50)])
+                                start_from_epoch=8)])
         #self.history = self.model.fit(self.X_train, self.y_train, epochs = 1000, batch_size=32,
         #                    validation_data = (self.X_test, self.y_test))
 
@@ -289,6 +232,12 @@ class classification_bCNN():
             except FileNotFoundError as e:
                 print(f"Could not save model as .h5 file. Error: {e}")
 
+        # Create the plotting object and create all the plots
+        dirname_here = os.getcwd()
+        plotter = plotting("", "", self.history, self.model_name, dirname_here + "/plots")
+        plotter.loss(cl_or_re="cl", show=True)
+        plotter.accuracy(show=True)
+        
         
     def analyze_model_prediction(self, data, true_label, model, image_num, run_ensamble=False):
         raise NotImplementedError

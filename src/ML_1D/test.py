@@ -34,22 +34,6 @@ def arg_parse():
 #---GLOBALS--------------+
 np.set_printoptions(threshold=np.inf)
 
-try:
-    if sys.platform in ["darwin", "linux", "linux2"]: #macOS, Linux
-        clear = lambda: os.system("clear")
-
-    elif sys.platform in ["win32", "win64"]: #windows
-        clear = lambda: os.system("cls")
-    
-    else:
-        clear = lambda: None
-
-except OSError as e:
-    print("Error identifying operating systems")
-
-bar = "+---------------------+"
-
-
 #---FUNCTIONS------------+
 def load_tf_model(file_path):
     """
@@ -91,7 +75,6 @@ def evaluate(model, dataset, num_classes, model_name):
     if len(dataset) == 2: # classification
         model_type = "cl"
         X_test, y_test = dataset
-        print(y_test)
         y_test_encode = to_categorical(y_test, num_classes)
 
     elif len(dataset) == 3: # regression
@@ -124,7 +107,7 @@ def evaluate(model, dataset, num_classes, model_name):
             'y_test': y_test.tolist()
         }
         plotter = plotting(y_test_encode, predictions, None, model_name, dirname + "/src/ML_1D/testing_loadable_models/")
-        plotter.roc(num_classes = num_classes, show=True)
+        plotter.roc(num_classes = num_classes, show=False)
 
     elif model_type == "re":
         try:
@@ -172,7 +155,6 @@ def main(model_name):
     """
 
     """
-    clear()
     # Model properties
     num_classes = 2
 
@@ -196,7 +178,7 @@ def main(model_name):
         print("Could not identiy which signature the model is trained on")
         exit(2)
 
-    model_path = dirname + "/src/ML_1D/saved_models/" + model_name 
+    model_path = dirname + "src/ML_1D/saved_models/" + model_name  + ".h5"
     model = load_model(model_path)
     
     # Load the dataset

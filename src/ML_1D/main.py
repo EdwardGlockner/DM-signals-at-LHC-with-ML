@@ -128,31 +128,6 @@ def train_regression(data_sets, input_shape, model_name):
     model.compile()
     model.train()
 
-    return model
-
-
-def val_classification():
-    """
-    asdfasdf
-
-    @arguments:
-        None
-    @returns:
-        None
-    """
-    return
-
-def val_regression():
-    """
-    asdfasdf
-
-    @arguments:
-        None
-    @returns:
-        None
-    """
-    return    
-
 
 def train(model_name, signature):
     """
@@ -168,14 +143,14 @@ def train(model_name, signature):
 
     # Train the models
     if model_type == "cl":
-        cl_model = train_classification(cl_data_set, input_shape, num_classes, model_name + "_classification")
+        train_classification(cl_data_set, input_shape, num_classes, model_name + "_classification")
 
     elif model_type == "re":
-        re_model = train_regression(re_data_set, input_shape, model_name + "_regression") 
+        train_regression(re_data_set, input_shape, model_name + "_regression") 
 
     elif model_type == "clre":
-        cl_model = train_classification(cl_data_set, input_shape, num_classes, model_name + "_classification")
-        re_model = train_regression(re_data_set, input_shape, model_name + "_regression") 
+        train_classification(cl_data_set, input_shape, num_classes, model_name + "_classification")
+        train_regression(re_data_set, input_shape, model_name + "_regression") 
 
     else:
         print("Not a valid model_type. See python main.py -h for help.")
@@ -203,10 +178,36 @@ def main(run_mode, model_type, model_prefix):
         command3 = [python_executable, 'test.py', '--model_name', model_name_jet + "_regression"]
         command4 = [python_executable, 'test.py', '--model_name', model_name_jet + "_classification"]
 
-        subprocess.run(command1)
-        subprocess.run(command2)
-        subprocess.run(command3)
-        subprocess.run(command4)
+        clear()
+        if model_type == "cl":
+            print(bar)
+            print("Running mono_z classification model on testing data")
+            subprocess.run(command2)
+            print(bar)
+            print("Running mono_jet classification model on testing data")
+            subprocess.run(command4)
+
+        elif model_type == "re":
+            print(bar)
+            print("Running mono_z regression model on testing data")
+            subprocess.run(command1)
+            print(bar)
+            print("Running mono_jet regression model on testing data")
+            subprocess.run(command3)
+
+        elif model_type == "clre":
+            print(bar)
+            print("Running mono_z classification model on testing data")
+            subprocess.run(command2)
+            print(bar)
+            print("Running mono_jet classification model on testing data")
+            subprocess.run(command4)
+            print(bar)
+            print("Running mono_z regression model on testing data")
+            subprocess.run(command1)
+            print(bar)
+            print("Running mono_jet regression model on testing data")
+            subprocess.run(command3)
 
 
 #---RUN CODE-------------+

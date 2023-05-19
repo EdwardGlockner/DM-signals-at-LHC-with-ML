@@ -95,11 +95,11 @@ class regression_CNN():
         maxpool1 = layers.MaxPooling1D((2))(conv1)
         conv2 = layers.Conv1D(32, (3), activation = "relu")(maxpool1)
         norm1 = layers.BatchNormalization()(conv2)
-        maxpool2 = layers.MaxPooling1D((2))(norm1)
+        maxpool2= layers.MaxPooling1D((2))(norm1)
         flatten = layers.Flatten()(maxpool2)
         concatenated = layers.concatenate([flatten, categorical_input])
-        dense1 = layers.Dense(64, activation = "relu")(concatenated)
-        dense2 = layers.Dense(16, activation = "relu")(dense1)
+        dense1 = layers.Dense(16, activation = "relu")(concatenated)
+        dense2 = layers.Dense(8, activation = "relu")(dense1)
         norm2 = layers.BatchNormalization()(dense2)
         output = layers.Dense(1, activation = "linear")(norm2)
 
@@ -198,66 +198,11 @@ class regression_CNN():
             print(f"Could not save image of model architecture. Error: {e}")
         
         #learning_rate = self.grid_search_lr()
-        self.model.compile(optimizer = tf.keras.optimizers.Adam(learning_rate=0.1), loss = "mse", metrics = [tf.keras.metrics.RootMeanSquaredError(), \
+        self.model.compile(optimizer = tf.keras.optimizers.Adam(learning_rate=0.01), loss = "mse", metrics = [tf.keras.metrics.RootMeanSquaredError(), \
                 tf.keras.metrics.MeanAbsoluteError(), tf.keras.metrics.MeanAbsolutePercentageError(), \
                 tf.keras.metrics.MeanSquaredLogarithmicError(), tf.keras.metrics.CosineSimilarity(), \
                 tf.keras.metrics.LogCoshError()])
     
-
-    def evaluate_model(self, X_val, X_val_cat, y_val, save_stats=True):
-        """
-        Evaluates the compiled and trained model on a new validation set.
-        Creates all the different performance metrics and saves it to a .json file,
-        in src/ML_1D/val_stats/
-
-        @arguments:
-            X_val: <numpy.ndarray> Arbitrary input data used for validation. Same input shape as the trained model is needed.
-            y_val: <tensorflow::EagerTensor> Output labels for the validation data
-            save_stats: <bool> Whether to save the .json file or not.
-        @returns:
-            None
-        """
-        """
-        indices = np.where(X_val_cat == 0)[0]
-
-        X_val = np.delete(X_val, indices, axis=0)
-        X_val_cat = np.delete(X_val_cat, indices, axis=0)
-        y_val = np.delete(y_val, indices, axis=0)
-        """
-        try:
-            results = self.model.evaluate([X_val, X_val_cat], y_val, batch_size=128)
-        except OverflowError as e:
-            print(f"Error occured in <evaluate_model>. Error: {e}")
-            return None
-
-        predictions = self.model.predict([X_val[:], X_val_cat[:]])
-        stats = {
-            'loss': results[0],
-            'RMSE': results[1],
-            'MAE': results[2],
-            'MAPE': results[3],
-            'MSLE': results[4],
-            'CosSim': results[5],
-            'LogCoshE': results[6],
-            'prediction': predictions.tolist(),
-            'y_test': y_val.tolist()
-        }
-
-        dirname_here = os.getcwd()
-        if save_stats:
-            with open(self.model_name + "_val_data" + '.json', 'w') as f:
-                json.dump(stats, f)
-            try:
-                shutil.move(dirname_here + "/" + self.model_name + "_val_data" + ".json", \
-                        dirname_here + "/val_stats/" + self.model_name + ".json") 
-            except FileNotFoundError as e:
-                print(f"Could not save validation statistics. Error: {e}")
-       
-        # Create the plotting object and create all the plots
-        plotter = plotting(self.y_test, predictions, self.history, self.model_name, dirname_here + "/plots")
-        plotter.loss(cl_or_re="cl", show=True)
-        plotter.rmse(show=True)
-
 
     def train(self, save_model=True):
         """
@@ -272,11 +217,11 @@ class regression_CNN():
         self.history = self.model.fit([self.X_train, self.X_train_cat], self.y_train, epochs = self.epochs,
                             validation_data = ([self.X_test, self.X_test_cat], self.y_test), callbacks = [tf.keras.callbacks.EarlyStopping(monitor='val_loss', 
                                 min_delta=0, 
-                                patience=2, 
+                                patience=1, 
                                 verbose=0, 
                                 mode='auto', 
                                 baseline=None,
-                                start_from_epoch=20,
+                                start_from_epoch=0,
                                 restore_best_weights=True)])
     
         # Save a loadable .h5 file
@@ -290,4 +235,9 @@ class regression_CNN():
             except FileNotFoundError as e:
                 print(f"Could not save model as .h5 file. Error: {e}")
 
+        dirname_here = os.getcwd()
+        plotter = plotting("", "", self.history, self.model_name, dirname_here + "/plots")
+        plotter.loss(cl_or_re="cl", show=True)
+        plotter.rmse(show=True)
+ 
 
