@@ -55,7 +55,7 @@ def load_tf_model(file_path):
     return model
 
 
-def load_dataset(model_type):
+def load_dataset(signature, model_type):
     """
     asdfasdf
 
@@ -65,7 +65,7 @@ def load_dataset(model_type):
         datasets
     pass
     """
-    dataset = load_sets(model_type)
+    dataset = load_sets(signature, model_type)
     return dataset
 
 def evaluate(model, dataset, num_classes, model_name):
@@ -81,12 +81,12 @@ def evaluate(model, dataset, num_classes, model_name):
     if len(dataset) == 2: # classification
         model_type = "cl"
         X_test, y_test = dataset
+        print(y_test)
         y_test_encode = to_categorical(y_test, num_classes)
 
     elif len(dataset) == 3: # regression
         model_type = "re"
         X_test_hist, X_test_cat, y_test = dataset
-        y_test_encode = to_categorical(y_test, num_classes)
 
     else:
         return
@@ -118,13 +118,13 @@ def evaluate(model, dataset, num_classes, model_name):
 
     elif model_type == "re":
         try:
-            results = model.evaluate([X_test_hist, X_hist_cat], y_test, batch_size=128)
+            results = model.evaluate([X_test_hist, X_test_cat], y_test, batch_size=128)
 
         except OverflowError as e:
             print(f"Error occured in <evaluate_model>. Error: {e}")
             return None
 
-        predictions = model.predict([X_test_cat[:], X_test_cat[:]])
+        predictions = model.predict([X_test_hist[:], X_test_cat[:]])
         stats = {
             'loss': results[0],
             'RMSE': results[1],
@@ -164,12 +164,16 @@ def main():
     num_classes = 2
 
     # Load the model
-    model_name = "Testing_classification_bCNN_1D_Thu_May_18_14:31:20.h5" 
+    #model_name = "FirstTryNewData_classification_bCNN_1D_Fri_May_19_10:49:02.h5" 
+    model_name = "TryingMonoZ_classification_bCNN_1D_Fri_May_19_11:55:47.h5"
+    signature = "z"
 
     if "classification" in model_name:
         model_type = "cl"
+
     elif "regression" in model_name:
         model_type = "re"
+
     else:
         print("Could not identify whether the model type was classification or regression")
         exit(2)
@@ -178,7 +182,8 @@ def main():
     model = load_model(model_path)
     
     # Load the dataset
-    dataset = load_dataset(model_type)
+    dataset = load_dataset(signature, model_type)
+    print(dataset)
     
     # Evaluate and save the performance metrics
     stats = evaluate(model, dataset, num_classes, model_name)

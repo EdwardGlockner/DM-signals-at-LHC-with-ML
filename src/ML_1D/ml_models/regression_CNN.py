@@ -198,7 +198,7 @@ class regression_CNN():
             print(f"Could not save image of model architecture. Error: {e}")
         
         #learning_rate = self.grid_search_lr()
-        self.model.compile(optimizer = tf.keras.optimizers.Adam(learning_rate=0.2), loss = "mse", metrics = [tf.keras.metrics.RootMeanSquaredError(), \
+        self.model.compile(optimizer = tf.keras.optimizers.Adam(learning_rate=0.1), loss = "mse", metrics = [tf.keras.metrics.RootMeanSquaredError(), \
                 tf.keras.metrics.MeanAbsoluteError(), tf.keras.metrics.MeanAbsolutePercentageError(), \
                 tf.keras.metrics.MeanSquaredLogarithmicError(), tf.keras.metrics.CosineSimilarity(), \
                 tf.keras.metrics.LogCoshError()])

@@ -96,30 +96,7 @@ def get_sets(*folder_csv_path):
     """
 
     """
-    """
-    X_data, targets, labels = create_sets_from_csv(*folder_csv_path) 
-    #count_zero = np.count_nonzero(labels == 0)
-    #count_one = np.count_nonzero(labels == 1)
-    #print(f"Number of zeros: {count_zero}")
-    #print(f"Number of ones: {count_one}")
-
-    cl, re = shuffle_and_create_sets(X_data, labels, targets, print_shapes=False)
-    X_train_cl, y_train_cl, X_test_cl, y_test_cl, X_val_cl, y_val_cl = cl
-    X_train_re_hist, X_train_re_cat, y_train_re, X_test_re_hist, X_test_re_cat, \
-            y_test_re, X_val_re_hist, X_val_re_cat, y_val_re = re
-    
-    input_shape = (X_train_cl.shape[1], X_train_cl.shape[2])
-    #print(np.count_nonzero(y_train_cl == 0))
-    #print(np.count_nonzero(y_train_cl == 1))
-    #print(np.count_nonzero(y_test_cl == 0))
-    #print(np.count_nonzero(y_test_cl == 1))
-    #print(np.count_nonzero(y_val_cl == 0))
-    #print(np.count_nonzero(y_val_cl == 1))
-    return [X_train_cl, y_train_cl, X_test_cl, y_test_cl, X_val_cl, y_val_cl], \
-            [X_train_re_hist, X_train_re_cat, y_train_re, X_test_re_hist, X_test_re_cat, \
-            y_test_re, X_val_re_hist, X_val_re_cat, y_val_re], input_shape
-    """
-    cl, re = load_sets(aug=False)
+    cl, re = load_sets("z", aug=False)
     input_shape = cl[0].shape[1], cl[0].shape[2] # Shape of X_train
     return cl, re, input_shape
 
@@ -166,11 +143,8 @@ def train_regression(data_sets, input_shape, model_prefix):
 
     return model
 
-
+"""
 def val_classification(data_sets, input_shape, num_classes, model, img_save_path):
-    """
-
-    """
     if len(data_sets) != 2:
         print(f"Error in function <val_classification>. Expected 2 datasets, got {len(data_sets)}")
         return
@@ -180,16 +154,13 @@ def val_classification(data_sets, input_shape, num_classes, model, img_save_path
 
 
 def val_regression(data_sets, input_shape, model, img_save_path):
-    """
-
-    """
     if len(data_sets) != 3:
         print(f"Error in function <val_regression>. Expected 3 datasets, got {len(data_sets)}")
         return
 
     X_val_hist, X_val_cat, y_val = data_sets
     model.evaluate_model(X_val_hist, X_val_cat, y_val, img_save_path)
-
+"""
 
 def GP_classification(data_sets):
     """
@@ -322,39 +293,35 @@ def main(run_mode, model_type, model_prefix):
     data_set_cl, data_set_re, input_shape = get_sets(sneutrino_jet_path, \
             sneutrino_jet_path2, neutralino_jet_path, neutralino_jet_path2) 
 
-    X_train_cl, y_train_cl, X_test_cl, y_test_cl, X_val_cl, y_val_cl = data_set_cl
-    X_train_re_hist, X_train_re_cat, y_train_re, X_test_re_hist, X_test_re_cat, \
-            y_test_re, X_val_re_hist, X_val_re_cat, y_val_re = data_set_re
+    X_train_cl, y_train_cl, X_val_cl, y_val_cl = data_set_cl
+    X_train_re_hist, X_train_re_cat, y_train_re, X_val_re_hist, X_val_re_cat, y_val_re = data_set_re
     
-    cl_data_set = [X_train_cl, y_train_cl, X_test_cl, y_test_cl]
-    re_data_set = [X_train_re_hist, X_train_re_cat, y_train_re, X_test_re_hist, \
-            X_test_re_cat,  y_test_re]
+    cl_data_set = [X_train_cl, y_train_cl, X_val_cl, y_val_cl]
+    re_data_set = [X_train_re_hist, X_train_re_cat, y_train_re, X_val_re_hist, \
+            X_val_re_cat,  y_val_re]
 
-    cl_data_set_val = [X_val_cl, y_val_cl]
-    re_data_set_val = [X_val_re_hist, X_val_re_cat,  y_val_re]
 
     num_classes = len(np.unique(y_train_cl))
-    
     # Train the models
     if model_type == "cl":
         cl_model = train_classification(cl_data_set, input_shape, num_classes, model_prefix)
         # Run Gaussian Process
-        GP_classification([X_train_cl, y_train_cl, X_test_cl, y_test_cl, X_val_cl, y_val_cl])
+        #GP_classification([X_train_cl, y_train_cl, X_test_cl, y_test_cl, X_val_cl, y_val_cl])
 
     elif model_type == "re":
         re_model = train_regression(re_data_set, input_shape, model_prefix) 
         # Run Gaussian Process
-        GP_regression([X_train_re_hist, X_train_re_cat, y_train_re, X_test_re_hist, \
-            X_test_re_cat, y_test_re, X_val_re_hist, X_val_re_cat, y_val_re])
+        #GP_regression([X_train_re_hist, X_train_re_cat, y_train_re, X_test_re_hist, \
+        #    X_test_re_cat, y_test_re, X_val_re_hist, X_val_re_cat, y_val_re])
 
     elif model_type == "clre":
         cl_model = train_classification(cl_data_set, input_shape, num_classes, model_prefix)
         re_model = train_regression(re_data_set, input_shape, model_prefix) 
 
         # Run Gaussian Process
-        GP_classification([X_train_cl, y_train_cl, X_test_cl, y_test_cl, X_val_cl, y_val_cl])
-        GP_regression([X_train_re_hist, X_train_re_cat, y_train_re, X_test_re_hist, \
-                X_test_re_cat, y_test_re, X_val_re_hist, X_val_re_cat, y_val_re])
+        #GP_classification([X_train_cl, y_train_cl, X_test_cl, y_test_cl, X_val_cl, y_val_cl])
+        #GP_regression([X_train_re_hist, X_train_re_cat, y_train_re, X_test_re_hist, \
+        #        X_test_re_cat, y_test_re, X_val_re_hist, X_val_re_cat, y_val_re])
 
 
     else:
@@ -362,7 +329,7 @@ def main(run_mode, model_type, model_prefix):
         return
 
     # Validate the models
-
+    """
     if run_mode == "trainval":
         img_save_path = dirname + "src/ML_1D/plots"
         if model_type == "cl":
@@ -374,7 +341,7 @@ def main(run_mode, model_type, model_prefix):
         elif model_type == "clre":
             val_classification(cl_data_set_val, input_shape, num_classes, cl_model, img_save_path)
             val_regression(re_data_set_val, input_shape, re_model, img_save_path)
-    
+    """ 
 
 
 #---RUN CODE-------------+

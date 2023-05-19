@@ -81,13 +81,13 @@ def main():
     merge_csv_files(sneutrino_monoz, neutralino_monoz, "64monoz.csv", "16monoz.csv", "20monoz.csv")
     merge_csv_files(sneutrino_jet, neutralino_jet, "64jet.csv", "16jet.csv", "20jet.csv")
 
-    split_csv("64monoz.csv", "monoz_mass_training", "monoz_model_training", "monoz_input_training")
-    split_csv("16monoz.csv", "monoz_mass_validation", "monoz_model_validation", "monoz_input_validation")
-    split_csv("20monoz.csv", "monoz_mass_testing", "monoz_model_testing", "monoz_input_testing")
+    split_csv("64monoz.csv", "monoz_mass_training.csv", "monoz_model_training.csv", "monoz_input_training.csv")
+    split_csv("16monoz.csv", "monoz_mass_validation.csv", "monoz_model_validation.csv", "monoz_input_validation.csv")
+    split_csv("20monoz.csv", "monoz_mass_testing.csv", "monoz_model_testing.csv", "monoz_input_testing.csv")
 
-    split_csv("64jet.csv", "jet_mass_training", "jet_model_training", "jet_input_training")
-    split_csv("16jet.csv", "jet_mass_validation", "jet_model_validation", "jet_input_validation")
-    split_csv("20jet.csv", "jet_mass_testing", "jet_model_testing", "jet_input_testing")
+    split_csv("64jet.csv", "jet_mass_training.csv", "jet_model_training.csv", "jet_input_training.csv")
+    split_csv("16jet.csv", "jet_mass_validation.csv", "jet_model_validation.csv", "jet_input_validation.csv")
+    split_csv("20jet.csv", "jet_mass_testing.csv", "jet_model_testing.csv", "jet_input_testing.csv")
 
 
 if __name__ == "__main__":

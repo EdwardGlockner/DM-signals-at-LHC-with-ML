@@ -53,7 +53,10 @@ class classification_bCNN():
             None
         """
         self.X_train = X_train
+        unique_classes = np.unique(y_train)
+        print("Unique classes:", unique_classes)
         self.y_train = to_categorical(y_train, num_classes)
+        print(self.y_train)
         self.X_test = X_test
         self.y_test = to_categorical(y_test, num_classes)
         self.input_shape = input_shape
