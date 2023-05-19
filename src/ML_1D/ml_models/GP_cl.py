@@ -9,31 +9,25 @@ import json
 
 """
 class classification_GP():
-    def __init__(self, X_train, y_train, X_test, y_test, X_val, y_val, \
-            model_name="classification_GP"):
+    def __init__(self, X_train, y_train, X_test, y_test, model_name="classification_GP"):
         """
 
         """
         self.model_name = model_name
         
         self.X_train, self.y_train, self.X_test, self.y_test = \
-                self._prepare_sets(X_train, y_train, X_test, y_test, X_val, y_val)
+                self._prepare_sets(X_train, y_train, X_test, y_test)
         self.model = self._create_model()
 
     
-    def _prepare_sets(self, X_train, y_train, X_test, y_test, X_val, y_val):
+    def _prepare_sets(self, X_train, y_train, X_test, y_test):
         """
 
         """
         X_train = np.reshape(X_train, (X_train.shape[0], -1))
         X_test = np.reshape(X_test, (X_test.shape[0], -1))
-        X_val = np.reshape(X_val, (X_val.shape[0], -1))
         
-        # Stack the testing and validation set together
-        X_test_val = np.vstack((X_test, X_val))
-        y_test_val = np.hstack((y_test, y_val))
-
-        return X_train, y_train, X_test_val, y_test_val
+        return X_train, y_train, X_test, y_test
 
     def _create_model(self):
         """
@@ -80,15 +74,4 @@ class classification_GP():
                 print(f"Could not save validation statistics. Error: {e}")
        
  
-
-
-
-
-
-
-
-
-
-
-
 

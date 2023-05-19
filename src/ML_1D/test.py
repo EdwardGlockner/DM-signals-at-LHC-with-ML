@@ -9,6 +9,7 @@ import tensorflow as tf
 from tensorflow.keras.models import load_model
 from keras.utils import to_categorical
 import json
+import argparse
 
 #---FIXING DIRNAME-------+
 dirname = os.getcwd()
@@ -21,6 +22,14 @@ sys.path.append(project_root)
 #---LOCAL IMPORTS--------+
 from data_prep_1D.data_prep_test import load_sets 
 from helper_functions.plotting import *
+
+#---Argument Parsing-----+
+def arg_parse():
+    parser = argparse.ArgumentParser(description="Machine Learning DM", add_help=False)
+    parser.add_argument('--model_name', type=str, default='', help='Name of the .h5 file')
+    args = parser.parse_args()
+
+    return args.model_name
 
 #---GLOBALS--------------+
 np.set_printoptions(threshold=np.inf)
@@ -67,6 +76,7 @@ def load_dataset(signature, model_type):
     """
     dataset = load_sets(signature, model_type)
     return dataset
+
 
 def evaluate(model, dataset, num_classes, model_name):
     """
@@ -158,16 +168,15 @@ def save_stats(save_dir, stats, model_name):
     print("Stats saved")
 
 #---MAIN-----------------+
-def main():
+def main(model_name):
+    """
+
+    """
     clear()
     # Model properties
     num_classes = 2
 
     # Load the model
-    #model_name = "FirstTryNewData_classification_bCNN_1D_Fri_May_19_10:49:02.h5" 
-    model_name = "TryingMonoZ_classification_bCNN_1D_Fri_May_19_11:55:47.h5"
-    signature = "z"
-
     if "classification" in model_name:
         model_type = "cl"
 
@@ -177,13 +186,21 @@ def main():
     else:
         print("Could not identify whether the model type was classification or regression")
         exit(2)
+    
+    if "_jet_" in model_name:
+        signature = "jet"
+    
+    elif "_z_" in model_name:
+        signature = "z"
+    else:
+        print("Could not identiy which signature the model is trained on")
+        exit(2)
 
     model_path = dirname + "/src/ML_1D/saved_models/" + model_name 
     model = load_model(model_path)
     
     # Load the dataset
     dataset = load_dataset(signature, model_type)
-    print(dataset)
     
     # Evaluate and save the performance metrics
     stats = evaluate(model, dataset, num_classes, model_name)
@@ -192,4 +209,6 @@ def main():
     
 
 if __name__ == "__main__":
-    main()
+    model_name = arg_parse()
+    main(model_name)
+
