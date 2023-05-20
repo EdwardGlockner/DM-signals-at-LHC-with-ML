@@ -145,10 +145,10 @@ def train(model_name, signature):
     
     if signature == "z":
         learning_rate_cl = 0.0001
-        learning_rate_re = 0.01
+        learning_rate_re = 0.0045
     else: # jet
         learning_rate_cl = 0.0001
-        learning_rate_re = 0.03
+        learning_rate_re = 0.006641414141414141
 
     # Train the models
     if model_type == "cl":
@@ -179,7 +179,7 @@ def main(run_mode, model_type, model_prefix):
     model_name_jet = model_prefix + "_jet_" + formatted_time
     
     # Train the models
-    train(model_name_z, "z")
+    #train(model_name_z, "z")
     train(model_name_jet, "jet")
     
     # Validate the models
@@ -203,7 +203,7 @@ def main(run_mode, model_type, model_prefix):
         elif model_type == "re":
             print(bar)
             print("Running mono_z regression model on testing data")
-            subprocess.run(command1)
+            #subprocess.run(command1)
             print(bar)
             print("Running mono_jet regression model on testing data")
             subprocess.run(command3)

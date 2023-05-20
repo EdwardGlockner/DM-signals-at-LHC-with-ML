@@ -73,10 +73,10 @@ def main():
 
     dirname = os.getcwd()
 
-    sneutrino_monoz = dirname + "/raw_data/sneutrino_monoz/data_Sneutrino_monoz.csv"
-    neutralino_monoz = dirname + "/raw_data/neutralino_monoz/data_Neutralino_monoz.csv"
-    sneutrino_jet = dirname + "/raw_data/sneutrino_jet/data_Sneutrino_jet.csv"
-    neutralino_jet = dirname + "/raw_data/neutralino_jet/data_Neutralino_jet.csv"
+    sneutrino_monoz = dirname + "/Sneutrino_monoz_cut.csv"
+    neutralino_monoz = dirname + "/Neutralino_monoz_cut.csv"
+    sneutrino_jet = dirname + "/Sneutrino_jet_cut.csv"
+    neutralino_jet = dirname + "/Neutralino_jet_cut.csv"
 
     merge_csv_files(sneutrino_monoz, neutralino_monoz, "64monoz.csv", "16monoz.csv", "20monoz.csv")
     merge_csv_files(sneutrino_jet, neutralino_jet, "64jet.csv", "16jet.csv", "20jet.csv")

@@ -22,12 +22,12 @@ def load_sets(signature, aug=False):
         None
     """
     if signature == "z":
-        train_input = dirname + "Storage_data/z_data/Training/monoz_input_training.csv"
-        train_mass = dirname + "Storage_data/z_data/Training/monoz_mass_training.csv"
-        train_model = dirname + "Storage_data/z_data/Training/monoz_model_training.csv"
-        val_input = dirname + "Storage_data/z_data/Validating/monoz_input_validation.csv"
-        val_mass = dirname + "Storage_data/z_data/Validating/monoz_mass_validation.csv"
-        val_model = dirname + "Storage_data/z_data/Validating/monoz_model_validation.csv"
+        train_input = dirname + "Storage_data/cut_z_data/Training/monoz_input_training.csv"
+        train_mass = dirname + "Storage_data/cut_z_data/Training/monoz_mass_training.csv"
+        train_model = dirname + "Storage_data/cut_z_data/Training/monoz_model_training.csv"
+        val_input = dirname + "Storage_data/cut_z_data/Validating/monoz_input_validation.csv"
+        val_mass = dirname + "Storage_data/cut_z_data/Validating/monoz_mass_validation.csv"
+        val_model = dirname + "Storage_data/cut_z_data/Validating/monoz_model_validation.csv"
     
         X_train = df_input_z(train_input)
         X_val = df_input_z(val_input)
@@ -41,12 +41,12 @@ def load_sets(signature, aug=False):
         model_val = np.where(model_val == 2, 0, np.where(model_val == 3, 1, model_val))
 
     else: # jet
-        train_input = dirname + "Storage_data/jet_data/Training/jet_input_training.csv"
-        train_mass = dirname + "Storage_data/jet_data/Training/jet_mass_training.csv"
-        train_model = dirname + "Storage_data/jet_data/Training/jet_model_training.csv"
-        val_input = dirname + "Storage_data/jet_data/Validating/jet_input_validation.csv"
-        val_mass = dirname + "Storage_data/jet_data/Validating/jet_mass_validation.csv"
-        val_model = dirname + "Storage_data/jet_data/Validating/jet_model_validation.csv"
+        train_input = dirname + "Storage_data/cut_jet_data/Training/jet_input_training.csv"
+        train_mass = dirname + "Storage_data/cut_jet_data/Training/jet_mass_training.csv"
+        train_model = dirname + "Storage_data/cut_jet_data/Training/jet_model_training.csv"
+        val_input = dirname + "Storage_data/cut_jet_data/Validating/jet_input_validation.csv"
+        val_mass = dirname + "Storage_data/cut_jet_data/Validating/jet_mass_validation.csv"
+        val_model = dirname + "Storage_data/cut_jet_data/Validating/jet_model_validation.csv"
 
         X_train = df_input_jet(train_input)
         X_val = df_input_jet(val_input)
@@ -81,21 +81,18 @@ def df_input_jet(file_path):
     """
     df = pd.read_csv(file_path, header=None)
     df = pd.DataFrame({
-        'eta': df.iloc[:, 0:45].values.tolist(),
-        'pt': df.iloc[:, 45:90].values.tolist(),
-        'tet': df.iloc[:, 90:].values.tolist()
+        'eta': df.iloc[:, 0:30].values.tolist(),
+        'tet': df.iloc[:, 30:].values.tolist()
     })
 
     eta_vals = df["eta"].tolist()
-    pt_vals = df["pt"].tolist()
     tet_vals = df["tet"].tolist()
 
     eta_vals = np.array([np.array(sublist) for sublist in eta_vals])
-    pt_vals = np.array([np.array(sublist) for sublist in pt_vals])
     tet_vals = np.array([np.array(sublist) for sublist in tet_vals])
 
     # Concatenate into three channels
-    input_data  = np.concatenate([eta_vals[..., np.newaxis], pt_vals[..., np.newaxis], tet_vals[..., np.newaxis]], axis=2)
+    input_data  = np.concatenate([eta_vals[..., np.newaxis], tet_vals[..., np.newaxis]], axis=2)
     return input_data
 
 
@@ -105,10 +102,10 @@ def df_input_z(file_path):
     """
     df = pd.read_csv(file_path, header=None)
     df = pd.DataFrame({
-        'eta': df.iloc[:, 0:45].values.tolist(),
-        'pt': df.iloc[:, 45:90].values.tolist(),
-        'mt_met': df.iloc[:, 90:135].values.tolist(),
-        'tet': df.iloc[:, 135:].values.tolist()
+        'eta': df.iloc[:, 0:40].values.tolist(),
+        'pt': df.iloc[:, 40:80].values.tolist(),
+        'mt_met': df.iloc[:, 80:120].values.tolist(),
+        'tet': df.iloc[:, 120:].values.tolist()
     })
 
     eta_vals = df["eta"].tolist()

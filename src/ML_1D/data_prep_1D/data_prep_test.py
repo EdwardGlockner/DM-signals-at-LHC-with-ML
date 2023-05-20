@@ -21,9 +21,9 @@ def load_sets(signature, model_type):
         None
     """
     if signature == "z":
-        test_input = dirname + "Storage_data/z_data/Testing/monoz_input_testing.csv"
-        test_mass = dirname + "Storage_data/z_data/Testing/monoz_mass_testing.csv"
-        test_model = dirname + "Storage_data/z_data/Testing/monoz_model_testing.csv"
+        test_input = dirname + "Storage_data/cut_z_data/Testing/monoz_input_testing.csv"
+        test_mass = dirname + "Storage_data/cut_z_data/Testing/monoz_mass_testing.csv"
+        test_model = dirname + "Storage_data/cut_z_data/Testing/monoz_model_testing.csv"
         
         X_test = df_input_z(test_input)
         mass_test = df_mass_model(test_mass)
@@ -32,9 +32,9 @@ def load_sets(signature, model_type):
     
     else: # jet
 
-        test_input = dirname + "Storage_data/jet_data/Testing/jet_input_testing.csv"
-        test_mass = dirname + "Storage_data/jet_data/Testing/jet_mass_testing.csv"
-        test_model = dirname + "Storage_data/jet_data/Testing/jet_model_testing.csv"
+        test_input = dirname + "Storage_data/cut_jet_data/Testing/jet_input_testing.csv"
+        test_mass = dirname + "Storage_data/cut_jet_data/Testing/jet_mass_testing.csv"
+        test_model = dirname + "Storage_data/cut_jet_data/Testing/jet_model_testing.csv"
     
         X_test = df_input_jet(test_input)
         mass_test = df_mass_model(test_mass)
@@ -55,21 +55,18 @@ def df_input_jet(file_path):
     """
     df = pd.read_csv(file_path, header=None)
     df = pd.DataFrame({
-        'eta': df.iloc[:, 0:45].values.tolist(),
-        'pt': df.iloc[:, 45:90].values.tolist(),
-        'tet': df.iloc[:, 90:].values.tolist()
+        'eta': df.iloc[:, 0:30].values.tolist(),
+        'tet': df.iloc[:, 30:].values.tolist()
     })
 
     eta_vals = df["eta"].tolist()
-    pt_vals = df["pt"].tolist()
     tet_vals = df["tet"].tolist()
 
     eta_vals = np.array([np.array(sublist) for sublist in eta_vals])
-    pt_vals = np.array([np.array(sublist) for sublist in pt_vals])
     tet_vals = np.array([np.array(sublist) for sublist in tet_vals])
 
     # Concatenate into three channels
-    input_data  = np.concatenate([eta_vals[..., np.newaxis], pt_vals[..., np.newaxis], tet_vals[..., np.newaxis]], axis=2)
+    input_data  = np.concatenate([eta_vals[..., np.newaxis], tet_vals[..., np.newaxis]], axis=2)
     return input_data
 
 
@@ -79,10 +76,10 @@ def df_input_z(file_path):
     """
     df = pd.read_csv(file_path, header=None)
     df = pd.DataFrame({
-        'eta': df.iloc[:, 0:45].values.tolist(),
-        'pt': df.iloc[:, 45:90].values.tolist(),
-        'mt_met': df.iloc[:, 90:135].values.tolist(),
-        'tet': df.iloc[:, 135:].values.tolist()
+        'eta': df.iloc[:, 0:40].values.tolist(),
+        'pt': df.iloc[:, 40:80].values.tolist(),
+        'mt_met': df.iloc[:, 80:120].values.tolist(),
+        'tet': df.iloc[:, 120:].values.tolist()
     })
 
     eta_vals = df["eta"].tolist()

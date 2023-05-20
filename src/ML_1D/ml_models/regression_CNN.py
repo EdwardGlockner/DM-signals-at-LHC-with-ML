@@ -97,10 +97,12 @@ class regression_CNN():
         if self.signature == "z":
             conv1 = layers.Conv1D(32, (3), activation= "relu", input_shape = self.input_shape)(image_input)
             maxpool1 = layers.MaxPooling1D((2))(conv1)
-            conv2 = layers.Conv1D(32, (3), activation = "relu")(maxpool1)
-            norm1 = layers.BatchNormalization()(conv2)
-            maxpool2= layers.MaxPooling1D((2))(norm1)
-            flatten = layers.Flatten()(maxpool2)
+            conv2 = layers.Conv1D(16, (3), activation = "relu")(maxpool1)
+            maxpool2 = layers.MaxPooling1D((2))(conv2)
+            conv3 = layers.Conv1D(8, (3), activation = "relu")(maxpool2)
+            norm1 = layers.BatchNormalization()(conv3)
+            maxpool3= layers.MaxPooling1D((2))(norm1)
+            flatten = layers.Flatten()(maxpool3)
             concatenated = layers.concatenate([flatten, categorical_input])
             dense1 = layers.Dense(16, activation = "relu")(concatenated)
             dense2 = layers.Dense(8, activation = "relu")(dense1)
@@ -110,15 +112,13 @@ class regression_CNN():
             model = models.Model(inputs=[image_input, categorical_input], outputs=output)
 
         else: # jet        
-            conv1 = layers.Conv1D(32, (3), activation= "relu", input_shape = self.input_shape)(image_input)
-            maxpool1 = layers.MaxPooling1D((2))(conv1)
-            conv2 = layers.Conv1D(32, (3), activation = "relu")(maxpool1)
-            norm1 = layers.BatchNormalization()(conv2)
-            maxpool2= layers.MaxPooling1D((2))(norm1)
-            flatten = layers.Flatten()(maxpool2)
+            conv1 = layers.Conv1D(8, (3), activation= "relu", input_shape = self.input_shape)(image_input)
+            norm1 = layers.BatchNormalization()(conv1)
+            maxpool1 = layers.MaxPooling1D((2))(norm1)
+            flatten = layers.Flatten()(maxpool1)
             concatenated = layers.concatenate([flatten, categorical_input])
-            dense1 = layers.Dense(16, activation = "relu")(concatenated)
-            dense2 = layers.Dense(8, activation = "relu")(dense1)
+            dense1 = layers.Dense(32, activation = "relu")(concatenated)
+            dense2 = layers.Dense(16, activation = "relu")(dense1)
             norm2 = layers.BatchNormalization()(dense2)
             output = layers.Dense(1, activation = "linear")(norm2)
 
@@ -158,8 +158,9 @@ class regression_CNN():
         """
         best_score = float('inf')
         best_params = {}
-
-        lrs = np.linspace(0.005, 0.25, 20).tolist()
+        val_losses = []
+        learning_rates = []
+        lrs = np.linspace(0.0005, 0.01, 100).tolist()
 
         for lr in lrs:
             # Create the model
@@ -168,10 +169,16 @@ class regression_CNN():
             model.compile(optimizer=optimizer, loss='mse', metrics=['mse'])
 
             # Train the model
-            history = model.fit([self.X_train, self.X_train_cat], self.y_train, \
-                    epochs=10, validation_data=([self.X_test, self.X_test_cat], \
-                    self.y_test))
-
+            history = model.fit([self.X_train, self.X_train_cat], self.y_train, epochs = self.epochs,
+                            validation_data = ([self.X_test, self.X_test_cat], self.y_test), callbacks = [tf.keras.callbacks.EarlyStopping(monitor='val_loss', 
+                                min_delta=0, 
+                                patience=0, 
+                                verbose=0, 
+                                mode='auto', 
+                                baseline=None,
+                                start_from_epoch=0,
+                                restore_best_weights=True)])
+ 
             # Evaluate the model
             val_loss = history.history['val_loss'][-1]
 
@@ -179,11 +186,18 @@ class regression_CNN():
             if val_loss < best_score:
                 best_score = val_loss
                 best_params = {'learning_rate': lr}
+
+            val_losses.append(val_loss)
+            learning_rates.append(lr)
         print(best_score)
         print(best_params)
+
+        plt.plot(learning_rates, val_losses)
+        plt.show()
+    
         return best_params['learning_rate']
 
-
+    
     def compile(self):
         """
         Compiles and save an image of the model architecture. 
@@ -216,8 +230,8 @@ class regression_CNN():
         except FileNotFoundError as e:
             print(f"Could not save image of model architecture. Error: {e}")
         
-        #learning_rate = self.grid_search_lr()
-        self.model.compile(optimizer = tf.keras.optimizers.Adam(learning_rate=self.learning_rate), loss = "mse", metrics = [tf.keras.metrics.RootMeanSquaredError(), \
+        learning_rate = self.grid_search_lr()
+        self.model.compile(optimizer = tf.keras.optimizers.Adam(learning_rate=learning_rate), loss = "mse", metrics = [tf.keras.metrics.RootMeanSquaredError(), \
                 tf.keras.metrics.MeanAbsoluteError(), tf.keras.metrics.MeanAbsolutePercentageError(), \
                 tf.keras.metrics.MeanSquaredLogarithmicError(), tf.keras.metrics.CosineSimilarity(), \
                 tf.keras.metrics.LogCoshError()])
@@ -240,7 +254,7 @@ class regression_CNN():
                                 verbose=0, 
                                 mode='auto', 
                                 baseline=None,
-                                start_from_epoch=0,
+                                start_from_epoch=2,
                                 restore_best_weights=True)])
     
         # Save a loadable .h5 file
@@ -256,7 +270,7 @@ class regression_CNN():
 
         dirname_here = os.getcwd()
         plotter = plotting("", "", self.history, self.model_name, dirname_here + "/plots")
-        plotter.loss(cl_or_re="cl", show=True)
+        #plotter.loss(cl_or_re="cl", show=True)
         plotter.rmse(show=True)
  
 
