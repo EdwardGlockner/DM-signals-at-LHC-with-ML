@@ -36,7 +36,8 @@ normalization, shuffling and so on.
 """
 
 class classification_bCNN():
-    def __init__(self, X_train, y_train, X_test, y_test, input_shape, num_classes, model_name = "classification_bCNN_1D", epochs=1000):
+    def __init__(self, X_train, y_train, X_test, y_test, input_shape, num_classes, \
+            signature, learning_rate, model_name = "classification_bCNN_1D", epochs=1000):
         """
         Constructor for the classification_bCNN class
 
@@ -58,6 +59,8 @@ class classification_bCNN():
         self.y_test = to_categorical(y_test, num_classes)
         self.input_shape = input_shape
         self.num_classes = num_classes
+        self.signature = signature
+        self.learning_rate = learning_rate
         self.model_name = model_name
         self.epochs = epochs  
         self.model = self._create_model()
@@ -96,19 +99,32 @@ class classification_bCNN():
             tfpl.OneHotCategorical(self.num_classes, convert_to_tensor_fn=tfd.Distribution.mode)
         ])
         """
-        model = models.Sequential()
-        model.add(layers.Conv1D(filters=32, kernel_size=(3), activation="relu", padding ="VALID",  input_shape=self.input_shape))
-        model.add(layers.MaxPooling1D(pool_size=(2)))
-        model.add(layers.Conv1D(filters=32, kernel_size=(3), activation="relu", padding="VALID"))
-        model.add(layers.BatchNormalization())
-        model.add(layers.MaxPooling1D(pool_size=(2)))
-        model.add(layers.Flatten())
-        layers.Dense(32, activation="relu")
-        layers.Dense(8, activation="relu")
+        if self.signature == "z":
+            model = models.Sequential()
+            model.add(layers.Conv1D(filters=32, kernel_size=(3), activation="relu", padding ="VALID",  input_shape=self.input_shape))
+            model.add(layers.MaxPooling1D(pool_size=(2)))
+            model.add(layers.Conv1D(filters=32, kernel_size=(3), activation="relu", padding="VALID"))
+            model.add(layers.BatchNormalization())
+            model.add(layers.MaxPooling1D(pool_size=(2)))
+            model.add(layers.Flatten())
+            layers.Dense(32, activation="relu")
+            layers.Dense(8, activation="relu")
 
-        model.add(layers.Dense(self.num_classes, activation="softmax"))
+            model.add(layers.Dense(self.num_classes, activation="softmax"))
+        
+        else: # jet
+            model = models.Sequential()
+            model.add(layers.Conv1D(filters=32, kernel_size=(3), activation="relu", padding ="VALID",  input_shape=self.input_shape))
+            model.add(layers.MaxPooling1D(pool_size=(2)))
+            model.add(layers.Conv1D(filters=32, kernel_size=(3), activation="relu", padding="VALID"))
+            model.add(layers.BatchNormalization())
+            model.add(layers.MaxPooling1D(pool_size=(2)))
+            model.add(layers.Flatten())
+            layers.Dense(32, activation="relu")
+            layers.Dense(8, activation="relu")
 
-
+            model.add(layers.Dense(self.num_classes, activation="softmax"))
+        
         # Print the architecture and return the model
         if print_sum:
             print(model.summary())
@@ -192,7 +208,7 @@ class classification_bCNN():
         
         #learning_rate = self.grid_search_lr()
         # Compiles the model
-        self.model.compile(optimizer = tf.keras.optimizers.Adam(learning_rate=0.00005),
+        self.model.compile(optimizer = tf.keras.optimizers.Adam(learning_rate=self.learning_rate),
                            loss = tf.keras.losses.CategoricalCrossentropy(from_logits=False),
                             metrics = ["accuracy", tf.keras.metrics.AUC(), tf.keras.metrics.Precision(), \
                               tf.keras.metrics.Recall(), tf.keras.metrics.TruePositives(), tf.keras.metrics.TrueNegatives(), \
@@ -212,12 +228,12 @@ class classification_bCNN():
         self.history = self.model.fit(self.X_train, self.y_train, epochs = self.epochs, batch_size=32,
                             validation_data = (self.X_test, self.y_test), callbacks = [tf.keras.callbacks.EarlyStopping(monitor='val_loss', 
                                 min_delta=0, 
-                                patience=3, 
+                                patience=2, 
                                 verbose=0, 
                                 mode='auto', 
                                 baseline=None,
                                 restore_best_weights=False,
-                                start_from_epoch=8)])
+                                start_from_epoch=5)])
         #self.history = self.model.fit(self.X_train, self.y_train, epochs = 1000, batch_size=32,
         #                    validation_data = (self.X_test, self.y_test))
 

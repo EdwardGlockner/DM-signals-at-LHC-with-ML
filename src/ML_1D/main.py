@@ -97,7 +97,7 @@ def get_sets(signature):
     input_shape = cl[0].shape[1], cl[0].shape[2] # Shape of X_train
     return cl, re, input_shape
 
-def train_classification(data_sets, input_shape, num_classes, model_name):
+def train_classification(data_sets, input_shape, num_classes, signature, learning_rate, model_name):
     """
 
     """
@@ -107,14 +107,15 @@ def train_classification(data_sets, input_shape, num_classes, model_name):
         
     X_train, y_train, X_test, y_test = data_sets 
 
-    model = classification_bCNN(X_train, y_train, X_test, y_test, input_shape, num_classes, model_name) 
+    model = classification_bCNN(X_train, y_train, X_test, y_test, input_shape, \
+            num_classes, signature, learning_rate, model_name) 
     model.compile()
     model.train()
 
     return model
 
 
-def train_regression(data_sets, input_shape, model_name):
+def train_regression(data_sets, input_shape, signature, learning_rate, model_name):
     """
 
     """
@@ -124,7 +125,8 @@ def train_regression(data_sets, input_shape, model_name):
 
     X_train_hist, X_train_cat, y_train, X_test_hist, X_test_cat, y_test = data_sets
 
-    model = regression_CNN(X_train_hist, X_train_cat, y_train, X_test_hist, X_test_cat, y_test, input_shape, model_name)
+    model = regression_CNN(X_train_hist, X_train_cat, y_train, X_test_hist, X_test_cat, \
+            y_test, input_shape, signature, learning_rate, model_name)
     model.compile()
     model.train()
 
@@ -140,17 +142,28 @@ def train(model_name, signature):
     """
     cl_data_set, re_data_set, input_shape = get_sets(signature)
     num_classes = len(np.unique(cl_data_set[1]))
+    
+    if signature == "z":
+        learning_rate_cl = 0.0001
+        learning_rate_re = 0.01
+    else: # jet
+        learning_rate_cl = 0.0001
+        learning_rate_re = 0.03
 
     # Train the models
     if model_type == "cl":
-        train_classification(cl_data_set, input_shape, num_classes, model_name + "_classification")
+        train_classification(cl_data_set, input_shape, num_classes, signature, \
+                             learning_rate_cl, model_name + "_classification")
 
     elif model_type == "re":
-        train_regression(re_data_set, input_shape, model_name + "_regression") 
+        train_regression(re_data_set, input_shape, signature, learning_rate_re, \
+                model_name + "_regression") 
 
     elif model_type == "clre":
-        train_classification(cl_data_set, input_shape, num_classes, model_name + "_classification")
-        train_regression(re_data_set, input_shape, model_name + "_regression") 
+        train_classification(cl_data_set, input_shape, num_classes, signature, \
+                learning_rate_cl, model_name + "_classification")
+        train_regression(re_data_set, input_shape, signature, learning_rate_re, \
+                model_name + "_regression") 
 
     else:
         print("Not a valid model_type. See python main.py -h for help.")

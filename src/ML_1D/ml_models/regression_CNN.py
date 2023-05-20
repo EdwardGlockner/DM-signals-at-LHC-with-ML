@@ -33,7 +33,8 @@ network architecture and save the results and statistics of the training and val
 WARNING: The data preparation should be handled outside of this class.
 """
 class regression_CNN():
-    def __init__(self, X_train, X_train_cat, y_train, X_test, X_test_cat, y_test, input_shape, model_name = "regression_CNN_1D", epochs=1000):
+    def __init__(self, X_train, X_train_cat, y_train, X_test, X_test_cat, y_test, \
+            input_shape, signature, learning_rate, model_name = "regression_CNN_1D", epochs=1000):
         """
         Constructor for the regresion_CNN class
 
@@ -57,6 +58,8 @@ class regression_CNN():
         self.X_test_cat = X_test_cat
         self.y_test = y_test
         self.input_shape = input_shape
+        self.signature = signature
+        self.learning_rate = learning_rate
         self.model_name = model_name
         self.epochs = epochs
         """ 
@@ -89,22 +92,38 @@ class regression_CNN():
         # Create the model inputs
         image_input = layers.Input(shape=self.input_shape)
         categorical_input = layers.Input(shape=(1,))
-
-        # Create the model
-        conv1 = layers.Conv1D(32, (3), activation= "relu", input_shape = self.input_shape)(image_input)
-        maxpool1 = layers.MaxPooling1D((2))(conv1)
-        conv2 = layers.Conv1D(32, (3), activation = "relu")(maxpool1)
-        norm1 = layers.BatchNormalization()(conv2)
-        maxpool2= layers.MaxPooling1D((2))(norm1)
-        flatten = layers.Flatten()(maxpool2)
-        concatenated = layers.concatenate([flatten, categorical_input])
-        dense1 = layers.Dense(16, activation = "relu")(concatenated)
-        dense2 = layers.Dense(8, activation = "relu")(dense1)
-        norm2 = layers.BatchNormalization()(dense2)
-        output = layers.Dense(1, activation = "linear")(norm2)
-
-        model = models.Model(inputs=[image_input, categorical_input], outputs=output)
         
+        # Create the model
+        if self.signature == "z":
+            conv1 = layers.Conv1D(32, (3), activation= "relu", input_shape = self.input_shape)(image_input)
+            maxpool1 = layers.MaxPooling1D((2))(conv1)
+            conv2 = layers.Conv1D(32, (3), activation = "relu")(maxpool1)
+            norm1 = layers.BatchNormalization()(conv2)
+            maxpool2= layers.MaxPooling1D((2))(norm1)
+            flatten = layers.Flatten()(maxpool2)
+            concatenated = layers.concatenate([flatten, categorical_input])
+            dense1 = layers.Dense(16, activation = "relu")(concatenated)
+            dense2 = layers.Dense(8, activation = "relu")(dense1)
+            norm2 = layers.BatchNormalization()(dense2)
+            output = layers.Dense(1, activation = "linear")(norm2)
+
+            model = models.Model(inputs=[image_input, categorical_input], outputs=output)
+
+        else: # jet        
+            conv1 = layers.Conv1D(32, (3), activation= "relu", input_shape = self.input_shape)(image_input)
+            maxpool1 = layers.MaxPooling1D((2))(conv1)
+            conv2 = layers.Conv1D(32, (3), activation = "relu")(maxpool1)
+            norm1 = layers.BatchNormalization()(conv2)
+            maxpool2= layers.MaxPooling1D((2))(norm1)
+            flatten = layers.Flatten()(maxpool2)
+            concatenated = layers.concatenate([flatten, categorical_input])
+            dense1 = layers.Dense(16, activation = "relu")(concatenated)
+            dense2 = layers.Dense(8, activation = "relu")(dense1)
+            norm2 = layers.BatchNormalization()(dense2)
+            output = layers.Dense(1, activation = "linear")(norm2)
+
+            model = models.Model(inputs=[image_input, categorical_input], outputs=output)
+
         # Print the model architecture and return the model
         if print_sum:
             print(model.summary())
@@ -198,7 +217,7 @@ class regression_CNN():
             print(f"Could not save image of model architecture. Error: {e}")
         
         #learning_rate = self.grid_search_lr()
-        self.model.compile(optimizer = tf.keras.optimizers.Adam(learning_rate=0.01), loss = "mse", metrics = [tf.keras.metrics.RootMeanSquaredError(), \
+        self.model.compile(optimizer = tf.keras.optimizers.Adam(learning_rate=self.learning_rate), loss = "mse", metrics = [tf.keras.metrics.RootMeanSquaredError(), \
                 tf.keras.metrics.MeanAbsoluteError(), tf.keras.metrics.MeanAbsolutePercentageError(), \
                 tf.keras.metrics.MeanSquaredLogarithmicError(), tf.keras.metrics.CosineSimilarity(), \
                 tf.keras.metrics.LogCoshError()])

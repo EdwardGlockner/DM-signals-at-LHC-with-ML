@@ -107,7 +107,7 @@ def evaluate(model, dataset, num_classes, model_name):
             'y_test': y_test.tolist()
         }
         plotter = plotting(y_test_encode, predictions, None, model_name, dirname + "/src/ML_1D/testing_loadable_models/")
-        plotter.roc(num_classes = num_classes, show=False)
+        plotter.roc(num_classes = num_classes, show=True)
 
     elif model_type == "re":
         try:
