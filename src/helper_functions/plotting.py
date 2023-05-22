@@ -37,7 +37,10 @@ class plotting():
         self.history = history
         self.save_path = save_path
         self.model_name = model_name
-
+        if "_jet_" in self.model_name:
+            self.signature = "Monojet"
+        else:
+            self.signature = "Mono-Z"
     
     def loss(self, cl_or_re, show=False):
         """
@@ -48,11 +51,12 @@ class plotting():
             show: <bool> To show the plots or not
         """
         plt.figure(2)
-        plt.plot(self.history.history["loss"], label = "train_loss", color="darkorange", linewidth=2)
-        plt.plot(self.history.history["val_loss"], label = "val_loss", color="navy", linewidth=2)
+        plt.plot(self.history.history["loss"], label = "train_loss", color="darkorange", linewidth=1.5)
+        plt.plot(self.history.history["val_loss"], label = "val_loss", color="navy", linewidth=1.5)
         plt.xlabel("Epochs")
         plt.ylabel("Loss")
-        plt.title("Loss versus epochs")
+        title = self.signature + " classifier. Loss versus epochs"
+        plt.title(title)
 
         if cl_or_re == "cl":
             plt.ylim([0 ,1])
@@ -74,11 +78,12 @@ class plotting():
             None
         """
         plt.figure(3)
-        plt.plot(self.history.history["root_mean_squared_error"], label = "rmse", color="darkorange", linewidth=2)
-        plt.plot(self.history.history["val_root_mean_squared_error"], label = "val_rmse", color="navy", linewidth=2)
+        plt.plot(self.history.history["root_mean_squared_error"], label = "rmse", color="darkorange", linewidth=1.5)
+        plt.plot(self.history.history["val_root_mean_squared_error"], label = "val_rmse", color="navy", linewidth=1.5)
         plt.xlabel("Epochs")
         plt.ylabel("RMSE")
-        plt.title("RMSE versus epochs")
+        title = self.signature + "regressor. RMSE versus epochs"
+        plt.title(title)
         plt.legend(loc="lower right")
     
         plt.savefig(self.save_path + "/" + self.model_name + "_accuracy_plot.png")
@@ -98,11 +103,12 @@ class plotting():
             None
         """
         plt.figure(4)
-        plt.plot(self.history.history["accuracy"], label = "accuracy", color="darkorange", linewidth=2)
+        plt.plot(self.history.history["accuracy"], label = "train_accuracy", color="darkorange", linewidth=2)
         plt.plot(self.history.history["val_accuracy"], label = "val_accuracy", color="navy", linewidth=2)
         plt.xlabel("Epochs")
         plt.ylabel("Accuracy")
-        plt.title("Accuracy versus epochs")
+        title = self.signature + "classifier. Accuracy versus epochs"
+        plt.title(title)
         plt.ylim([0, 1])
         plt.legend(loc="lower right")
     
@@ -112,11 +118,12 @@ class plotting():
             plt.show()
 
         plt.figure(5)
-        plt.plot(self.history.history["accuracy"], label = "accuracy", color="darkorange", linewidth=2)
-        plt.plot(self.history.history["val_accuracy"], label = "val_accuracy", color="navy", linewidth=2)
+        plt.plot(self.history.history["accuracy"], label = "train_accuracy", color="darkorange", linewidth=1.5)
+        plt.plot(self.history.history["val_accuracy"], label = "val_accuracy", color="navy", linewidth=1.5)
         plt.xlabel("Epochs")
         plt.ylabel("Accuracy")
-        plt.title("Accuracy versus epochs")
+        title = self.signature + " classifier. Accuracy versus epochs"
+        plt.title(title)
         plt.ylim([0.5, 1])
         plt.legend(loc="lower right")
     
@@ -190,9 +197,9 @@ class plotting():
         plt.ylim([0.0, 1.05])
         plt.xlabel('False Positive Rate')
         plt.ylabel('True Positive Rate')
-        plt.title('Some extension of Receiver operating characteristic to multi-class')
+        title = self.signature + ' classifier. Roc curve'
+        plt.title(title)       
         plt.legend(loc="lower right", fontsize="small")
- 
         plt.savefig(self.save_path + "/" + self.model_name + "_roc_plot.png")
 
         if show:
@@ -222,7 +229,8 @@ class plotting():
         plt.plot([0, 1], [0, 1], 'k--', lw=lw)
         plt.xlabel('False Positive Rate')
         plt.ylabel('True Positive Rate')
-        plt.title('Some extension of Receiver operating characteristic to multi-class')
+        title = self.signature + ' classifier. Roc curve'
+        plt.title(title)
         plt.legend(loc="lower right", fontsize="small")
   
         plt.savefig(self.save_path + "/" + self.model_name + "_roc_plot_zoom.png")
