@@ -148,8 +148,7 @@ def train(model_name, signature):
         learning_rate_re = 0.0045
     else: # jet
         learning_rate_cl = 0.000027
-        learning_rate_re = 0.006641414141414141
-
+        learning_rate_re = 0.0798989898989899
     # Train the models
     if model_type == "cl":
         train_classification(cl_data_set, input_shape, num_classes, signature, \

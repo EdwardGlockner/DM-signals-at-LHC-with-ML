@@ -4,6 +4,7 @@
 #---Imports--------------+
 import tensorflow as tf
 from tensorflow.keras import datasets, layers, models
+from keras import backend as K
 import matplotlib.pyplot as plt 
 import numpy as np
 from sklearn.metrics import confusion_matrix, classification_report
@@ -112,12 +113,12 @@ class regression_CNN():
             model = models.Model(inputs=[image_input, categorical_input], outputs=output)
 
         else: # jet        
-            conv1 = layers.Conv1D(8, (3), activation= "relu", input_shape = self.input_shape)(image_input)
+            conv1 = layers.Conv1D(10, (3), activation= "relu", input_shape = self.input_shape)(image_input)
             norm1 = layers.BatchNormalization()(conv1)
             maxpool1 = layers.MaxPooling1D((3))(norm1)
             flatten = layers.Flatten()(maxpool1)
             concatenated = layers.concatenate([flatten, categorical_input])
-            dense1 = layers.Dense(16, activation = "relu")(concatenated)
+            dense1 = layers.Dense(8, activation = "relu")(concatenated)
             norm2 = layers.BatchNormalization()(dense1)
             output = layers.Dense(1, activation = "linear")(norm2)
 
@@ -130,52 +131,49 @@ class regression_CNN():
         return model
 
 
+    def log_cosh(self, y_true, y_pred):
+        """
+        asdfasdf
+
+        @arguments:
+            y_true: <>
+            y_pred: <>
+        @returns:
+            None
+        """
+        return K.mean(K.log(K.cosh(y_pred - y_true)), axis=-1)
+
+
     def grid_search_lr(self):
         """
+        asdfasdf
 
-        """
-        """
-        def build_model(learning_rate):
-            model = self._create_model(print_sum=False)
-            optimizer = tf.keras.optimizers.Adam(learning_rate=learning_rate)
-            model.compile(optimizer=optimizer, loss='mse', metrics=[tf.keras.metrics.MeanAbsoluteError()])
-
-            return model
-        
-        print(self.X_train.shape)  # Should match the number of samples in self.y_train
-        print(self.X_train_cat.shape)  # Should match the number of samples in self.y_train
-        print(self.y_train.shape)
-        lrs = np.linspace(0.005, 0.4, 20).tolist()
-        param_grid = {'learning_rate': lrs} 
-        model = tf.keras.wrappers.scikit_learn.KerasRegressor(build_fn=build_model)
-        grid_search = GridSearchCV(estimator=model, param_grid=param_grid, cv=3, error_score='raise')
-        grid_search.fit(np.array([self.X_train, self.X_train_cat]), np.array(self.y_train))
-        best_params = grid_search.best_params_
-        best_score = grid_search.best_score_
-        print(best_params)
-        print(best_score)
+        @arguments:
+            None
+        @returns:
+            None
         """
         best_score = float('inf')
         best_params = {}
         val_losses = []
         learning_rates = []
-        lrs = np.linspace(0.0005, 0.01, 100).tolist()
+        lrs = np.linspace(0.005, 0.01, 100).tolist()
 
         for lr in lrs:
             # Create the model
             model = self._create_model()
             optimizer = tf.keras.optimizers.Adam(learning_rate=lr)
-            model.compile(optimizer=optimizer, loss='mse', metrics=['mse'])
+            model.compile(optimizer=optimizer, loss=self.log_cosh, metrics=['mae', 'mape'])
 
             # Train the model
-            history = model.fit([self.X_train, self.X_train_cat], self.y_train, epochs = self.epochs,
+            history = model.fit([self.X_train, self.X_train_cat], self.y_train, epochs = self.epochs, batch_size=32,
                             validation_data = ([self.X_test, self.X_test_cat], self.y_test), callbacks = [tf.keras.callbacks.EarlyStopping(monitor='val_loss', 
                                 min_delta=0, 
-                                patience=0, 
+                                patience=1, 
                                 verbose=0, 
                                 mode='auto', 
                                 baseline=None,
-                                start_from_epoch=0,
+                                start_from_epoch=2,
                                 restore_best_weights=True)])
  
             # Evaluate the model
@@ -188,11 +186,17 @@ class regression_CNN():
 
             val_losses.append(val_loss)
             learning_rates.append(lr)
+
         print(best_score)
         print(best_params)
+        
+        plt.figure()
+        plt.plot(learning_rates, val_losses, color="navy", linewidth=1.5)
+        plt.xlabel("Learning rate")
+        plt.ylabel("Loss")
+        plt.title("Monojet regressor. Loss versus learning rate")
+        plt.savefig("learning_rate.png")
 
-        plt.plot(learning_rates, val_losses)
-        plt.show()
     
         return best_params['learning_rate']
 
@@ -230,7 +234,8 @@ class regression_CNN():
             print(f"Could not save image of model architecture. Error: {e}")
         
         learning_rate = self.grid_search_lr()
-        self.model.compile(optimizer = tf.keras.optimizers.Adam(learning_rate=learning_rate), loss = "mse", metrics = [tf.keras.metrics.RootMeanSquaredError(), \
+        #learning_rate = 0.01
+        self.model.compile(optimizer = tf.keras.optimizers.Adam(learning_rate=learning_rate), loss = self.log_cosh, metrics = [tf.keras.metrics.RootMeanSquaredError(), \
                 tf.keras.metrics.MeanAbsoluteError(), tf.keras.metrics.MeanAbsolutePercentageError(), \
                 tf.keras.metrics.MeanSquaredLogarithmicError(), tf.keras.metrics.CosineSimilarity(), \
                 tf.keras.metrics.LogCoshError()])
@@ -246,7 +251,7 @@ class regression_CNN():
             None
         """
         # Trains the model
-        self.history = self.model.fit([self.X_train, self.X_train_cat], self.y_train, epochs = self.epochs,
+        self.history = self.model.fit([self.X_train, self.X_train_cat], self.y_train, epochs = self.epochs, batch_size=32,
                             validation_data = ([self.X_test, self.X_test_cat], self.y_test), callbacks = [tf.keras.callbacks.EarlyStopping(monitor='val_loss', 
                                 min_delta=0, 
                                 patience=1, 

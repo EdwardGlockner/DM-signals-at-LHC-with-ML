@@ -41,7 +41,8 @@ class plotting():
             self.signature = "Monojet"
         else:
             self.signature = "Mono-Z"
-Z 
+
+
     def loss(self, cl_or_re, show=False):
         """
         Plots the loss (obtained from the history object) versus number of epochs.
@@ -82,7 +83,7 @@ Z
         plt.plot(self.history.history["val_root_mean_squared_error"], label = "val_rmse", color="navy", linewidth=1.5)
         plt.xlabel("Epochs")
         plt.ylabel("RMSE")
-        title = self.signature + "regressor. RMSE versus epochs"
+        title = self.signature + " regressor. RMSE versus epochs"
         plt.title(title)
         plt.legend(loc="lower right")
     
