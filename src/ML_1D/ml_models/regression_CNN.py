@@ -118,7 +118,7 @@ class regression_CNN():
             maxpool1 = layers.MaxPooling1D((3))(norm1)
             flatten = layers.Flatten()(maxpool1)
             concatenated = layers.concatenate([flatten, categorical_input])
-            dense1 = layers.Dense(8, activation = "relu")(concatenated)
+            dense1 = layers.Dense(16, activation = "relu")(concatenated)
             norm2 = layers.BatchNormalization()(dense1)
             output = layers.Dense(1, activation = "linear")(norm2)
 
@@ -129,19 +129,6 @@ class regression_CNN():
             print(model.summary())
 
         return model
-
-
-    def log_cosh(self, y_true, y_pred):
-        """
-        asdfasdf
-
-        @arguments:
-            y_true: <>
-            y_pred: <>
-        @returns:
-            None
-        """
-        return K.mean(K.log(K.cosh(y_pred - y_true)), axis=-1)
 
 
     def grid_search_lr(self):
@@ -163,7 +150,7 @@ class regression_CNN():
             # Create the model
             model = self._create_model()
             optimizer = tf.keras.optimizers.Adam(learning_rate=lr)
-            model.compile(optimizer=optimizer, loss=self.log_cosh, metrics=['mae', 'mape'])
+            model.compile(optimizer=optimizer, loss='logcosh', metrics=['mae', 'mape'])
 
             # Train the model
             history = model.fit([self.X_train, self.X_train_cat], self.y_train, epochs = self.epochs, batch_size=32,
@@ -233,9 +220,9 @@ class regression_CNN():
         except FileNotFoundError as e:
             print(f"Could not save image of model architecture. Error: {e}")
         
-        learning_rate = self.grid_search_lr()
-        #learning_rate = 0.01
-        self.model.compile(optimizer = tf.keras.optimizers.Adam(learning_rate=learning_rate), loss = self.log_cosh, metrics = [tf.keras.metrics.RootMeanSquaredError(), \
+        #learning_rate = self.grid_search_lr()
+        learning_rate = 0.003
+        self.model.compile(optimizer = tf.keras.optimizers.Adam(learning_rate=learning_rate), loss = "mse", metrics = [tf.keras.metrics.RootMeanSquaredError(), \
                 tf.keras.metrics.MeanAbsoluteError(), tf.keras.metrics.MeanAbsolutePercentageError(), \
                 tf.keras.metrics.MeanSquaredLogarithmicError(), tf.keras.metrics.CosineSimilarity(), \
                 tf.keras.metrics.LogCoshError()])
@@ -254,7 +241,7 @@ class regression_CNN():
         self.history = self.model.fit([self.X_train, self.X_train_cat], self.y_train, epochs = self.epochs, batch_size=32,
                             validation_data = ([self.X_test, self.X_test_cat], self.y_test), callbacks = [tf.keras.callbacks.EarlyStopping(monitor='val_loss', 
                                 min_delta=0, 
-                                patience=1, 
+                                patience=2, 
                                 verbose=0, 
                                 mode='auto', 
                                 baseline=None,
@@ -275,6 +262,6 @@ class regression_CNN():
         dirname_here = os.getcwd()
         plotter = plotting("", "", self.history, self.model_name, dirname_here + "/plots")
         #plotter.loss(cl_or_re="cl", show=True)
-        plotter.rmse(show=True)
+        plotter.loss_re(show=True)
  
 

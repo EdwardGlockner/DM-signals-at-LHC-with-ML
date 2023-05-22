@@ -69,7 +69,7 @@ class plotting():
         if show:
             plt.show()
 
-    def rmse(self, show=False):
+    def loss_re(self, show=False):
         """
         Plots the RMSE of a regression model.
 
@@ -79,15 +79,15 @@ class plotting():
             None
         """
         plt.figure(3)
-        plt.plot(self.history.history["root_mean_squared_error"], label = "rmse", color="darkorange", linewidth=1.5)
-        plt.plot(self.history.history["val_root_mean_squared_error"], label = "val_rmse", color="navy", linewidth=1.5)
+        plt.plot(self.history.history["loss"], label = "train_loss", color="darkorange", linewidth=1.5)
+        plt.plot(self.history.history["val_loss"], label = "val_loss", color="navy", linewidth=1.5)
         plt.xlabel("Epochs")
-        plt.ylabel("RMSE")
-        title = self.signature + " regressor. RMSE versus epochs"
+        plt.ylabel("Loss")
+        title = self.signature + " regressor. Loss versus epochs"
         plt.title(title)
         plt.legend(loc="lower right")
     
-        plt.savefig(self.save_path + "/" + self.model_name + "_accuracy_plot.png")
+        plt.savefig(self.save_path + "/" + self.model_name + "_loss_plot.png")
 
         if show:
             plt.show()
