@@ -107,8 +107,8 @@ class classification_bCNN():
             model.add(layers.BatchNormalization())
             model.add(layers.MaxPooling1D(pool_size=(2)))
             model.add(layers.Flatten())
-            layers.Dense(32, activation="relu")
-            layers.Dense(8, activation="relu")
+            model.add(layers.Dense(32, activation="relu"))
+            model.add(layers.Dense(8, activation="relu"))
 
             model.add(layers.Dense(self.num_classes, activation="softmax"))
         
@@ -120,8 +120,8 @@ class classification_bCNN():
             model.add(layers.BatchNormalization())
             model.add(layers.MaxPooling1D(pool_size=(2)))
             model.add(layers.Flatten())
-            layers.Dense(32, activation="relu")
-            layers.Dense(8, activation="relu")
+            model.add(layers.Dense(32, activation="relu"))
+            model.add(layers.Dense(8, activation="relu"))
 
             model.add(layers.Dense(self.num_classes, activation="softmax"))
         
@@ -189,9 +189,9 @@ class classification_bCNN():
             tf.keras.utils.plot_model(
                 self.model,
                 to_file=self.model_name + '.png',
-                show_shapes=False,
+                show_shapes=True,
                 show_dtype=False,
-                show_layer_names=False,
+                show_layer_names=True,
                 rankdir="LR",
                 expand_nested=False,
                 dpi=96,
@@ -205,7 +205,7 @@ class classification_bCNN():
 
         except FileNotFoundError as e:
             print(f"Could not save image of model architecture. Error: {e}")
-        
+
         #learning_rate = self.grid_search_lr()
         # Compiles the model
         self.model.compile(optimizer = tf.keras.optimizers.Adam(learning_rate=self.learning_rate),

@@ -112,7 +112,7 @@ class regression_CNN():
             model = models.Model(inputs=[image_input, categorical_input], outputs=output)
 
         else: # jet        
-            conv1 = layers.Conv1D(4, (3), activation= "relu", input_shape = self.input_shape)(image_input)
+            conv1 = layers.Conv1D(8, (3), activation= "relu", input_shape = self.input_shape)(image_input)
             norm1 = layers.BatchNormalization()(conv1)
             maxpool1 = layers.MaxPooling1D((3))(norm1)
             flatten = layers.Flatten()(maxpool1)

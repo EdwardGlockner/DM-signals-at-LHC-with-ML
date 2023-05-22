@@ -41,7 +41,7 @@ class plotting():
             self.signature = "Monojet"
         else:
             self.signature = "Mono-Z"
-    
+Z 
     def loss(self, cl_or_re, show=False):
         """
         Plots the loss (obtained from the history object) versus number of epochs.
@@ -107,7 +107,7 @@ class plotting():
         plt.plot(self.history.history["val_accuracy"], label = "val_accuracy", color="navy", linewidth=2)
         plt.xlabel("Epochs")
         plt.ylabel("Accuracy")
-        title = self.signature + "classifier. Accuracy versus epochs"
+        title = self.signature + " classifier. Accuracy versus epochs"
         plt.title(title)
         plt.ylim([0, 1])
         plt.legend(loc="lower right")
