@@ -178,7 +178,7 @@ def main(run_mode, model_type, model_prefix):
     model_name_jet = model_prefix + "_jet_" + formatted_time
     
     # Train the models
-    train(model_name_z, "z")
+    #train(model_name_z, "z")
     #train(model_name_jet, "jet")
     
     # Validate the models
@@ -187,7 +187,7 @@ def main(run_mode, model_type, model_prefix):
 
         command1 = [python_executable, 'test.py', '--model_name', model_name_z + "_regression"]
         command2 = [python_executable, 'test.py', '--model_name', model_name_z + "_classification"]
-        command3 = [python_executable, 'test.py', '--model_name', model_name_jet + "_regression"]
+        command3 = [python_executable, 'test.py', '--model_name', "ForReport_jet_Tue_May_23_18:19:32_regression"]
         command4 = [python_executable, 'test.py', '--model_name', model_name_jet + "_classification"]
 
         clear()
@@ -202,10 +202,10 @@ def main(run_mode, model_type, model_prefix):
         elif model_type == "re":
             print(bar)
             print("Running mono_z regression model on testing data")
-            subprocess.run(command1)
+            #subprocess.run(command1)
             print(bar)
             print("Running mono_jet regression model on testing data")
-            #subprocess.run(command3)
+            subprocess.run(command3)
 
         elif model_type == "clre":
             print(bar)

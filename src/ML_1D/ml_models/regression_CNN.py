@@ -221,7 +221,7 @@ class regression_CNN():
             print(f"Could not save image of model architecture. Error: {e}")
         
         #learning_rate = self.grid_search_lr()
-        learning_rate = 0.0065
+        learning_rate = 0.00007
         self.model.compile(optimizer = tf.keras.optimizers.Adam(learning_rate=learning_rate), loss = "mse", metrics = [tf.keras.metrics.RootMeanSquaredError(), \
                 tf.keras.metrics.MeanAbsoluteError(), tf.keras.metrics.MeanAbsolutePercentageError(), \
                 tf.keras.metrics.MeanSquaredLogarithmicError(), tf.keras.metrics.CosineSimilarity(), \
@@ -238,14 +238,14 @@ class regression_CNN():
             None
         """
         # Trains the model
-        self.history = self.model.fit([self.X_train, self.X_train_cat], self.y_train, epochs = self.epochs, batch_size=32,
+        self.history = self.model.fit([self.X_train, self.X_train_cat], self.y_train, epochs = 2000, batch_size=32,
                             validation_data = ([self.X_test, self.X_test_cat], self.y_test), callbacks = [tf.keras.callbacks.EarlyStopping(monitor='val_loss', 
                                 min_delta=0, 
-                                patience=2, 
+                                patience=80, 
                                 verbose=0, 
                                 mode='auto', 
                                 baseline=None,
-                                start_from_epoch=5,
+                                start_from_epoch=1,
                                 restore_best_weights=True)])
     
         # Save a loadable .h5 file
