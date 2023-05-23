@@ -203,14 +203,14 @@ class regression_CNN():
             tf.keras.utils.plot_model(
                 self.model,
                 to_file=self.model_name + '.png',
-                show_shapes=True,
+                show_shapes=False,
                 show_dtype=False,
-                show_layer_names=True,
+                show_layer_names=False,
                 rankdir='TB',
                 expand_nested=False,
                 dpi=96,
                 layer_range=None,
-                show_layer_activations=True,
+                show_layer_activations=False,
                 show_trainable=False
             )
             # Move the png to the correct folder
@@ -220,8 +220,8 @@ class regression_CNN():
         except FileNotFoundError as e:
             print(f"Could not save image of model architecture. Error: {e}")
         
-        #learning_rate = self.grid_search_lr()
-        learning_rate = 0.003
+        learning_rate = self.grid_search_lr()
+        #learning_rate = 0.00302
         self.model.compile(optimizer = tf.keras.optimizers.Adam(learning_rate=learning_rate), loss = "mse", metrics = [tf.keras.metrics.RootMeanSquaredError(), \
                 tf.keras.metrics.MeanAbsoluteError(), tf.keras.metrics.MeanAbsolutePercentageError(), \
                 tf.keras.metrics.MeanSquaredLogarithmicError(), tf.keras.metrics.CosineSimilarity(), \
@@ -245,7 +245,7 @@ class regression_CNN():
                                 verbose=0, 
                                 mode='auto', 
                                 baseline=None,
-                                start_from_epoch=2,
+                                start_from_epoch=5,
                                 restore_best_weights=True)])
     
         # Save a loadable .h5 file

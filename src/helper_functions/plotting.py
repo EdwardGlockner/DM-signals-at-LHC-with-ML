@@ -85,13 +85,84 @@ class plotting():
         plt.ylabel("Loss")
         title = self.signature + " regressor. Loss versus epochs"
         plt.title(title)
-        plt.legend(loc="lower right")
+        plt.legend(loc="upper right")
     
         plt.savefig(self.save_path + "/" + self.model_name + "_loss_plot.png")
 
         if show:
             plt.show()
 
+
+    def MAE(self, show=False):
+        """
+        Plots the RMSE of a regression model.
+
+        @arguments:
+            show: <bool> To show plots or not
+        @returns:
+            None
+        """
+        plt.figure(3)
+        plt.plot(self.history.history['mean_absolute_error'], label = "train_MAE", color="darkorange", linewidth=1.5)
+        plt.plot(self.history.history["val_mean_absolute_error"], label = "val_MAE", color="navy", linewidth=1.5)
+        plt.xlabel("Epochs")
+        plt.ylabel("Loss")
+        title = self.signature + " regressor. MAE versus epochs"
+        plt.title(title)
+        plt.legend(loc="lower right")
+    
+        plt.savefig(self.save_path + "/" + self.model_name + "_mae_plot.png")
+
+        if show:
+            plt.show()       
+
+
+    def RMSE(self, show=False):
+        """
+        Plots the RMSE of a regression model.
+
+        @arguments:
+            show: <bool> To show plots or not
+        @returns:
+            None
+        """
+        plt.figure(3)
+        plt.plot(self.history.history["root_mean_squared_error"], label = "train_RMSE", color="darkorange", linewidth=1.5)
+        plt.plot(self.history.history["val_root_mean_squared_error"], label = "val_RMSE", color="navy", linewidth=1.5)
+        plt.xlabel("Epochs")
+        plt.ylabel("Loss")
+        title = self.signature + " regressor. RMSE versus epochs"
+        plt.title(title)
+        plt.legend(loc="lower right")
+    
+        plt.savefig(self.save_path + "/" + self.model_name + "_rmse_plot.png")
+
+        if show:
+            plt.show()       
+
+
+    def MAPE(self, show=False):
+        """
+        Plots the RMSE of a regression model.
+
+        @arguments:
+            show: <bool> To show plots or not
+        @returns:
+            None
+        """
+        plt.figure(3)
+        plt.plot(self.history.history["mean_absolute_percentage_error"], label = "train_MAPE", color="darkorange", linewidth=1.5)
+        plt.plot(self.history.history["val_mean_absolute_percentage_error"], label = "val_MAPE", color="navy", linewidth=1.5)
+        plt.xlabel("Epochs")
+        plt.ylabel("Loss")
+        title = self.signature + " regressor. MAPE versus epochs"
+        plt.title(title)
+        plt.legend(loc="lower right")
+    
+        plt.savefig(self.save_path + "/" + self.model_name + "_mape_plot.png")
+
+        if show:
+            plt.show()       
 
 
     def accuracy(self, show=False):
