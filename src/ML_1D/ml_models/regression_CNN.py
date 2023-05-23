@@ -98,7 +98,7 @@ class regression_CNN():
         if self.signature == "z":
             conv1 = layers.Conv1D(32, (3), activation= "relu", input_shape = self.input_shape)(image_input)
             maxpool1 = layers.MaxPooling1D((2))(conv1)
-            conv2 = layers.Conv1D(16, (3), activation = "relu")(maxpool1)
+            conv2 = layers.Conv1D(12, (3), activation = "relu")(maxpool1)
             maxpool2 = layers.MaxPooling1D((2))(conv2)
             conv3 = layers.Conv1D(8, (3), activation = "relu")(maxpool2)
             norm1 = layers.BatchNormalization()(conv3)
@@ -106,8 +106,8 @@ class regression_CNN():
             flatten = layers.Flatten()(maxpool3)
             concatenated = layers.concatenate([flatten, categorical_input])
             dense1 = layers.Dense(16, activation = "relu")(concatenated)
-            dense2 = layers.Dense(8, activation = "relu")(dense1)
-            norm2 = layers.BatchNormalization()(dense2)
+            #dense2 = layers.Dense(8, activation = "relu")(dense1)
+            norm2 = layers.BatchNormalization()(dense1)
             output = layers.Dense(1, activation = "linear")(norm2)
 
             model = models.Model(inputs=[image_input, categorical_input], outputs=output)
@@ -220,8 +220,8 @@ class regression_CNN():
         except FileNotFoundError as e:
             print(f"Could not save image of model architecture. Error: {e}")
         
-        learning_rate = self.grid_search_lr()
-        #learning_rate = 0.00302
+        #learning_rate = self.grid_search_lr()
+        learning_rate = 0.0065
         self.model.compile(optimizer = tf.keras.optimizers.Adam(learning_rate=learning_rate), loss = "mse", metrics = [tf.keras.metrics.RootMeanSquaredError(), \
                 tf.keras.metrics.MeanAbsoluteError(), tf.keras.metrics.MeanAbsolutePercentageError(), \
                 tf.keras.metrics.MeanSquaredLogarithmicError(), tf.keras.metrics.CosineSimilarity(), \
