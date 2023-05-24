@@ -27,7 +27,7 @@ def get_sets():
     """
 
     """
-    cl, re = load_sets("z", aug=False)
+    cl, re = load_sets("jet", aug=False)
     input_shape = cl[0].shape[1], cl[0].shape[2] # Shape of X_train
     return cl, re, input_shape
 

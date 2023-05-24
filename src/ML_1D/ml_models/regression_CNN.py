@@ -144,8 +144,7 @@ class regression_CNN():
         best_params = {}
         val_losses = []
         learning_rates = []
-        lrs = np.linspace(0.005, 0.01, 100).tolist()
-
+        lrs = np.linspace(0.00001, 0.000099, 100).tolist()
         for lr in lrs:
             # Create the model
             model = self._create_model()
@@ -160,7 +159,7 @@ class regression_CNN():
                                 verbose=0, 
                                 mode='auto', 
                                 baseline=None,
-                                start_from_epoch=2,
+                                start_from_epoch=50,
                                 restore_best_weights=True)])
  
             # Evaluate the model
@@ -220,8 +219,8 @@ class regression_CNN():
         except FileNotFoundError as e:
             print(f"Could not save image of model architecture. Error: {e}")
         
-        #learning_rate = self.grid_search_lr()
-        learning_rate = 0.00007
+        learning_rate = self.grid_search_lr()
+        #learning_rate = 0.0004
         self.model.compile(optimizer = tf.keras.optimizers.Adam(learning_rate=learning_rate), loss = "mse", metrics = [tf.keras.metrics.RootMeanSquaredError(), \
                 tf.keras.metrics.MeanAbsoluteError(), tf.keras.metrics.MeanAbsolutePercentageError(), \
                 tf.keras.metrics.MeanSquaredLogarithmicError(), tf.keras.metrics.CosineSimilarity(), \
@@ -238,7 +237,7 @@ class regression_CNN():
             None
         """
         # Trains the model
-        self.history = self.model.fit([self.X_train, self.X_train_cat], self.y_train, epochs = 2000, batch_size=32,
+        self.history = self.model.fit([self.X_train, self.X_train_cat], self.y_train, epochs = 10, batch_size=32,
                             validation_data = ([self.X_test, self.X_test_cat], self.y_test), callbacks = [tf.keras.callbacks.EarlyStopping(monitor='val_loss', 
                                 min_delta=0, 
                                 patience=80, 
