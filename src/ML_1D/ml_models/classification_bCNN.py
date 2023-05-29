@@ -189,14 +189,14 @@ class classification_bCNN():
             tf.keras.utils.plot_model(
                 self.model,
                 to_file=self.model_name + '.png',
-                show_shapes=True,
+                show_shapes=False,
                 show_dtype=False,
-                show_layer_names=True,
-                rankdir="LR",
+                show_layer_names=False,
+                rankdir="TB",
                 expand_nested=False,
                 dpi=96,
                 layer_range=None,
-                show_layer_activations=True,
+                show_layer_activations=False,
                 show_trainable=False
             )
             # Move the png to the correct folder

@@ -12,4 +12,4 @@
 python_version="python3.10"
 
 # Run the machine learning model
-$python_version main.py --run trainval --type re --name ForReport 
+$python_version main.py --run trainval --type cl --name ForReport 
