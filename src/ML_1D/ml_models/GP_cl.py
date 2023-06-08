@@ -1,4 +1,5 @@
 #---Imports--------------+
+from sklearn.metrics import roc_auc_score, recall_score
 from sklearn.gaussian_process import GaussianProcessClassifier
 import numpy as np
 import os
@@ -51,6 +52,10 @@ class classification_GP():
         y_pred = self.model.predict(self.X_test)
         train_score = self.model.score(self.X_train, self.y_train)
         test_score = self.model.score(self.X_test, self.y_test)
+        auc_score = roc_auc_score(self.y_test, y_pred)
+
+        # Calculate recall
+        recall = recall_score(self.y_test, y_pred)
 
         if print_perf:
             print(f"Model score on training data: {train_score}\t")
@@ -59,6 +64,8 @@ class classification_GP():
         stats = {
             'train': train_score, 
             'test': test_score,
+            'auc': auc_score,
+            'recall':recall,
             'prediction': y_pred.tolist(),
             'y_test': self.y_test.tolist()
         }
