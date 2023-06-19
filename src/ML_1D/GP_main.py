@@ -2,10 +2,6 @@ import sys
 import time
 import numpy as np
 import os
-from gpytorch.likelihoods import GaussianLikelihood
-from gpytorch.kernels import RBFKernel, MaternKernel, ScaleKernel
-import torch
-import gpytorch
 
 #---FIXING DIRNAME-------+
 dirname = os.getcwd()
@@ -17,7 +13,7 @@ sys.path.append(parent_dir)
 #---LOCAL IMPORTS--------+
 from ml_models.GP_cl import classification_GP
 from ml_models.GP_re import regression_GP
-from data_prep_1D.data_prep_2D_v2 import load_sets
+from data_prep_1D.data_prep.pv import load_sets
 
 #---GLOBALS--------------+
 np.set_printoptions(threshold=np.inf)

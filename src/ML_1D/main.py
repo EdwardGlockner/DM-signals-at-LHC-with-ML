@@ -35,7 +35,7 @@ def arg_parse():
         print("model_type is by default set to 'cl'.\n")
 
         print("--name \t Options: any string")
-        print("Gives a prefix to the model name. The files will be named: <model_prefix>_Classification_bCNN_1D_<timestamp>.")
+        print("Gives a prefix to the model name. The files will be named: <model_prefix>_Classification_CNN_1D_<timestamp>.")
         print("model_prefix is by default set to 'test'.\n")
 
 
@@ -61,32 +61,12 @@ parent_dir = os.path.dirname(current_dir)
 sys.path.append(parent_dir)
 
 #---LOCAL IMPORTS--------+
-from ml_models.classification_bCNN import classification_bCNN
+from ml_models.classification_CNN import classification_CNN
 from ml_models.regression_CNN import regression_CNN
-from ml_models.GP_cl import classification_GP
-from ml_models.GP_re import regression_GP
-from data_prep_1D.data_prep_1D import create_sets_from_csv, \
-        shuffle_and_create_sets
-from data_prep_1D.data_prep_2D_v2 import load_sets
+from data_prep_1D.data_prep import load_sets
 
 #---GLOBALS--------------+
 np.set_printoptions(threshold=np.inf)
-
-try:
-    if sys.platform in ["darwin", "linux", "linux2"]: #macOS, Linux
-        clear = lambda: os.system("clear")
-
-    elif sys.platform in ["win32", "win64"]: #windows
-        clear = lambda: os.system("cls")
-    
-    else:
-        clear = lambda: None
-
-except OSError as e:
-    print("Error identifying operating systems")
-
-bar = "+---------------------+"
-
 
 #---FUNCTIONS------------+
 def get_sets(signature):
@@ -96,6 +76,7 @@ def get_sets(signature):
     cl, re = load_sets(signature, aug=False)
     input_shape = cl[0].shape[1], cl[0].shape[2] # Shape of X_train
     return cl, re, input_shape
+
 
 def train_classification(data_sets, input_shape, num_classes, signature, learning_rate, model_name):
     """
@@ -107,7 +88,7 @@ def train_classification(data_sets, input_shape, num_classes, signature, learnin
         
     X_train, y_train, X_test, y_test = data_sets 
 
-    model = classification_bCNN(X_train, y_train, X_test, y_test, input_shape, \
+    model = classification_CNN(X_train, y_train, X_test, y_test, input_shape, \
             num_classes, signature, learning_rate, model_name) 
     model.compile()
     model.train()
@@ -170,7 +151,6 @@ def train(model_name, signature):
 
 #---MAIN-----------------+
 def main(run_mode, model_type, model_prefix):
-    clear()
     # Create model names
     timestamp = time.time()
     formatted_time = time.strftime("%a_%b_%d_%H:%M:%S", time.localtime(timestamp))
@@ -178,8 +158,11 @@ def main(run_mode, model_type, model_prefix):
     model_name_jet = model_prefix + "_jet_" + formatted_time
     
     # Train the models
-    train(model_name_z, "z")
-    #train(model_name_jet, "jet")
+    if model_type == "re":
+        train(model_name_z, "z")
+
+    if model_type == "cl":
+        train(model_name_jet, "jet")
     
     # Validate the models
     if run_mode == "trainval":
@@ -187,37 +170,28 @@ def main(run_mode, model_type, model_prefix):
 
         command1 = [python_executable, 'test.py', '--model_name', model_name_z + "_regression"]
         command2 = [python_executable, 'test.py', '--model_name', model_name_z + "_classification"]
-        command3 = [python_executable, 'test.py', '--model_name', "ForReport_jet_Tue_May_23_18:19:32_regression"]
+        command3 = [python_executable, 'test.py', '--model_name', model_name_jet + "_classification"]
         command4 = [python_executable, 'test.py', '--model_name', model_name_jet + "_classification"]
 
-        clear()
         if model_type == "cl":
-            print(bar)
             print("Running mono_z classification model on testing data")
             subprocess.run(command2)
-            print(bar)
             print("Running mono_jet classification model on testing data")
             subprocess.run(command4)
 
         elif model_type == "re":
-            print(bar)
             print("Running mono_z regression model on testing data")
             subprocess.run(command1)
-            print(bar)
             print("Running mono_jet regression model on testing data")
             subprocess.run(command3)
 
         elif model_type == "clre":
-            print(bar)
             print("Running mono_z classification model on testing data")
             subprocess.run(command2)
-            print(bar)
             print("Running mono_jet classification model on testing data")
             subprocess.run(command4)
-            print(bar)
             print("Running mono_z regression model on testing data")
             subprocess.run(command1)
-            print(bar)
             print("Running mono_jet regression model on testing data")
             subprocess.run(command3)
 

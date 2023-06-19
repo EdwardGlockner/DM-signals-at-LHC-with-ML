@@ -1,2 +1,0 @@
-jet bra för lr=0.05
-z bra för 0.5
